@@ -1,0 +1,66 @@
+.container {
+  border-radius: 10px;
+  margin: auto;
+  width: 20em;
+  padding: 20px;
+  font-size: 0.9em;
+  font-weight: 350;
+}
+
+#login-form input {
+  transition: 100ms;
+  width: calc(20em - 20px);
+  display: block;
+  border-radius: 8px;
+  color: white;
+  font-weight: 350;
+  font-family: Inter, sans-serif;
+  padding: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-top: 8px;
+  margin-bottom: 13px;
+}
+
+#login-form * {
+  font-size: 1em;
+}
+
+#forgot {
+  font-size: 0.9em;
+  float: right;
+}
+
+#title {
+  font-weight: 200;
+  font-size: 1.7em;
+  margin-top: -5px;
+}
+
+#icon {
+  margin-top: 30px;
+}
+
+#submit {
+  transition: 100ms;
+  width: calc(20em - 10px);
+  display: block;
+  border-radius: 8px;
+  border: none;
+  font-weight: 450;
+  font-family: Inter, sans-serif;
+  padding: 6px;
+  margin-top: 18px;
+}
+
+#submit:hover {
+  cursor: pointer;
+}
+
+#noaccount {
+  /* background-color: transparent; */
+  /* font-weight: 350; */
+  /* border: none; */
+  /* font-family: Inter, sans-serif; */
+  /* font-size: 0.9em; */
+}

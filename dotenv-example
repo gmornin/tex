@@ -1,0 +1,11 @@
+MONGO_HOST=mongodb://localhost:27017
+
+HASH_SALT=A string salt for hashing
+
+SMTP_USERNAME=example@gmail.com
+SMTP_PASSWORD=from apis
+SMTP_RELAY=smtp.gmail.com
+SMTP_FROM=GoodMorningTex<example@gmail.com>
+
+IP=127.0.0.1
+PORT=8080

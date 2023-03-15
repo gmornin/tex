@@ -1,0 +1,27 @@
+#login-form {
+  border: rgba(255, 255, 255, 0.2) solid 1px;
+  background-color: #222222;
+}
+
+#login-form input {
+  background-color: #181a1b;
+  border: rgba(255, 255, 255, 0.1) solid 1px;
+  outline: #2266aa;
+}
+
+#login-form input:focus {
+  outline: 1px solid #2266aa;
+}
+
+#forgot, #noaccount {
+  color: #58a6ff;
+}
+
+#submit {
+  color: white;
+  background-color: #388636;
+}
+
+#submit:hover {
+  background-color: #489646;
+}

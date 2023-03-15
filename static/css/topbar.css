@@ -1,0 +1,29 @@
+.top-bar-link {
+  padding-left: 30px;
+}
+
+#top-bar {
+  position: sticky;
+  top: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  align-content: center;
+  padding-top: 25px;
+  padding-bottom: 25px;
+  padding-left: 12px;
+  padding-right: 12px;
+  /* background-color: blue; */
+}
+
+#top-bar-left {
+  margin-left: 28px;
+  /* background-color: red; */
+}
+
+#top-bar-right {
+  /* background-color: green; */
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-right: 28px;
+}
