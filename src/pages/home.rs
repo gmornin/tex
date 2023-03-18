@@ -4,7 +4,6 @@ use crate::components::*;
 
 #[get("/")]
 async fn home(req: HttpRequest) -> HttpResponse {
-    println!("ran");
     let token_cookie = req.cookie("token");
     let token = cookie_to_str(&token_cookie);
 
@@ -20,7 +19,7 @@ async fn home(req: HttpRequest) -> HttpResponse {
     <link rel="stylesheet" href="/static/css/dark/main.css" />
     <link rel="stylesheet" href="/static/css/dark/topbar.css" />
     <link rel="stylesheet" href="/static/css/dark/topbar-signedout.css" />
-    <link rel="shortcut icon" href="/static/images/favicon.svg" type="image/x-icon" />
+    <link rel="shortcut icon" href="/static/images/favicon-dark.svg" type="image/x-icon" />
     <title>Home - GoodMorning Tex</title>
   </head>
   <body>

@@ -26,5 +26,10 @@ a {
 }
 
 .linklike:hover {
+  cursor: pointer;
   text-decoration: underline #2866bf;
+}
+
+.hide {
+  display: none;
 }

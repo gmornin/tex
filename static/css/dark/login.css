@@ -13,15 +13,20 @@
   outline: 1px solid #2266aa;
 }
 
-#forgot, #noaccount {
+#forgot,
+#noaccount,
+#hasaccount {
   color: #58a6ff;
+  background-color: transparent;
+  border: none;
 }
 
-#submit {
+.submit {
   color: white;
   background-color: #388636;
 }
 
-#submit:hover {
+.submit:hover {
   background-color: #489646;
+  cursor: pointer;
 }

@@ -1,9 +1,9 @@
 use actix_files::NamedFile;
 use actix_web::{get, web::Path, Result};
 use goodmorning_services::*;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Deserialize)]
 struct StaticPath {
     path: String,
 }

@@ -26,6 +26,13 @@
   font-size: 1em;
 }
 
+#hasaccount,
+#noaccount {
+  font-family: Inter, sans-serif;
+  font-weight: 350;
+  font-size: 1em;
+}
+
 #forgot {
   font-size: 0.9em;
   float: right;
@@ -41,7 +48,7 @@
   margin-top: 30px;
 }
 
-#submit {
+.submit {
   transition: 100ms;
   width: calc(20em - 10px);
   display: block;
@@ -57,10 +64,8 @@
   cursor: pointer;
 }
 
-#noaccount {
-  /* background-color: transparent; */
-  /* font-weight: 350; */
-  /* border: none; */
-  /* font-family: Inter, sans-serif; */
-  /* font-size: 0.9em; */
+#error-display {
+	margin-top: 10px;
+	margin-bottom: 0;
+	font-size: 0.8em;
 }

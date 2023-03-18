@@ -3,7 +3,7 @@ use dotenv::dotenv;
 use goodmorning_services::{functions::*, *};
 use std::env;
 
-use gmt_server::{r#static, pages};
+use gmt_server::pages;
 
 #[tokio::main]
 async fn main() {
@@ -23,9 +23,7 @@ async fn main() {
     HttpServer::new(move || {
         App::new()
             .service(api::scope())
-            // .service(pages::home)
             .service(pages::scope())
-            .service(r#static)
             .wrap(Logger::default())
             .app_data(Data::new(db.clone()))
     })
