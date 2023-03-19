@@ -7,12 +7,21 @@
     <link rel="stylesheet" href="/static/css/login.css" />
     <link rel="stylesheet" href="/static/css/dark/main.css" />
     <link rel="stylesheet" href="/static/css/dark/login.css" />
-    <link rel="shortcut icon" href="/static/images/favicon-dark.svg" type="image/x-icon" />
+    <link
+      rel="shortcut icon"
+      href="/static/images/favicon-dark.svg"
+      type="image/x-icon"
+    />
     <title>Sign in - GoodMorning Tex</title>
   </head>
   <body>
     <script type="module">
-      import init, { change_state, update, signin } from "/static/wasm/login/login.js";
+      import init, {
+        change_state,
+        update,
+        signin,
+        handle_enter,
+      } from "/static/wasm/login/login.js";
 
       (async () => {
         await init();
@@ -20,6 +29,11 @@
 
       window.onpopstate = update;
       window.wasm = { change_state, signin };
+      window.onkeydown = (event) => {
+        if (event.key === "Enter") {
+          handle_enter();
+        }
+      };
     </script>
     <center>
       <img src="/static/images/icon-dark.svg" alt="" width="100" id="icon" />
@@ -32,7 +46,9 @@
         <label for="password">Password</label>
         <a href="" id="forgot" class="linklike">Forgot password?</a>
         <input type="password" name="password" id="password" />
-        <button id="submit-signin" class="submit" onclick="wasm.signin()">Sign in</button>
+        <button id="submit-signin" class="submit" onclick="wasm.signin()">
+          Sign in
+        </button>
       </div>
       <div class="signup hide">
         <label for="email">Email address</label>

@@ -12,6 +12,6 @@ pub async fn login(query: Query<Type>) -> Result<NamedFile> {
     if query.r#type.as_deref().unwrap_or_default() == "new" {
         todo!()
     } else {
-        Ok(NamedFile::open_async("static_hidden/login.html").await?)
+        Ok(NamedFile::open_async("static/htmls/login.html").await?)
     }
 }
