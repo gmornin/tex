@@ -2,6 +2,7 @@
 /* eslint-disable */
 export const memory: WebAssembly.Memory;
 export function change_state(a: number, b: number): void;
+export function signup(): number;
 export function signin(): number;
 export function handle_enter(): number;
 export function main(): void;

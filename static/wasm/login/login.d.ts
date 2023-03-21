@@ -13,6 +13,10 @@ export function change_state(t: string): void;
 /**
 * @returns {Promise<void>}
 */
+export function signup(): Promise<void>;
+/**
+* @returns {Promise<void>}
+*/
 export function signin(): Promise<void>;
 /**
 * @returns {Promise<void>}
@@ -24,6 +28,7 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
   readonly change_state: (a: number, b: number) => void;
+  readonly signup: () => number;
   readonly signin: () => number;
   readonly handle_enter: () => number;
   readonly main: () => void;

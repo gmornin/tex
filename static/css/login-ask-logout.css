@@ -1,0 +1,18 @@
+body {
+  font-family: Inter, sans-serif;
+  color: white;
+  font-weight: 350;
+  line-height: 2em;
+  font-size: 1.5em;
+}
+
+#logout {
+  font-family: Inter, sans-serif;
+  font-size: 1em;
+  font-weight: 350;
+  padding: 0;
+}
+
+#icon {
+  margin-top: 30px;
+}

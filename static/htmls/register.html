@@ -20,7 +20,6 @@
         change_state,
         update,
         signin,
-	signup,
         handle_enter,
       } from "/static/wasm/login/login.js";
 
@@ -29,7 +28,7 @@
       })();
 
       window.onpopstate = update;
-      window.wasm = { change_state, signin, signup };
+      window.wasm = { change_state, signin };
       window.onkeydown = (event) => {
         if (event.key === "Enter") {
           handle_enter();
@@ -43,7 +42,7 @@
       <h1 id="title">GoodMorning, Tex</h1>
     </center>
     <div id="login-form" class="container">
-      <div class="signin">
+      <div class="signin hide">
         <label for="identifier">Username or email address</label>
         <input type="text" name="identifier" id="identifier" />
         <label for="password">Password</label>
@@ -53,7 +52,7 @@
           Sign in
         </button>
       </div>
-      <div class="signup hide">
+      <div class="signup">
         <label for="email">Email address</label>
         <input type="text" name="email" id="email" />
         <label for="username">Username</label>
@@ -62,12 +61,12 @@
         <input type="password" name="password1" id="password1" />
         <label for="password2">Confirm password</label>
         <input type="password" name="password2" id="password2" />
-        <button id="submit-create" class="submit" onclick="wasm.signup()">Create account</button>
+        <button id="submit-create" class="submit">Create account</button>
       </div>
       <p id="error-display" class="hide"></p>
     </div>
     <div class="container">
-      <center class="signin">
+      <center class="signin hide">
         New here?
         <button
           id="noaccount"
@@ -78,7 +77,7 @@
           Create an account
         </button>
       </center>
-      <center class="signup hide">
+      <center class="signup">
         Already have an account?
         <button
           id="hasaccount"

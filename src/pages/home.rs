@@ -7,7 +7,7 @@ async fn home(req: HttpRequest) -> HttpResponse {
     let token_cookie = req.cookie("token");
     let token = cookie_to_str(&token_cookie);
 
-    if token.is_none() {
+    // if token.is_none() {
         return HttpResponse::Ok().body(format!(r#"<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -26,7 +26,7 @@ async fn home(req: HttpRequest) -> HttpResponse {
   {}
   </body>
 </html>"#, TOPBAR_LOGGEDOUT));
-    }
+    // }
 
     todo!()
 }

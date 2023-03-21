@@ -14,3 +14,7 @@ a {
 .hover-dropshadow:hover {
   box-shadow: 0px 5px 12px -3px #232526;
 }
+
+.linklike {
+  color: #58a6ff;
+}

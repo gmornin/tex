@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/css/main.css" />
+    <link rel="stylesheet" href="/static/css/login-ask-logout.css" />
+    <link rel="stylesheet" href="/static/css/dark/main.css" />
+    <link rel="stylesheet" href="/static/css/dark/login-ask-logout.css" />
+    <link
+      rel="shortcut icon"
+      href="/static/images/favicon-dark.svg"
+      type="image/x-icon"
+    />
+    <title>Logged out - GoodMorning Tex</title>
+  </head>
+  <body>
+    <script type="module">
+      import init from "/static/wasm/been-loggedout/been_loggedout.js";
+
+      (async () => {
+        await init();
+      })();
+    </script>
+    <center>
+      <a href="/">
+        <img src="/static/images/icon-dark.svg" alt="" width="100" id="icon" />
+      </a>
+      <br />
+      You have been logged out from another device,
+      <br />
+      click <a href="/login" , class="linklike">here</a> to login again.
+    </center>
+  </body>
+</html>
