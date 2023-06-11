@@ -12,29 +12,10 @@
       href="/static/images/favicon-dark.svg"
       type="image/x-icon"
     />
+    <script src="/static/scripts/login.js" defer></script>
     <title>Sign in - GoodMorning Tex</title>
   </head>
   <body>
-    <script type="module">
-      import init, {
-        change_state,
-        update,
-        signin,
-        handle_enter,
-      } from "/static/wasm/login/login.js";
-
-      (async () => {
-        await init();
-      })();
-
-      window.onpopstate = update;
-      window.wasm = { change_state, signin };
-      window.onkeydown = (event) => {
-        if (event.key === "Enter") {
-          handle_enter();
-        }
-      };
-    </script>
     <center>
       <a href="/">
         <img src="/static/images/icon-dark.svg" alt="" width="100" id="icon" />
@@ -48,7 +29,7 @@
         <label for="password">Password</label>
         <a href="" id="forgot" class="linklike">Forgot password?</a>
         <input type="password" name="password" id="password" />
-        <button id="submit-signin" class="submit" onclick="wasm.signin()">
+        <button id="submit-signin" class="submit" onclick="signin()">
           Sign in
         </button>
       </div>
@@ -61,9 +42,11 @@
         <input type="password" name="password1" id="password1" />
         <label for="password2">Confirm password</label>
         <input type="password" name="password2" id="password2" />
-        <button id="submit-create" class="submit">Create account</button>
+        <button id="submit-create" class="submit" onclick="signup()">
+          Create account
+        </button>
       </div>
-      <p id="error-display" class="hide"></p>
+      <p id="error-display"></p>
     </div>
     <div class="container">
       <center class="signin hide">
@@ -72,7 +55,7 @@
           id="noaccount"
           class="linklike"
           onclick="
-	  wasm.change_state('signup')"
+	  changeState('signup')"
         >
           Create an account
         </button>
@@ -82,7 +65,7 @@
         <button
           id="hasaccount"
           class="linklike"
-          onclick="wasm.change_state('signin')"
+          onclick="changeState('signin')"
         >
           Sign in instead
         </button>

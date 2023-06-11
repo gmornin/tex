@@ -12,20 +12,10 @@
       href="/static/images/favicon-dark.svg"
       type="image/x-icon"
     />
+    <script src="/static/scripts/login-ask-logout.js"></script>
     <title>Sign out? - GoodMorning Tex</title>
   </head>
   <body>
-    <script type="module">
-      import init, {
-        logout,
-      } from "/static/wasm/login-ask-logout/login_ask_logout.js";
-
-      (async () => {
-        await init();
-      })();
-
-      window.wasm = { logout };
-    </script>
     <center>
       <a href="/">
         <img src="/static/images/icon-dark.svg" alt="" width="100" id="icon" />
@@ -34,7 +24,7 @@
       You are already logged in,
       <br />
       or do you wish to
-      <button class="linklike" id="logout" onclick="window.wasm.logout()">
+      <button id="logout" class="linklike" onclick="logout()">
         logout
       </button>
       instead?

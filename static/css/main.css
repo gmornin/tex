@@ -17,6 +17,19 @@ a {
   border-radius: 30px;
 }
 
+.ghbutton {
+  transition: 100ms;
+  display: block;
+  border-radius: 8px;
+  border: none;
+  font-weight: 450;
+  font-family: Inter, sans-serif;
+  padding: 6px;
+  padding-left: 3em;
+  padding-right: 3em;
+  margin-top: 18px;
+}
+
 .buttonlike-hover {
   transition: 350ms;
 }

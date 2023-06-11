@@ -1,3 +1,12 @@
+use std::error::Error;
+
+use actix_web::HttpResponse;
+use log::*;
+
+pub fn internalserver_error(e: Box<dyn Error>) -> HttpResponse {
+    error!("{e}");
+    let body = format!(
+        r#"
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -12,8 +21,7 @@
       href="/static/images/favicon-dark.svg"
       type="image/x-icon"
     />
-    <script src="/static/scripts/been-loggedout.js"></script>
-    <title>Logged out - GoodMorning Tex</title>
+    <title>Something went wrong</title>
   </head>
   <body>
     <center>
@@ -21,9 +29,15 @@
         <img src="/static/images/icon-dark.svg" alt="" width="100" id="icon" />
       </a>
       <br />
-      You have been logged out from another device,
+      I think the server broke,
       <br />
-      click <a href="/login" , class="linklike">here</a> to login again.
+      don't worry it's not your fault.
+      <br />
+      <code>{}</code>
     </center>
   </body>
-</html>
+</html>"#,
+        e
+    );
+    HttpResponse::InternalServerError().body(body)
+}

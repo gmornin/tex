@@ -12,8 +12,8 @@
       href="/static/images/favicon-dark.svg"
       type="image/x-icon"
     />
-    <script src="/static/scripts/been-loggedout.js"></script>
-    <title>Logged out - GoodMorning Tex</title>
+    <script src="/static/scripts/remindverify.js" defer></script>
+    <title>Verification reminder</title>
   </head>
   <body>
     <center>
@@ -21,9 +21,16 @@
         <img src="/static/images/icon-dark.svg" alt="" width="100" id="icon" />
       </a>
       <br />
-      You have been logged out from another device,
+      Your account has been created,
       <br />
-      click <a href="/login" , class="linklike">here</a> to login again.
+      check
+      <button id="logout" class="linklike" onclick="launchemail()">
+        your email
+      </button>
+      for a verification message.
+      <br />
+      <br />
+      <a href="/" class="linklike">Continue to setup</a>
     </center>
   </body>
 </html>
