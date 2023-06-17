@@ -18,6 +18,7 @@ a {
 }
 
 .ghbutton {
+  cursor: pointer;
   transition: 100ms;
   display: block;
   border-radius: 8px;
@@ -45,4 +46,8 @@ a {
 
 .hide {
   display: none;
+}
+
+.ghbutton:disabled:hover {
+  cursor: wait;
 }

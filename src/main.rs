@@ -1,10 +1,7 @@
-use actix_web::{middleware::Logger, web::Data, App, HttpServer};
+use actix_web::{middleware::Logger, App, HttpServer};
 use dotenv::dotenv;
 use gmt_server::pages;
-use goodmorning_services::{
-    functions::{get_client, get_prod_database},
-    init as valinit, *,
-};
+use goodmorning_services::{init as valinit, *};
 use rustls::{Certificate, PrivateKey, ServerConfig};
 use rustls_pemfile::{certs, pkcs8_private_keys};
 use simplelog::*;
@@ -50,8 +47,6 @@ async fn main() {
 
     let config = load_rustls_config();
 
-    let db = get_prod_database(&get_client().await);
-
     // let storage_limits = StorageLimits {
     //     _1: env::var("STORAGE_LIMIT_1")
     //         .expect("cannot find `STORAGE_LIMIT_1` in env")
@@ -69,7 +64,6 @@ async fn main() {
             .service(api::scope())
             .service(pages::scope())
             .wrap(Logger::default())
-            .app_data(Data::new(db.clone()))
         // .app_data(Data::new(EMAIL_VERIFICATION_DURATION))
         // .app_data(Data::new(storage_limits))
         // .wrap(middleware)

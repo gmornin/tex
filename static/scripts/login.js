@@ -74,7 +74,7 @@ function signup() {
     return;
   }
 
-  let url = "/api/services/v1/account/create";
+  let url = "/api/accounts/v1/create";
   let data = {
     username,
     email,
@@ -99,13 +99,17 @@ function signup() {
     .then((data) => {
       switch (data.type) {
         case "error":
-          errorDisplay.innerHTML = `Server responded with error <code>${data.kind}</code>`;
+          errorDisplay.innerHTML = `Server responded with error <code>${JSON.stringify(
+            data.kind
+          )}</code>`;
           break;
         case "created":
           document.cookie = `token=${data.token}; path=/; max-age=31536000; same-site=lax; Secure`;
           localStorage.setItem("userid", data.id);
           errorDisplay.innerText = "Account created. Redirecting...";
-          window.location.pathname = "/remindverify";
+          window.location.href = `/remindverify?${email.slice(
+            email.indexOf("@") + 1
+          )}`;
           return;
         default:
           errorDisplay.innerText = `Unexpected server response (check console)`;
@@ -117,6 +121,8 @@ function signup() {
       button.innerText = "Create account";
     })
     .catch((error) => {
+      button.innerText = "Create account";
+      button.removeAttribute("disabled");
       errorDisplay.innerText = error;
       console.error("Error:", error);
     });
@@ -135,7 +141,7 @@ function signin() {
   let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   let identifierType = emailRegex.test(identifier) ? "email" : "username";
 
-  let url = "/api/services/v1/account/login";
+  let url = "/api/accounts/v1/login";
   let data = {
     identifier,
     "identifier-type": identifierType,
@@ -160,7 +166,9 @@ function signin() {
     .then((data) => {
       switch (data.type) {
         case "error":
-          errorDisplay.innerHTML = `Server responded with error <code>${data.kind}</code>`;
+          errorDisplay.innerHTML = `Server responded with error <code>${JSON.stringify(
+            data.kind
+          )}</code>`;
           break;
         case "login":
           document.cookie = `token=${data.token}; path=/; max-age=31536000; same-site=lax; Secure`;
@@ -178,6 +186,8 @@ function signin() {
       button.innerText = "Sign in";
     })
     .catch((error) => {
+      button.innerText = "Sign in";
+      button.removeAttribute("disabled");
       errorDisplay.innerText = error;
       console.error("Error:", error);
     });

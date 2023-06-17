@@ -12,6 +12,7 @@
       href="/static/images/favicon-dark.svg"
       type="image/x-icon"
     />
+    <script src="/static/scripts/finish-setup.js"></script>
     <title>Finishing up</title>
   </head>
   <body>
@@ -21,17 +22,18 @@
       </a>
       <br />
       <div id="not-yet">
-        I see that you have verified your email address.
+        Click the button below to create storage for GoodMorning Tex.
         <br />
-        (yes this is necessary for setting up storage correctly)
         <br />
-	<button class="ghbutton">Finish setup</button>
       </div>
       <div id="done" class="hide">
         Okay all done,
         <br />
-        good luck and have fun exploring (✿◠‿◠)
+        have fun exploring (✿◠‿◠)
       </div>
+      <button class="ghbutton" id="finish" onclick="create()">Finish setup</button>
+      <br />
+      <p id="error-display"></p>
     </center>
   </body>
 </html>
