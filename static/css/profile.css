@@ -16,7 +16,6 @@
 }
 
 #profile-top img {
-  background-color: red;
   border-radius: 30%;
   margin-right: 20px;
 }
@@ -30,4 +29,13 @@
 .badge-value {
   height: 20px;
   margin-left: 5px;
+}
+
+#username {
+  font-weight: bold;
+  font-size: 23px;
+}
+
+#status {
+  font-size: 15px;
 }

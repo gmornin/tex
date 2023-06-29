@@ -35,7 +35,7 @@ pub fn TopbarLoggedin(props: &TopbarLoggedinProps) -> Html {
       </div>
       <div id="top-bar-right">
         <img src="/static/icons/bell.svg" id="notif-bell" alt="" width="15" />
-        <img src={format!("/api/tex/generic/v1/pfp/{}", props.id)} id="topbar-pfp" alt="" width="30" height="30" />
+        <a href={format!("/user/{}", props.id)}> <img src={format!("/api/tex/generic/v1/pfp/id/{}", props.id)} id="topbar-pfp" alt="" width="30" height="30" /></a>
       </div>
     </div>
     }

@@ -1,6 +1,6 @@
 use actix_files::NamedFile;
 use actix_web::{get, web::Query, HttpRequest};
-use goodmorning_services::{functions::get_accounts, structs::Account, DATABASE};
+use goodmorning_services::{structs::Account, ACCOUNTS};
 use serde::Deserialize;
 use std::error::Error;
 
@@ -12,7 +12,7 @@ struct Type {
 #[get("/login")]
 pub async fn login(req: HttpRequest, query: Query<Type>) -> Result<NamedFile, Box<dyn Error>> {
     if let Some(token) = req.cookie("token") {
-        if Account::find_by_token(token.value(), &get_accounts(DATABASE.get().unwrap()))
+        if Account::find_by_token(token.value(), ACCOUNTS.get().unwrap())
             .await?
             .is_some()
         {

@@ -1,6 +1,7 @@
 mod hard_links;
 mod home;
 mod login;
+mod user;
 use actix_web::Scope;
 pub use home::*;
 
@@ -12,4 +13,5 @@ pub fn scope() -> Scope {
         .service(login::login)
         .service(r#static::r#static)
         .service(hard_links::remindverify)
+        .service(user::profile)
 }

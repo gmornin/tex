@@ -4,7 +4,7 @@ use actix_web::{get, http::header::ContentType, HttpRequest, HttpResponse};
 use goodmorning_services::{
     functions::*,
     structs::{Account, GMServices},
-    DATABASE,
+    ACCOUNTS,
 };
 
 #[get("/")]
@@ -39,12 +39,7 @@ async fn home(req: HttpRequest) -> HttpResponse {
             ));
     }
 
-    let account = match Account::find_by_token(
-        token.unwrap(),
-        &get_accounts(DATABASE.get().unwrap()),
-    )
-    .await
-    {
+    let account = match Account::find_by_token(token.unwrap(), ACCOUNTS.get().unwrap()).await {
         Ok(Some(account)) => account,
         Ok(None) => {
             return match NamedFile::open_async("static/htmls/been-loggedout.html").await {
@@ -67,6 +62,7 @@ async fn home(req: HttpRequest) -> HttpResponse {
     let renderer = yew::ServerRenderer::<TopbarLoggedin>::with_props(move || TopbarLoggedinProps {
         id: account.id,
     });
+
     HttpResponse::Ok()
         .content_type(ContentType::html())
         .insert_header(("Content-Security-Policy", "default-src 'self';"))
