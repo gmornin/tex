@@ -9,9 +9,7 @@ use goodmorning_services::structs::Account;
 use goodmorning_services::traits::CollectionItem;
 use goodmorning_services::ACCOUNTS;
 
-use crate::components::{
-    ProfileInfo, ProfileInfoProp, TopbarLoggedin, TopbarLoggedinProps, TOPBAR_LOGGEDOUT,
-};
+use crate::components::{topbar_from_req, ProfileInfo, ProfileInfoProp};
 use crate::functions::internalserver_error;
 
 #[get("/user/{id}")]
@@ -23,34 +21,21 @@ pub async fn profile(path: Path<i64>, req: HttpRequest) -> HttpResponse {
 }
 
 async fn profile_task(id: Path<i64>, req: HttpRequest) -> Result<HttpResponse, Box<dyn Error>> {
-    let token = req.cookie("token");
-
-    let topbar = match token {
-        Some(token) => {
-            let account =
-                match Account::find_by_token(token.value(), ACCOUNTS.get().unwrap()).await? {
-                    Some(account) => account,
-                    None => {
-                        return Ok(NamedFile::open_async("static/htmls/been-loggedout.html")
-                            .await?
-                            .into_response(&req))
-                    }
-                };
-            yew::ServerRenderer::<TopbarLoggedin>::with_props(move || TopbarLoggedinProps {
-                id: account.id,
-            })
-            .render()
-            .await
-        }
-        None => TOPBAR_LOGGEDOUT.to_string(),
+    let (topbar, account) = match topbar_from_req(&req).await? {
+        Ok(stuff) => stuff,
+        Err(res) => return Ok(res),
     };
 
-    let account = match Account::find_by_id(*id, ACCOUNTS.get().unwrap()).await? {
-        Some(account) => account,
-        None => {
-            return Ok(NamedFile::open_async("static/htmls/notfound.html")
-                .await?
-                .into_response(&req))
+    let account = if account.is_some() && account.as_ref().unwrap().id == *id {
+        account.unwrap()
+    } else {
+        match Account::find_by_id(*id, ACCOUNTS.get().unwrap()).await? {
+            Some(account) => account,
+            None => {
+                return Ok(NamedFile::open_async("static/htmls/notfound.html")
+                    .await?
+                    .into_response(&req))
+            }
         }
     };
 
@@ -62,7 +47,7 @@ async fn profile_task(id: Path<i64>, req: HttpRequest) -> Result<HttpResponse, B
             .await?
             .into_response(&req));
     }
-    let pf = read_profile(account.id, "tex").await?;
+    let pf = read_profile(account.id, goodmorning_services::structs::GMServices::Tex).await?;
     let pf = yew::ServerRenderer::<ProfileInfo>::with_props(move || ProfileInfoProp {
         account: to_profile_acccount(account),
         profile: pf,

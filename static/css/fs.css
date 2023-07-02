@@ -1,0 +1,15 @@
+#fslist {
+  list-style-type: none;
+  padding: 0;
+}
+
+#fslist li {
+  width: 60em;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 10px;
+}
+
+#fslist li:hover {
+  cursor: pointer;
+}

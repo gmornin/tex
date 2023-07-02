@@ -1,0 +1,11 @@
+#fslist li:not(:last-child) {
+  border-bottom: 1px solid #333311;
+}
+
+#fslist li {
+  color: #bbaa99;
+}
+
+#fslist li:hover {
+  color: #ffaa99;
+}

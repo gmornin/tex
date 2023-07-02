@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/css/main.css" />
+    <link rel="stylesheet" href="/static/css/topbar.css" />
+    <link rel="stylesheet" href="/static/css/topbar-signedout.css" />
+    <link rel="stylesheet" href="/static/css/fs.css" />
+    <link rel="stylesheet" href="/static/css/path.css" />
+    <link rel="stylesheet" href="/static/css/topbar-loggedin.css" />
+    <link rel="stylesheet" href="/static/css/dark/main.css" />
+    <link rel="stylesheet" href="/static/css/dark/topbar.css" />
+    <link rel="stylesheet" href="/static/css/dark/fs.css" />
+    <link rel="stylesheet" href="/static/css/dark/path.css" />
+    <link rel="stylesheet" href="/static/css/dark/topbar-signedout.css" />
+    <link
+      rel="shortcut icon"
+      href="/static/images/favicon-dark.svg"
+      type="image/x-icon"
+    />
+    <script src="/static/scripts/fs.js" defer></script>
+    <title>Usercontent - GoodMorning Tex</title>
+  </head>
+  <body>
+    <div id="top-bar">
+      <div id="top-bar-left">
+        <a href="/" id="top-bar-icon"
+          ><img src="/static/images/favicon-dark.svg" alt="" width="30"
+        /></a>
+        <a href="/docs" class="top-bar-link">API</a>
+        <a href="" class="top-bar-link">Blog</a>
+      </div>
+      <div id="top-bar-right">
+        <img src="/static/icons/bell.svg" id="notif-bell" alt="" width="15" />
+        <img
+          src="/api/tex/generic/v1/pfp/id/1"
+          id="topbar-pfp"
+          alt=""
+          width="30"
+          height="30"
+        />
+      </div>
+    </div>
+    <div id="path-display">
+      <span class="fragment">1</span>
+      <span class="connect">&gt;</span>
+      <span class="fragment">projects</span>
+      <span class="connect">&gt;</span>
+      <span class="fragment">gmt-server</span>
+    </div>
+    <ul id="fslist">
+      <li class="dir">assets/</li>
+      <li class="dir">src/</li>
+      <li class="dir">static/</li>
+      <li class="dir">target/</li>
+      <li class="file">Cargo.lock</li>
+      <li class="file">Cargo.toml</li>
+      <li class="file">LICENSE</li>
+      <li class="file">README.md</li>
+      <li class="file">dotenv-example</li>
+      <li class="hidden-file">.env</li>
+    </ul>
+    <script>window.cache = {"tex": [{"name":".system","is_file":false,"size":4096}]}</script>
+  </body>
+</html>

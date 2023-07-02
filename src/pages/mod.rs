@@ -1,3 +1,4 @@
+mod fs;
 mod hard_links;
 mod home;
 mod login;
@@ -14,4 +15,6 @@ pub fn scope() -> Scope {
         .service(r#static::r#static)
         .service(hard_links::remindverify)
         .service(user::profile)
+        .service(fs::fspath)
+        .service(fs::root)
 }

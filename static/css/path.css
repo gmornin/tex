@@ -1,0 +1,25 @@
+.connect {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+#path-display {
+  font-family: "Courier New", monospace;
+  background: black;
+  width: 60em;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-radius: 10px;
+}
+
+#path-display .fragment:not(:last-child):hover {
+  cursor: pointer;
+}
+
+.fragment:last-child:hover {
+  cursor: not-allowed;
+}

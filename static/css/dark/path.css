@@ -1,0 +1,11 @@
+#path-display .connect {
+  color: #99bb00;
+}
+
+#path-display .fragment {
+  color: #ffcc99;
+}
+
+#path-display .fragment:not(:last-child):hover {
+  color: #ff8888;
+}

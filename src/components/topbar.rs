@@ -7,6 +7,12 @@
 //     }
 // }
 
+use std::borrow::Cow;
+use std::error::Error;
+
+use actix_files::NamedFile;
+use actix_web::{HttpRequest, HttpResponse};
+use goodmorning_services::{structs::Account, ACCOUNTS};
 use yew::{function_component, html, Html, Properties};
 
 pub const TOPBAR_LOGGEDOUT: &str = r#"
@@ -39,6 +45,56 @@ pub fn TopbarLoggedin(props: &TopbarLoggedinProps) -> Html {
       </div>
     </div>
     }
+}
+
+pub async fn topbar_from_req(
+    req: &HttpRequest,
+) -> Result<Result<(Cow<'static, str>, Option<Account>), HttpResponse>, Box<dyn Error>> {
+    let token = req.cookie("token");
+
+    match token {
+        Some(token) => topbar_from_token(Some(token.value()), req).await,
+        None => topbar_from_token(None, req).await,
+    }
+}
+
+pub async fn topbar_from_token(
+    token: Option<&str>,
+    req: &HttpRequest,
+) -> Result<Result<(Cow<'static, str>, Option<Account>), HttpResponse>, Box<dyn Error>> {
+    Ok(Ok(match token {
+        Some(token) => {
+            let account = match Account::find_by_token(token, ACCOUNTS.get().unwrap()).await? {
+                Some(account) => account,
+                None => {
+                    return Ok(Err(NamedFile::open_async(
+                        "static/htmls/been-loggedout.html",
+                    )
+                    .await?
+                    .into_response(req)))
+                }
+            };
+
+            if !account
+                .services
+                .contains(&goodmorning_services::structs::GMServices::Tex)
+            {
+                return Ok(Ok((Cow::Borrowed(TOPBAR_LOGGEDOUT), None)));
+            }
+
+            (
+                Cow::Owned(
+                    yew::ServerRenderer::<TopbarLoggedin>::with_props(move || {
+                        TopbarLoggedinProps { id: account.id }
+                    })
+                    .render()
+                    .await,
+                ),
+                Some(account),
+            )
+        }
+        None => (Cow::Borrowed(TOPBAR_LOGGEDOUT), None),
+    }))
 }
 
 #[derive(Properties, PartialEq)]
