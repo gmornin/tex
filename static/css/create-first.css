@@ -1,0 +1,15 @@
+center * {
+  font-family: Inter, sans-serif;
+  color: white;
+  font-weight: 350;
+  line-height: 2em;
+  margin: auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -200%);
+}
+
+center h2 {
+  font-size: 2em;
+}

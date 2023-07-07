@@ -1,4 +1,4 @@
-use crate::{components::*, functions::internalserver_error};
+use crate::{components::*, functions::internalserver_error, CSP_BASE};
 use actix_files::NamedFile;
 use actix_web::{get, http::header::ContentType, HttpRequest, HttpResponse};
 use goodmorning_services::{
@@ -65,7 +65,7 @@ async fn home(req: HttpRequest) -> HttpResponse {
 
     HttpResponse::Ok()
         .content_type(ContentType::html())
-        .insert_header(("Content-Security-Policy", "default-src 'self';"))
+        .insert_header(("Content-Security-Policy", CSP_BASE.get().unwrap().as_str()))
         .body(format!(
             r#"<!DOCTYPE html>
 <html lang="en">

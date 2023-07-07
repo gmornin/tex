@@ -20,9 +20,43 @@
       type="image/x-icon"
     />
     <script src="/static/scripts/fs.js" defer></script>
+    <script src="/static/scripts/upload.js" defer></script>
     <title>Usercontent - GoodMorning Tex</title>
   </head>
   <body>
+    <dialog id="uploadd">
+      <div id="x">&#x2715;</div>
+      <h2>Upload a file or folder</h2>
+      <div id="upload-types">
+        <label id="fileupload">
+          <img src="/static/icons/fileup.svg" height="50px" id="upload-file" />
+          <input type="file" />
+        </label>
+        <label id="folderupload">
+          <img
+            src="/static/icons/folderup.svg"
+            id="upload-folder"
+            height="50px"
+          />
+          <input
+            type="file"
+            webkitdirectory
+            mozdirectory
+            msdirectory
+            odirectory
+            directory
+          />
+        </label>
+      </div>
+      <p id="upload-from">Source: <span>select a source</span></p>
+      <input
+        type="text"
+        name="target"
+        id="target"
+        placeholder="Upload target"
+      />
+      <button id="uploadbut" disabled class="not-allowed">Upload</button>
+    </dialog>
     <div id="top-bar">
       <div id="top-bar-left">
         <a href="/" id="top-bar-icon"
@@ -48,7 +82,12 @@
       <span class="fragment">projects</span>
       <span class="connect">&gt;</span>
       <span class="fragment">gmt-server</span>
+      <img src="/static/icons/upload.svg" alt="" width="18px" id="upload" />
     </div>
+    <!-- <label id="upload"> -->
+    <!--   <input type="file" /> -->
+    <!--   Upload -->
+    <!-- </label> -->
     <ul id="fslist">
       <li class="dir">assets/</li>
       <li class="dir">src/</li>
@@ -61,6 +100,10 @@
       <li class="file">dotenv-example</li>
       <li class="hidden-file">.env</li>
     </ul>
-    <script>window.cache = {"tex": [{"name":".system","is_file":false,"size":4096}]}</script>
+    <div id="backdrop" style="display: none"></div>
+    <script>
+      window.cache = { tex: [{ name: ".system", is_file: false, size: 4096 }] };
+      window.history.replaceState({path: '1/projects/gmt-server'}, "")
+    </script>
   </body>
 </html>

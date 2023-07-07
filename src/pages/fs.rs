@@ -1,4 +1,4 @@
-use std::{borrow::Cow, error::Error, path::PathBuf};
+use std::{borrow::Cow, error::Error, ffi::OsStr, path::PathBuf};
 
 use actix_files::NamedFile;
 use actix_web::{
@@ -17,8 +17,11 @@ use goodmorning_services::{
 use tokio::fs;
 
 use crate::{
-    components::{self, audio, topbar_from_req, FsItem, FsItemProp, Img, ImgProp, PathProp},
+    components::{
+        self, html_friendly_mime, topbar_from_req, FsItem, FsItemProp, Img, ImgProp, PathProp,
+    },
     functions::{from_res, gen_nonce},
+    CSP_BASE,
 };
 
 #[get("/fs/{id}/{path:.*}")]
@@ -100,7 +103,7 @@ async fn dir(
     )
     .await?;
     let nonce = gen_nonce();
-    let csp_heaher = format!("default-src 'self'; script-src 'self' 'nonce-{nonce}'");
+    let csp_heaher = format!("{} 'nonce-{nonce}'", CSP_BASE.get().unwrap());
     let items_props = FsItemProp {
         nonce,
         id: account.id,
@@ -110,9 +113,88 @@ async fn dir(
     let items_display = yew::ServerRenderer::<components::FsItems>::with_props(|| items_props)
         .render()
         .await;
+    let path_props = PathProp {
+        path: path.clone(),
+        id: account.id,
+    };
+    let path_display = yew::ServerRenderer::<components::Path>::with_props(|| path_props)
+        .render()
+        .await;
 
-    let html = format!(
-        r#"<!DOCTYPE html>
+    let html = if is_owner {
+        format!(
+            r#"<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/css/main.css" />
+    <link rel="stylesheet" href="/static/css/topbar.css" />
+    <link rel="stylesheet" href="/static/css/topbar-signedout.css" />
+    <link rel="stylesheet" href="/static/css/fs.css" />
+    <link rel="stylesheet" href="/static/css/path.css" />
+    <link rel="stylesheet" href="/static/css/topbar-loggedin.css" />
+    <link rel="stylesheet" href="/static/css/dark/main.css" />
+    <link rel="stylesheet" href="/static/css/dark/topbar.css" />
+    <link rel="stylesheet" href="/static/css/dark/fs.css" />
+    <link rel="stylesheet" href="/static/css/dark/path.css" />
+    <link rel="stylesheet" href="/static/css/dark/topbar-signedout.css" />
+    <link
+      rel="shortcut icon"
+      href="/static/images/favicon-dark.svg"
+      type="image/x-icon"
+    />
+    <title>{}</title>
+  </head>
+  <body>
+    <dialog id="uploadd">
+      <div id="x">&#x2715;</div>
+      <h2>Upload a file or folder</h2>
+      <div id="upload-types">
+        <label id="fileupload">
+          <img src="/static/icons/fileup.svg" height="50px" id="upload-file" />
+          <input type="file" />
+        </label>
+        <label id="folderupload">
+          <img
+            src="/static/icons/folderup.svg"
+            id="upload-folder"
+            height="50px"
+          />
+          <input
+            type="file"
+            webkitdirectory
+            mozdirectory
+            msdirectory
+            odirectory
+            directory
+          />
+        </label>
+      </div>
+      <p id="upload-from">Source: <span>select a source</span></p>
+      <input
+        type="text"
+        name="target"
+        id="target"
+        placeholder="Upload target"
+      />
+      <button id="uploadbut" disabled class="not-allowed">Upload</button>
+    </dialog>
+  {topbar}
+<div id="path-display">
+  {path_display}
+  <img src="/static/icons/upload.svg" alt="" width="18px" id="upload" />
+</div>
+  {items_display}
+  <script src="/static/scripts/fs.js" defer></script>
+  <script src="/static/scripts/upload.js" defer></script>
+  </body>
+</html>"#,
+            html_escape::encode_safe(&format!("{}/{path}", account.id))
+        )
+    } else {
+        format!(
+            r#"<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -137,12 +219,16 @@ async fn dir(
   </head>
   <body>
   {topbar}
+<div id="path-display">
+  {path_display}
+</div>
   {items_display}
   <script src="/static/scripts/fs.js" defer></script>
   </body>
 </html>"#,
-        html_escape::encode_safe(&format!("{}/{path}", account.id))
-    );
+            html_escape::encode_safe(&format!("{}/{path}", account.id))
+        )
+    };
 
     Ok(HttpResponse::Ok()
         .content_type(ContentType::html())
@@ -175,32 +261,48 @@ async fn file(
         .get()
         .unwrap()
         .get_mime_types_from_file_name(pathbuf.file_name().unwrap().to_str().unwrap());
+
     let mime = match mimes.first() {
         Some(mime) => mime.clone(),
-        None => todo!(),
+        None => mime::TEXT_PLAIN,
     };
 
-    let (display, css) = match (mime.type_(), mime.subtype()) {
-        (mime::IMAGE, _) => (
-            yew::ServerRenderer::<Img>::with_props(move || ImgProp { url })
-                .render()
-                .await,
-            "<link rel=\"stylesheet\" href=\"/static/css/img.css\" />",
-        ),
-        (mime::AUDIO, _) => (
-            audio(&mime, &url),
-            "<link rel=\"stylesheet\" href=\"/static/css/audio.css\" />",
-        ),
-        (_, mime::PDF) => {
-            return Ok(NamedFile::open_async(&pathbuf)
-                .await?
-                .set_content_disposition(ContentDisposition {
-                    disposition: actix_web::http::header::DispositionType::Inline,
-                    parameters: Vec::new(),
-                })
-                .into_response(req))
-        }
-        mime => todo!("{mime:?}"),
+    let mime_str = html_friendly_mime(mime.essence_str());
+
+    let (display, css) = match pathbuf
+        .extension()
+        .unwrap_or(OsStr::new(""))
+        .to_str()
+        .unwrap()
+    {
+        "html" => components::html(&pathbuf).await?,
+        _ => match (mime.type_(), mime.subtype()) {
+            (mime::IMAGE, _) => (
+                yew::ServerRenderer::<Img>::with_props(move || ImgProp { url })
+                    .render()
+                    .await,
+                "<link rel=\"stylesheet\" href=\"/static/css/img.css\" />",
+            ),
+            (mime::AUDIO, _) => (
+                components::audio(&url),
+                "<link rel=\"stylesheet\" href=\"/static/css/audio.css\" />",
+            ),
+            (mime::VIDEO, _) => (
+                components::video(&url),
+                "<link rel=\"stylesheet\" href=\"/static/css/video.css\" />",
+            ),
+            (_, mime::PDF) => {
+                return Ok(NamedFile::open_async(&pathbuf)
+                    .await?
+                    .set_content_disposition(ContentDisposition {
+                        disposition: actix_web::http::header::DispositionType::Inline,
+                        parameters: Vec::new(),
+                    })
+                    .into_response(req))
+            }
+            (mime::TEXT, _) => components::text(&pathbuf).await?,
+            _ => todo!("{mimes:?}"),
+        },
     };
 
     let path_display = yew::ServerRenderer::<components::Path>::with_props(move || PathProp {
@@ -209,7 +311,7 @@ async fn file(
     })
     .render()
     .await;
-    let info_unsafe = format!("{} {}", &mime, crate::functions::size(size));
+    let info_unsafe = format!("{} {}", mime_str, crate::functions::size(size));
     let info = html_escape::encode_safe(&info_unsafe);
 
     let html = format!(
@@ -229,6 +331,7 @@ async fn file(
     <link rel="stylesheet" href="/static/css/dark/path.css" />
     <link rel="stylesheet" href="/static/css/dark/topbar-signedout.css" />
     {css}
+    {}
     <script src="/static/scripts/file.js" defer></script>
     <link
       rel="shortcut icon"
@@ -239,21 +342,25 @@ async fn file(
   </head>
   <body>
     {topbar}
+<div id="path-display">
     {path_display}
+</div>
     <div id="display">
         {display}
         <br />
-        <code id="info">{info}</code>
+        <center><code id="info">{info}</code></center>
     </div>
   </body>
-</html>"#
+</html>"#,
+        if mime.type_() == mime::TEXT {
+            r#"<link rel="stylesheet" href="/static/css/textpreview.css" />"#
+        } else {
+            ""
+        }
     );
 
     Ok(HttpResponse::Ok()
         .content_type(ContentType::html())
-        .insert_header((
-            "Content-Security-Policy",
-            "default-src 'self'; script-src 'self'",
-        ))
+        .insert_header(("Content-Security-Policy", CSP_BASE.get().unwrap().as_str()))
         .body(html))
 }

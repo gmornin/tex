@@ -1,6 +1,8 @@
+use actix_web::web::Data;
 use actix_web::{middleware::Logger, App, HttpServer};
 use dotenv::dotenv;
 use gmt_server::pages;
+use goodmorning_services::structs::Jobs;
 use goodmorning_services::{init as valinit, *};
 use rustls::{Certificate, PrivateKey, ServerConfig};
 use rustls_pemfile::{certs, pkcs8_private_keys};
@@ -10,7 +12,6 @@ use std::{
     env,
     fs::{self, File},
     io::BufReader,
-    path::PathBuf,
 };
 
 #[tokio::main]
@@ -20,6 +21,7 @@ async fn main() {
     dotenv().ok();
     valinit().await;
     init();
+    gmt_server::init();
 
     CombinedLogger::init(vec![
         TermLogger::new(
@@ -35,11 +37,12 @@ async fn main() {
                 .create(true)
                 .write(true)
                 .truncate(true)
-                .open(format!(
-                    "{}/logs/gmt-{}.log",
-                    STORAGE.get().unwrap().as_str(),
-                    chrono::Utc::now()
-                ))
+                .open(
+                    STORAGE
+                        .get()
+                        .unwrap()
+                        .join(format!("logs/services-{}.log", chrono::Utc::now())),
+                )
                 .unwrap(),
         ),
     ])
@@ -47,12 +50,7 @@ async fn main() {
 
     let config = load_rustls_config();
 
-    // let storage_limits = StorageLimits {
-    //     _1: env::var("STORAGE_LIMIT_1")
-    //         .expect("cannot find `STORAGE_LIMIT_1` in env")
-    //         .parse()
-    //         .expect("cannot parse STORAGE_LIMIT_1 to u64"),
-    // };
+    let jobs = Data::new(Jobs::default());
 
     HttpServer::new(move || {
         // let backend = InMemoryBackend::builder().build();
@@ -64,6 +62,7 @@ async fn main() {
             .service(api::scope())
             .service(pages::scope())
             .wrap(Logger::default())
+            .app_data(jobs.clone())
         // .app_data(Data::new(EMAIL_VERIFICATION_DURATION))
         // .app_data(Data::new(storage_limits))
         // .wrap(middleware)
@@ -109,7 +108,7 @@ fn load_rustls_config() -> rustls::ServerConfig {
 }
 
 fn init() {
-    let path = PathBuf::from(STORAGE.get().unwrap().as_str()).join("logs");
+    let path = STORAGE.get().unwrap().join("logs");
     if !path.exists() {
         fs::create_dir_all(path).unwrap();
     }

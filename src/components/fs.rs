@@ -6,20 +6,17 @@ use yew::{function_component, html, Html, Properties};
 pub fn Path(prop: &PathProp) -> Html {
     if prop.path.is_empty() {
         return html! {
-            <div id="path-display">
               <span class="fragment">{prop.id}</span>
-            </div>
         };
     }
     let fragments = prop.path.split('/').collect::<Vec<_>>();
     html! {
-    <div id="path-display">
-      <span class="fragment" path={prop.id.to_string()}>{prop.id}</span>
+      <><span class="fragment" path={prop.id.to_string()}>{prop.id}</span>
       <span class="connect">{">"}</span>
       {
           for fragments.iter().enumerate().map(|(i, fragment)| html! { <span class="fragment" path={format!("{}/{}", prop.id, fragments[0..i+1].join("/"))}>{fragment}</span> }).intersperse(html! {<span class="connect">{">"}</span>})
       }
-    </div>
+    </>
     }
 }
 
@@ -57,8 +54,7 @@ pub fn FsItems(prop: &FsItemProp) -> Html {
     )
     .unwrap();
     html! {
-        <><Path id={prop.id} path={prop.path.clone()}/>
-        <ul id="fslist">
+        <><ul id="fslist">
         {
             for prop.items.iter().map(|item| {
             let path = if prop.path.is_empty() { format!("{}/{}", prop.id, item.name)} else {format!("{}/{}/{}", prop.id, prop.path, item.name)};

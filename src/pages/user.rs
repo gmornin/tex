@@ -11,6 +11,7 @@ use goodmorning_services::ACCOUNTS;
 
 use crate::components::{topbar_from_req, ProfileInfo, ProfileInfoProp};
 use crate::functions::internalserver_error;
+use crate::CSP_BASE;
 
 #[get("/user/{id}")]
 pub async fn profile(path: Path<i64>, req: HttpRequest) -> HttpResponse {
@@ -88,6 +89,6 @@ async fn profile_task(id: Path<i64>, req: HttpRequest) -> Result<HttpResponse, B
 
     Ok(HttpResponse::Ok()
         .content_type(ContentType::html())
-        .insert_header(("Content-Security-Policy", "default-src 'self';"))
+        .insert_header(("Content-Security-Policy", CSP_BASE.get().unwrap().as_str()))
         .body(html))
 }

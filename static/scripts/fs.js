@@ -85,13 +85,18 @@ function trimPath(path) {
 }
 
 function displayPath(path) {
-  pathDisplay.innerHTML = "";
+  let spans = pathDisplay.getElementsByTagName("span");
+
+  for (let i = spans.length - 1; i >= 0; i--) {
+    spans[i].parentNode.removeChild(spans[i]);
+  }
+
   let fragments = path.split("/");
 
-  for (let i = 0; i < fragments.length; i++) {
+  for (let i = fragments.length - 1; i >= 0; i--) {
     addFragment(fragments[i], fragments.slice(0, i + 1).join("/"));
 
-    if (i === fragments.length - 1) {
+    if (i === 0) {
       break;
     }
     addConnect();
@@ -104,14 +109,14 @@ function addFragment(s, fullpath) {
   fragment.innerText = s;
   fragment.setAttribute("path", fullpath);
   // fragment.onclick = () => go(fullpath);
-  pathDisplay.appendChild(fragment);
+  pathDisplay.insertBefore(fragment, pathDisplay.firstChild);
 }
 
 function addConnect() {
   let connect = document.createElement("span");
   connect.classList.add("connect");
   connect.innerText = ">";
-  pathDisplay.appendChild(connect);
+  pathDisplay.insertBefore(connect, pathDisplay.firstChild);
 }
 
 function displayItems(items, currentPath) {
@@ -156,7 +161,8 @@ function addListeners() {
     if (fragment.getAttribute("isFile")) {
       fragment.addEventListener(
         "click",
-        (_ev) => (window.location.pathname = `/fs/${fragment.getAttribute("path")}`)
+        (_ev) =>
+          (window.location.pathname = `/fs/${fragment.getAttribute("path")}`)
       );
     } else {
       fragment.addEventListener("click", (_ev) =>

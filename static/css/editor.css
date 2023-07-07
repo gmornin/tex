@@ -1,0 +1,75 @@
+#editor {
+  position: absolute;
+  height: calc(100% - 90px);
+  width: 49%;
+  background: transparent;
+  font-size: 16px;
+  top: 100px;
+  overflow: auto;
+}
+
+#editor .ace_gutter {
+  background: transparent;
+}
+
+body {
+  overflow: hidden;
+}
+
+#preview {
+  position: absolute;
+  height: calc(100% - 90px);
+  width: 49%;
+  right: 0;
+  top: 100px;
+  overflow: auto;
+}
+
+.menubar-item {
+  display: inline-block;
+  position: relative;
+}
+
+.menubar-item span {
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  border-radius: 5px;
+}
+
+.menubar-item span:hover:not(.running) {
+  cursor: pointer;
+}
+
+.dropdown-content {
+  margin-top: 5px;
+  padding: 0px;
+  border-radius: 8px;
+  position: absolute;
+  transform: translateX(-9px);
+  z-index: 999;
+}
+
+.dropdown-item {
+  padding: 14px !important;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+  display: block;
+  white-space: nowrap;
+}
+
+span.running:hover {
+  cursor: wait !important;
+}
+
+#menubar {
+  position: absolute;
+  top: 75px;
+  margin-left: 30px;
+}
+
+#no-preview * {
+  font-family: Inter, sans-serif;
+  font-weight: 300;
+}

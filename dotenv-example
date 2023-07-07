@@ -1,6 +1,7 @@
 SELF_ADDR=http://localhost:8080/api/services/v1/trigger/use/
 
 MONGO_HOST=mongodb://localhost:27017
+DB_NAME=goodmorning-prod
 
 HASH_SALT=A string salt for hashing
 
@@ -16,7 +17,9 @@ PFP_LIMIT=2097152
 CERT_CHAIN=Path to cert chain e.g. /etc/letsencrypt/live/siriusmart.duckdns.org/fullchain.pem
 CERT_KEY=Path to cert key e.g. /etc/letsencrypt/live/siriusmart.duckdns.org/privkey.pem
 
-STORAGE_PATH=/data/gm
-USERCONTENT_PATH=/data/gm/usercontent
-
+STORAGE_PATH=/root/.local/share/gm
+USERCONTENT_PATH=/root/.local/share/gm/usercontent
 PFP_DEFAULT=assets/pfp-default.svg
+
+MAX_CONCURRENT=1
+QUEUE_LIMIT=99999

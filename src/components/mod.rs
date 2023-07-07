@@ -6,3 +6,5 @@ mod fs;
 pub use fs::*;
 mod file;
 pub use file::*;
+mod editor;
+pub use editor::*;

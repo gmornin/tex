@@ -58,10 +58,34 @@ pub async fn topbar_from_req(
     }
 }
 
+pub async fn topbar_option_from_req(
+    req: &HttpRequest,
+) -> Result<Result<Option<(Cow<'static, str>, Account)>, HttpResponse>, Box<dyn Error>> {
+    let token = req.cookie("token");
+
+    match token {
+        Some(token) => topbar_option_from_token(Some(token.value()), req).await,
+        None => topbar_option_from_token(None, req).await,
+    }
+}
+
 pub async fn topbar_from_token(
     token: Option<&str>,
     req: &HttpRequest,
 ) -> Result<Result<(Cow<'static, str>, Option<Account>), HttpResponse>, Box<dyn Error>> {
+    match match topbar_option_from_token(token, req).await? {
+        Ok(stuff) => stuff,
+        Err(res) => return Ok(Err(res)),
+    } {
+        Some((topbar, account)) => Ok(Ok((topbar, Some(account)))),
+        None => Ok(Ok((Cow::Borrowed(TOPBAR_LOGGEDOUT), None))),
+    }
+}
+
+pub async fn topbar_option_from_token(
+    token: Option<&str>,
+    req: &HttpRequest,
+) -> Result<Result<Option<(Cow<'static, str>, Account)>, HttpResponse>, Box<dyn Error>> {
     Ok(Ok(match token {
         Some(token) => {
             let account = match Account::find_by_token(token, ACCOUNTS.get().unwrap()).await? {
@@ -79,10 +103,10 @@ pub async fn topbar_from_token(
                 .services
                 .contains(&goodmorning_services::structs::GMServices::Tex)
             {
-                return Ok(Ok((Cow::Borrowed(TOPBAR_LOGGEDOUT), None)));
+                return Ok(Ok(None));
             }
 
-            (
+            Some((
                 Cow::Owned(
                     yew::ServerRenderer::<TopbarLoggedin>::with_props(move || {
                         TopbarLoggedinProps { id: account.id }
@@ -90,10 +114,10 @@ pub async fn topbar_from_token(
                     .render()
                     .await,
                 ),
-                Some(account),
-            )
+                account,
+            ))
         }
-        None => (Cow::Borrowed(TOPBAR_LOGGEDOUT), None),
+        None => None,
     }))
 }
 

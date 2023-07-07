@@ -9,3 +9,43 @@
 #fslist li:hover {
   color: #ffaa99;
 }
+
+#uploadd {
+  background-color: #222222;
+  border: rgba(255, 255, 255, 0.2) solid 1px;
+  color: white;
+}
+
+#target {
+  background-color: #181a1b;
+  color: white;
+  border: rgba(255, 255, 255, 0.1) solid 1px;
+  outline: #2266aa;
+}
+
+#backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+#uploadbut {
+  color: white;
+  background-color: #2266cc;
+}
+
+#uploadbut:hover {
+  background-color: #4488ff;
+  cursor: pointer;
+}
+
+#uploadbut[disabled="disabled"],
+#uploadbut:disabled {
+  background-color: #4488ff;
+}
+
+#x:hover {
+  color: #ff6666
+}
+/* #uploadd { */
+/*   border: rgba(255, 255, 255, 0.2) solid 1px; */
+/*   background-color: #222222; */
+/* } */

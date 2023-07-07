@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/css/main.css" />
+    <link rel="stylesheet" href="/static/css/topbar.css" />
+    <link rel="stylesheet" href="/static/css/editor.css" />
+    <link rel="stylesheet" href="/static/css/topbar-signedout.css" />
+    <link rel="stylesheet" href="/static/css/topbar-loggedin.css" />
+    <link rel="stylesheet" href="/static/css/dark/main.css" />
+    <link rel="stylesheet" href="/static/css/dark/topbar.css" />
+    <link rel="stylesheet" href="/static/css/dark/topbar-signedout.css" />
+    <link rel="stylesheet" href="/static/css/dark/editor.css" />
+    <script src="/static/scripts/editor.js" defer></script>
+    <link
+      rel="shortcut icon"
+      href="/static/images/favicon-dark.svg"
+      type="image/x-icon"
+    />
+    <title>Home - GoodMorning Tex</title>
+  </head>
+  <body>
+    <div id="top-bar">
+      <div id="top-bar-left">
+        <a href="/" id="top-bar-icon"
+          ><img src="/static/images/favicon-dark.svg" alt="" width="30"
+        /></a>
+        <a href="/docs" class="top-bar-link">API</a>
+        <a href="" class="top-bar-link">Blog</a>
+      </div>
+      <div id="top-bar-right">
+        <img src="/static/icons/bell.svg" id="notif-bell" alt="" width="15" />
+        <img
+          src="/api/tex/generic/v1/pfp/id/1"
+          id="topbar-pfp"
+          alt=""
+          width="30"
+          height="30"
+        />
+      </div>
+    </div>
+    <div id="menubar">
+      <div class="menubar-item" id="file-menu">
+        <span onclick="showFile()">File</span>
+        <div class="dropdown-content hide">
+          <span class="dropdown-item">Save</span
+          ><span class="dropdown-item">Save as</span>
+        </div>
+      </div>
+      <div class="menubar-item" id="edit-menu">
+        <span onclick="showEdit()">Edit</span>
+        <div class="dropdown-content hide">
+          <span class="dropdown-item">Undo</span
+          ><span class="dropdown-item">Redo</span>
+        </div>
+      </div>
+      <div class="menubar-item" id="view-menu">
+        <span onclick="showView()">View</span>
+        <div class="dropdown-content hide">
+          <span class="dropdown-item" ="vim">Vim</span
+          ><span class="dropdown-item" ="emacs">Emacs</span>
+          <span class="dropdown-item" ="sublime">Sublime</span
+          ><span class="dropdown-item" ="vscode">Vscode</span>
+        </div>
+      </div>
+      <div class="menubar-item" id="compile-menu">
+        <span onclick="showCompile()">Compile</span>
+        <div class="dropdown-content hide">
+          <span class="dropdown-item">To html</span>
+        </div>
+      </div>
+    </div>
+    <div id="bottom">
+      <pre id="editor">
+![](https://img.shields.io/github/languages/top/siriusmart/youtube-tui?label=rust)
+![](https://shields.io/github/license/siriusmart/youtube-tui)
+[![](https://img.shields.io/crates/d/youtube-tui?label=crates.io%20downloads)](https://crates.io/crates/youtube-tui)
+[![](https://img.shields.io/crates/v/youtube-tui?label=crates.io%20version)](https://crates.io/crates/youtube-tui)
+[![](https://img.shields.io/aur/version/youtube-tui)](https://aur.archlinux.org/packages/youtube-tui)
+![](https://shields.io/github/stars/siriusmart/youtube-tui?style=social)
+
+***Read more in the [user manual](https://siriusmart.github.io/youtube-tui) (including installation guide and documentation).***
+
+# Overview
+
+Written in Rust, the **YouTube TUI** is a lightweight and user friendly TUI for browsing YouTube content from the terminal.
+
+![](./docs/src/images/search-showcase.png)
+
+It is like an _app launcher_, it launches other programs to do the heavy lifting (for example, `mpv` for playing videos).
+
+> Consider regenerating config files on updates to allow new features.
+
+## Customisable
+
+The YouTube TUI can be customised through config files, they are located in `~/.config/youtube-tui` and are in the YAML format.
+
+Here's an example of the config file:
+
+```yaml
+mouse_support: true
+invidious_instance: https://vid.puffyan.us
+max_watch_history: 50
+allow_unicode: false
+images: Sixels
+refresh_after_modifying_search_filters: true
+provider: YouTube
+env:
+  browser: firefox
+  video-player: mpv
+  youtube-downloader: yt-dlp
+  terminal-emulator: konsole -e
+```
+</pre
+      >
+      <div id="preview">
+        <!--         <p> -->
+        <!--           <img -->
+        <!--             src="https://img.shields.io/github/languages/top/siriusmart/youtube-tui?label=rust" -->
+        <!--             alt="" -->
+        <!--           /> -->
+        <!--           <img -->
+        <!--             src="https://shields.io/github/license/siriusmart/youtube-tui" -->
+        <!--             alt="" -->
+        <!--           /> -->
+        <!--           <a href="https://crates.io/crates/youtube-tui" -->
+        <!--             ><img -->
+        <!--               src="https://img.shields.io/crates/d/youtube-tui?label=crates.io%20downloads" -->
+        <!--               alt="" -->
+        <!--           /></a> -->
+        <!--           <a href="https://crates.io/crates/youtube-tui" -->
+        <!--             ><img -->
+        <!--               src="https://img.shields.io/crates/v/youtube-tui?label=crates.io%20version" -->
+        <!--               alt="" -->
+        <!--           /></a> -->
+        <!--           <a href="https://aur.archlinux.org/packages/youtube-tui" -->
+        <!--             ><img src="https://img.shields.io/aur/version/youtube-tui" alt="" -->
+        <!--           /></a> -->
+        <!--           <img -->
+        <!--             src="https://shields.io/github/stars/siriusmart/youtube-tui?style=social" -->
+        <!--             alt="" -->
+        <!--           /> -->
+        <!--         </p> -->
+        <!--         <p> -->
+        <!--           <em -->
+        <!--             ><strong -->
+        <!--               >Read more in the -->
+        <!--               <a href="https://siriusmart.github.io/youtube-tui">user manual</a> -->
+        <!--               (including installation guide and documentation).</strong -->
+        <!--             ></em -->
+        <!--           > -->
+        <!--         </p> -->
+        <!--         <h1>Overview</h1> -->
+        <!--         <p> -->
+        <!--           Written in Rust, the <strong>YouTube TUI</strong> is a lightweight and -->
+        <!--           user friendly TUI for browsing YouTube content from the terminal. -->
+        <!--         </p> -->
+        <!--         <p><img src="./docs/src/images/search-showcase.png" alt="" /></p> -->
+        <!--         <p> -->
+        <!--           It is like an <em>app launcher</em>, it launches other programs to do -->
+        <!--           the heavy lifting (for example, <code>mpv</code> for playing videos). -->
+        <!--         </p> -->
+        <!--         <blockquote> -->
+        <!--           <p> -->
+        <!--             Consider regenerating config files on updates to allow new features. -->
+        <!--           </p> -->
+        <!--         </blockquote> -->
+        <!--         <h2>Customisable</h2> -->
+        <!--         <p> -->
+        <!--           The YouTube TUI can be customised through config files, they are -->
+        <!--           located in <code>~/.config/youtube-tui</code> and are in the YAML -->
+        <!--           format. -->
+        <!--         </p> -->
+        <!--         <p>Here’s an example of the config file:</p> -->
+        <!--         <pre><code class="language-yaml">mouse_support: true -->
+        <!-- invidious_instance: https://vid.puffyan.us -->
+        <!-- max_watch_history: 50 -->
+        <!-- allow_unicode: false -->
+        <!-- images: Sixels -->
+        <!-- refresh_after_modifying_search_filters: true -->
+        <!-- provider: YouTube -->
+        <!-- env: -->
+        <!--   browser: firefox -->
+        <!--   video-player: mpv -->
+        <!--   youtube-downloader: yt-dlp -->
+        <!--   terminal-emulator: konsole -e -->
+        <!-- </code></pre> -->
+        <!--         <p> -->
+        <!--           Anything from layouts to colours and keybindings can be customised, -->
+        <!--           more on that later. -->
+        <!--         </p> -->
+        <!--         <h2>Dependency-free*</h2> -->
+        <!--         <p> -->
+        <!--           <sub -->
+        <!--             >See -->
+        <!--             <a -->
+        <!--               href="https://siriusmart.github.io/youtube-tui/installation.html#features" -->
+        <!--               >installation#features</a -->
+        <!--             > -->
+        <!--             for more info on dependencies.</sub -->
+        <!--           > -->
+        <!--         </p> -->
+        <!--         <p> -->
+        <!--           The YouTube TUI does not work on its own, it is instead like a -->
+        <!--           <em>TUI frontend</em> for programs like <code>mpv</code> or -->
+        <!--           <code>yt-dlp</code>/<code>youtube-dl</code>. -->
+        <!--         </p> -->
+        <!--         <p> -->
+        <!--           However, the programs to launch can be changed, and therefore the -->
+        <!--           YouTube TUI <u>does not rely on any specific dependencies</u> to run. -->
+        <!--         </p> -->
+        <!--         <p> -->
+        <!--           <img -->
+        <!--             src="./docs/src/images/custom-dependencies-showcase.png" -->
+        <!--             alt="" -->
+        <!--           /> -->
+        <!--         </p> -->
+        <!--         <h2>Powerful</h2> -->
+        <!--         <p> -->
+        <!--           The YouTube TUI allows you to browse YouTube with (almost) all of it’s -->
+        <!--           features, functions including: -->
+        <!--         </p> -->
+        <!--         <ul> -->
+        <!--           <li>View popular/trending videos</li> -->
+        <!--           <li>View information about channels, playlists and videos</li> -->
+        <!--           <li>Use search filters to sort and filter search results</li> -->
+        <!--           <li>Save browsing history</li> -->
+        <!--         </ul> -->
+        <!--         <p>It also includes features like:</p> -->
+        <!--         <ul> -->
+        <!--           <li>Vim-like commands</li> -->
+        <!--           <li>Mouse support</li> -->
+        <!--           <li>Extensible keybindings system</li> -->
+        <!--           <li>Offline library</li> -->
+        <!--           <li>Subscriptions</li> -->
+        <!--         </ul> -->
+        <!--         <h3>What it doesn’t have</h3> -->
+        <!--         <ul> -->
+        <!--           <li> -->
+        <!--             [URGENT] Replace the no-longer-going-to-compile -->
+        <!--             <code>typemap</code> dependency with either a self implementation of -->
+        <!--             it or a useable crate. -->
+        <!--           </li> -->
+        <!--           <li>Strip down some libraries to reduce compile speed.</li> -->
+        <!--           <li>Add command section for channel main page (first priority)</li> -->
+        <!--           <li>Up arrow command history + Ctrl arrow keys move between words</li> -->
+        <!--         </ul> -->
+        <!--         <h2>How to contribute</h2> -->
+        <!--         <p> -->
+        <!--           You will need a <u>general knowledge</u> of the Rust programming -->
+        <!--           language, and the ability to <em>understand my spaghetti</em>. -->
+        <!--         </p> -->
+        <!--         <ol> -->
+        <!--           <li> -->
+        <!--             Open an issue to make sure nobody else is working on the same -->
+        <!--             feature -->
+        <!--           </li> -->
+        <!--           <li>Write code</li> -->
+        <!--           <li>Open a pull request</li> -->
+        <!--           <li>Get merged?</li> -->
+        <!--         </ol> -->
+        <!--         <p>Or just <em>fix that typo in README</em> -_-</p> -->
+        <center id="no-preview">
+          <h2>Cannot find previews for this file</h2>
+          <p>Try compiling this file to a previewable format.</p>
+        </center>
+      </div>
+    </div>
+    <script src="/static/scripts/src-min-noconflict/ace.js"></script>
+    <script>
+      var editor = ace.edit("editor");
+      editor.setTheme("ace/theme/monokai");
+      editor.session.setMode("ace/mode/markdown");
+      editor.setOption("wrap", true);
+      editor.setShowPrintMargin(false);
+      editor.setKeyboardHandler("ace/keyboard/vim");
+    </script>
+  </body>
+</html>

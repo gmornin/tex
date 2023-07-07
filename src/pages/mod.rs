@@ -1,3 +1,4 @@
+mod edit;
 mod fs;
 mod hard_links;
 mod home;
@@ -17,4 +18,5 @@ pub fn scope() -> Scope {
         .service(user::profile)
         .service(fs::fspath)
         .service(fs::root)
+        .service(edit::edit)
 }

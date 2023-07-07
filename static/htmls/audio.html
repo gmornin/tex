@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/css/main.css" />
+    <link rel="stylesheet" href="/static/css/topbar.css" />
+    <link rel="stylesheet" href="/static/css/topbar-signedout.css" />
+    <link rel="stylesheet" href="/static/css/path.css" />
+    <link rel="stylesheet" href="/static/css/topbar-loggedin.css" />
+    <link rel="stylesheet" href="/static/css/dark/main.css" />
+    <link rel="stylesheet" href="/static/css/dark/topbar.css" />
+    <link rel="stylesheet" href="/static/css/dark/path.css" />
+    <link rel="stylesheet" href="/static/css/dark/topbar-signedout.css" />
+    <link rel="stylesheet" href="/static/css/audio.css" />
+    <script src="/static/scripts/file.js" defer></script>
+    <link
+      rel="shortcut icon"
+      href="/static/images/favicon-dark.svg"
+      type="image/x-icon"
+    />
+    <title>Usercontent - GoodMorning Tex</title>
+  </head>
+  <body>
+    <!--<[gmt_server::components::topbar::TopbarLoggedin]>-->
+    <div id="top-bar">
+      <div id="top-bar-left">
+        <a href="/" id="top-bar-icon"
+          ><img src="/static/images/favicon-dark.svg" alt="" width="30" /></a
+        ><a href="/docs" class="top-bar-link">API</a
+        ><a href="" class="top-bar-link">Blog</a>
+      </div>
+      <div id="top-bar-right">
+        <img src="/static/icons/bell.svg" id="notif-bell" alt="" width="15" /><a
+          href="/user/1"
+          ><img
+            src="/api/tex/generic/v1/pfp/id/1"
+            id="topbar-pfp"
+            alt=""
+            width="30"
+            height="30"
+        /></a>
+      </div>
+    </div>
+    <!--</[gmt_server::components::topbar::TopbarLoggedin]>-->
+    <!--<[gmt_server::components::fs::Path]>-->
+    <div id="path-display">
+      <span path="1" class="fragment">1</span><span class="connect">&gt;</span
+      ><span path="1/public" class="fragment">public</span
+      ><span class="connect">&gt;</span
+      ><span path="1/public/city_lights.opus" class="fragment"
+        >city_lights.opus</span
+      >
+    </div>
+    <!--</[gmt_server::components::fs::Path]>-->
+    <div id="display">
+      <audio controls autoplay id="audio">
+        <source
+          src="/api/storage/v1/file/26c3b37a0c5ae6f832cecb39f035f581-4252b2fad58936ea8e59ae26f9243b79-377a9a4a4eada914de05e97ad6852b8d-f6964b3e2656485ea93e1ddf70f00cea/tex/public/city_lights.opus"
+          type="audio/ogg"
+        />
+        Your browser does not support the audio element.
+      </audio>
+      <br />
+      <code id="info">audio&#x2F;x-opus+ogg 3.1MB</code>
+    </div>
+  </body>
+</html>
