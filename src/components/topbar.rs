@@ -12,7 +12,7 @@ use std::error::Error;
 
 use actix_files::NamedFile;
 use actix_web::{HttpRequest, HttpResponse};
-use goodmorning_services::{structs::Account, ACCOUNTS};
+use goodmorning_services::structs::Account;
 use yew::{function_component, html, Html, Properties};
 
 pub const TOPBAR_LOGGEDOUT: &str = r#"
@@ -88,7 +88,7 @@ pub async fn topbar_option_from_token(
 ) -> Result<Result<Option<(Cow<'static, str>, Account)>, HttpResponse>, Box<dyn Error>> {
     Ok(Ok(match token {
         Some(token) => {
-            let account = match Account::find_by_token(token, ACCOUNTS.get().unwrap()).await? {
+            let account = match Account::find_by_token(token).await? {
                 Some(account) => account,
                 None => {
                     return Ok(Err(NamedFile::open_async(

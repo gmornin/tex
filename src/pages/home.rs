@@ -4,7 +4,6 @@ use actix_web::{get, http::header::ContentType, HttpRequest, HttpResponse};
 use goodmorning_services::{
     functions::*,
     structs::{Account, GMServices},
-    ACCOUNTS,
 };
 
 #[get("/")]
@@ -39,7 +38,7 @@ async fn home(req: HttpRequest) -> HttpResponse {
             ));
     }
 
-    let account = match Account::find_by_token(token.unwrap(), ACCOUNTS.get().unwrap()).await {
+    let account = match Account::find_by_token(token.unwrap()).await {
         Ok(Some(account)) => account,
         Ok(None) => {
             return match NamedFile::open_async("static/htmls/been-loggedout.html").await {

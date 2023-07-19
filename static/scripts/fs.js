@@ -5,7 +5,6 @@ function go(path) {
   if (window.history.state.path === path) {
     return;
   }
-  console.log(path);
   let token = document.cookie
     .split("; ")
     .find((row) => row.startsWith("token="));

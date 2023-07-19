@@ -6,7 +6,6 @@ function getCookie(name) {
 
 let compilePath = window.location.pathname.split("/").slice(2).join("/");
 let savePath = `tex/${compilePath}`;
-console.log(savePath);
 
 document.getElementById("undo").onclick = () => editor.undo();
 document.getElementById("redo").onclick = () => editor.redo();
@@ -15,6 +14,7 @@ let htmlPreview = document.getElementById("html-preview");
 let preview = document.getElementById("preview");
 let token = getCookie("token");
 let noPreview = document.getElementById("no-preview");
+let pdfPreview = document.getElementById("pdf-preview");
 
 function previewsHideExcept(except) {
   for (let i = 0; i < preview.children.length; i++) {
@@ -28,7 +28,7 @@ function previewsHideExcept(except) {
 
 function preview_url(path) {
   noPreview.classList.add("hide");
-  let url = `/api/storage/v1/file/${token}/tex/${path}`;
+  let url = `/api/storage/v1/file/${token}/tex/${path}?time=${Date.now()}`;
   let ext = path.split(".").pop();
   switch (ext) {
     case "html":
@@ -44,8 +44,12 @@ function preview_url(path) {
           console.log("Fetch Error :-S", err);
         });
       break;
+    case "pdf":
+      pdfPreview.setAttribute("src", `${url}&type=inline`);
+      previewsHideExcept(pdfPreview);
+      break;
     default:
-      alert(`Cannot compile .${ext} files into other formats`);
+      alert(`Cannot preview files with extension ${ext}`);
   }
 }
 
@@ -161,7 +165,9 @@ function save(f) {
       try {
         let res = JSON.parse(xhr.responseText);
         if (res.type === "error") {
-          alert(`There was an error saving this file: ${JSON.stringify(res.kind)}`);
+          alert(
+            `There was an error saving this file: ${JSON.stringify(res.kind)}`
+          );
         }
       } catch (_) {}
       removeRunning(saveBtn);

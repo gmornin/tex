@@ -7,7 +7,7 @@ use goodmorning_services::{functions::get_user_dir, structs::GMServices};
 use tokio::fs;
 
 use crate::{
-    components::{self, available_targets, topbar_option_from_req},
+    components::{self, available_targets, ext_to_mode, topbar_option_from_req},
     functions::{from_res, gen_nonce},
     CSP_BASE,
 };
@@ -32,13 +32,15 @@ async fn edit_task(path: Path<String>, req: &HttpRequest) -> Result<HttpResponse
     let mut previews = Vec::new();
     let mut target_exts = Vec::new();
     let mut preview_path = PathBuf::from(path.as_ref());
-    let available_targets = available_targets(
-        preview_path
-            .extension()
-            .unwrap_or(OsStr::new(""))
-            .to_str()
-            .unwrap(),
-    );
+
+    let pathbuf = usr_dir.join(path.as_ref());
+    let ext = pathbuf
+        .extension()
+        .unwrap_or(OsStr::new(""))
+        .to_str()
+        .unwrap();
+    let source_fmt = ext_to_mode(ext);
+    let available_targets = available_targets(source_fmt);
     for ext in available_targets {
         target_exts.push(*ext);
         preview_path.set_extension(ext);
@@ -46,8 +48,6 @@ async fn edit_task(path: Path<String>, req: &HttpRequest) -> Result<HttpResponse
             previews.push(preview_path.to_string_lossy().to_string());
         }
     }
-
-    let pathbuf = usr_dir.join(path.as_ref());
     if !fs::try_exists(&pathbuf).await? {
         return Err(V1Error::FileNotFound.into());
     }
@@ -68,15 +68,12 @@ async fn edit_task(path: Path<String>, req: &HttpRequest) -> Result<HttpResponse
     let html = components::editor(
         &topbar,
         content,
-        pathbuf
-            .extension()
-            .unwrap_or(OsStr::new(""))
-            .to_str()
-            .unwrap(),
+        ext,
         &path,
         &nonce,
         &previews,
         &target_exts,
+        source_fmt,
     );
 
     let csp_heaher = format!("{} 'nonce-{nonce}'", CSP_BASE.get().unwrap());

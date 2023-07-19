@@ -8,8 +8,8 @@ pub fn editor(
     nonce: &str,
     preview_sources: &[String],
     target_exts: &[&str],
+    source_fmt: &str,
 ) -> String {
-    let source_fmt = ext_to_mode(ext);
     let compile = if target_exts.is_empty() {
         Cow::Borrowed("")
     } else {
@@ -95,6 +95,7 @@ var previews = {};
           <p>Try compiling this file to a previewable format.</p>
         </center>
         <div id="html-preview" class="hide"></div>
+        <iframe id="pdf-preview" class="hide" type="application/pdf"></iframe>
        </div>
     </div>
   </body>
@@ -107,7 +108,7 @@ var previews = {};
     )
 }
 
-fn ext_to_mode(ext: &str) -> &'static str {
+pub fn ext_to_mode(ext: &str) -> &'static str {
     match ext {
         "abap" => "abap",
         "abc" => "abc",
@@ -293,9 +294,10 @@ fn ext_to_mode(ext: &str) -> &'static str {
     }
 }
 
-pub fn available_targets(ext: &str) -> &'static [&'static str] {
-    match ext {
-        "md" => &["html"],
+pub fn available_targets(name: &str) -> &'static [&'static str] {
+    match name {
+        "markdown" => &["html"],
+        "latex" => &["pdf"],
         _ => &[],
     }
 }

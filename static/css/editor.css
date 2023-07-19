@@ -25,6 +25,12 @@ body {
   overflow: auto;
 }
 
+#pdf-preview {
+  width: 99%;
+  height: 99%;
+  border: none;
+}
+
 .menubar-item {
   display: inline-block;
   position: relative;
