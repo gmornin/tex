@@ -103,7 +103,7 @@ function fileUploadProgress(event) {
   if (event.lengthComputable) {
     uploadbut.innerText = `${formatBytes(event.loaded)}/${formatBytes(
       event.total
-    )} (${((event.loaded / event.total * 100).toFixed(2))}%)`;
+    )} (${((event.loaded / event.total) * 100).toFixed(2)}%)`;
   }
 }
 
@@ -115,6 +115,7 @@ function fileUploadComplete(event) {
   }
 
   reset();
+  refresh();
   uploadbut.innerText = "Upload success";
 }
 
@@ -132,7 +133,6 @@ uploadbut.addEventListener("click", (_e) => {
 target.addEventListener("input", targetInput);
 
 function targetInput(_event) {
-  console.log(1);
   if (target.value.length === 0) {
     uploadbut.disabled = true;
   } else if (fileInput.files.length !== 0) {

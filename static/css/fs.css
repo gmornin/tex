@@ -1,6 +1,7 @@
 #fslist {
   list-style-type: none;
   padding: 0;
+  margin-bottom: 5em;
 }
 
 #fslist li {
@@ -143,3 +144,72 @@ img.disabled:hover {
 /* #upload input[type="file"] { */
 /*   display: none; */
 /* } */
+
+.ellipsis {
+  display: inline;
+}
+
+.ellipsis .dots {
+  display: none;
+}
+
+li:hover .ellipsis .dots {
+  display: inline !important;
+}
+
+.ellipsis * {
+  /* display: inline-block; */
+  padding: 0px;
+  margin: 0px;
+  float: right;
+  /* transform: translateY(4px); */
+}
+
+.ellipsis * {
+  display: inline-block;
+}
+
+/* .ellipsis .dots:hover { */
+/*   box-shadow: 2px 2px; */
+/* } */
+
+.ellipsis .dots {
+  height: 15px;
+  width: 15px;
+  border-radius: 11.5px;
+  padding: 4px;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+li:hover .dropdown {
+  transform: translateX(23px);
+}
+
+.dropdown-item {
+  padding: 14px !important;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+  box-sizing: border-box;
+  width: 100%;
+  display: block;
+  white-space: nowrap;
+  float: left;
+  border-radius: 8px;
+}
+
+.dropdown-content {
+  margin-top: 30px;
+  padding: 0px;
+  border-radius: 8px;
+  position: absolute;
+  /* transform: translateX(-9px); */
+  z-index: 999;
+}
+
+.hide {
+  display: none !important;
+}

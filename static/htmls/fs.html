@@ -89,21 +89,77 @@
     <!--   Upload -->
     <!-- </label> -->
     <ul id="fslist">
-      <li class="dir">assets/</li>
-      <li class="dir">src/</li>
-      <li class="dir">static/</li>
-      <li class="dir">target/</li>
-      <li class="file">Cargo.lock</li>
-      <li class="file">Cargo.toml</li>
-      <li class="file">LICENSE</li>
-      <li class="file">README.md</li>
-      <li class="file">dotenv-example</li>
-      <li class="hidden-file">.env</li>
+      <li class="dir">
+        assets/
+        <div class="ellipsis">
+          <div class="dropdown">
+            <img src="/static/icons/ellipsis.svg" class="dots" />
+            <div class="dropdown-content">
+              <span class="dropdown-item">Edit</span>
+              <span class="dropdown-item">Copy</span>
+            </div>
+          </div>
+        </div>
+      </li>
+      <li class="dir">
+        src/
+        <div class="ellipsis">
+          <img src="/static/icons/ellipsis.svg" class="dots" />
+        </div>
+      </li>
+      <li class="dir">
+        static/
+        <div class="ellipsis">
+          <img src="/static/icons/ellipsis.svg" class="dots" />
+        </div>
+      </li>
+      <li class="dir">
+        target/
+        <div class="ellipsis">
+          <img src="/static/icons/ellipsis.svg" class="dots" />
+        </div>
+      </li>
+      <li class="file">
+        Cargo.lock
+        <div class="ellipsis">
+          <img src="/static/icons/ellipsis.svg" class="dots" />
+        </div>
+      </li>
+      <li class="file">
+        Cargo.toml
+        <div class="ellipsis">
+          <img src="/static/icons/ellipsis.svg" class="dots" />
+        </div>
+      </li>
+      <li class="file">
+        LICENSE
+        <div class="ellipsis">
+          <img src="/static/icons/ellipsis.svg" class="dots" />
+        </div>
+      </li>
+      <li class="file">
+        README.md
+        <div class="ellipsis">
+          <img src="/static/icons/ellipsis.svg" class="dots" />
+        </div>
+      </li>
+      <li class="file">
+        dotenv-example
+        <div class="ellipsis">
+          <img src="/static/icons/ellipsis.svg" class="dots" />
+        </div>
+      </li>
+      <li class="hidden-file">
+        .env
+        <div class="ellipsis">
+          <img src="/static/icons/ellipsis.svg" class="dots" />
+        </div>
+      </li>
     </ul>
     <div id="backdrop" style="display: none"></div>
     <script>
       window.cache = { tex: [{ name: ".system", is_file: false, size: 4096 }] };
-      window.history.replaceState({path: '1/projects/gmt-server'}, "")
+      window.history.replaceState({ path: "1/projects/gmt-server" }, "");
     </script>
   </body>
 </html>

@@ -43,9 +43,22 @@
 }
 
 #x:hover {
-  color: #ff6666
+  color: #ff6666;
 }
 /* #uploadd { */
 /*   border: rgba(255, 255, 255, 0.2) solid 1px; */
 /*   background-color: #222222; */
 /* } */
+
+.dropdown-content {
+  background-color: #222222;
+  border: rgba(255, 255, 255, 0.1) solid 1px;
+}
+
+.dropdown-content .dropdown-item:hover {
+  background: #333536;
+}
+
+.dropdown-item {
+  color: white;
+}

@@ -114,7 +114,12 @@ function showCompile() {
 document.getElementById("file").onclick = showFile;
 document.getElementById("edit").onclick = showEdit;
 document.getElementById("view").onclick = showView;
-document.getElementById("compile").onclick = showCompile;
+{
+  let compile = document.getElementById("compile");
+  if (compile) {
+    compile.onclick = showCompile;
+  }
+}
 
 let modes = view.getElementsByClassName("dropdown-content")[0].childNodes;
 
