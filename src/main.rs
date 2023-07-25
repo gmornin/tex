@@ -35,10 +35,10 @@ async fn main() {
                 .write(true)
                 .truncate(true)
                 .open(
-                    STORAGE
+                    LOGS_PATH
                         .get()
                         .unwrap()
-                        .join(format!("logs/services-{}.log", chrono::Utc::now())),
+                        .join(format!("gmt-{}.log", chrono::Utc::now())),
                 )
                 .unwrap(),
         ),
@@ -104,7 +104,7 @@ fn load_rustls_config() -> rustls::ServerConfig {
 }
 
 fn init() {
-    let path = STORAGE.get().unwrap().join("logs");
+    let path = LOGS_PATH.get().unwrap();
     if !path.exists() {
         fs::create_dir_all(path).unwrap();
     }

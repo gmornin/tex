@@ -300,7 +300,7 @@ async fn file(
                     })
                     .into_response(req))
             }
-            (mime::TEXT, _) => components::text(&pathbuf).await?,
+            (mime::TEXT, _) | (mime::APPLICATION, _) => components::text(&pathbuf).await?,
             _ => todo!("{mimes:?}"),
         },
     };

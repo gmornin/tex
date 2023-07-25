@@ -6,8 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-goodmorning-services = { git = "https://github.com/GoodMorning-Network/services", rev = "c5c04c4" }
-goodmorning-bindings = { git = "https://github.com/GoodMorning-Network/rust-bindings", rev = "ac6aa0d"}
+goodmorning-services = { git = "https://github.com/gmornin/services", rev = "914f900" }
+goodmorning-bindings = { git = "https://github.com/gmornin/rust-bindings", rev = "dddd894"}
 # goodmorning-services = { path = "../goodmorning-services" }
 # goodmorning-bindings = { path = "../rust-bindings" }
 actix-web = {version = "4.3", features = ["rustls"]}
