@@ -53,7 +53,7 @@ function go(path, skipCheck) {
       .catch((error) => console.error(error));
   } else {
     fetch(
-      `/api/usercontent/v1/diritems/${id}/tex/${path
+      `/api/usercontent/v1/diritems/id/${id}/tex/${path
         .split("/")
         .slice(1)
         .join("/")}`
@@ -124,7 +124,6 @@ function addFragment(s, fullpath) {
   fragment.classList.add("fragment");
   fragment.innerText = s;
   fragment.setAttribute("path", fullpath);
-  // fragment.onclick = () => go(fullpath);
   pathDisplay.insertBefore(fragment, pathDisplay.firstChild);
 }
 
@@ -164,6 +163,13 @@ function addItem(item, fullpath) {
   }
 
   node.classList.add(classname);
+
+  let icon = `<img src="/static/icons/${
+    item.visibility.visibility
+  }.svg" class="${
+    item.visibility.inherited ? "icon icon-inherit" : "icon"
+  }" />`;
+  node.innerHTML = `${icon}${node.innerHTML}`;
   fslist.appendChild(node);
 }
 
@@ -223,10 +229,10 @@ function addDots() {
       item.classList.contains("hidden-file")
     ) {
       item.innerHTML +=
-        '<div class="ellipsis"><img src="/static/icons/ellipsis.svg" class="dots"/><div class="dropdown hide"><div class="dropdown-content"><span class="dropdown-item" action="edit">Edit</span><span class="dropdown-item" action="delete">Delete</span></div></div></div>';
+        '<div class="ellipsis"><img src="/static/icons/ellipsis.svg" class="dots"/><div class="dropdown hide"><div class="dropdown-content"><span class="dropdown-item" action="edit">Edit</span><span class="dropdown-item" action="delete">Delete</span><span class="dropdown-item" action="visibility">Change visibility<div class="dropdown dropdown-fold"><div class="dropdown-content"><div class="dropdown-item" action="public">Public</div><div class="dropdown-item" action="hidden">Hidden</div><div class="dropdown-item" action="private">Private</div><div class="dropdown-item" action="inherit">Inherit</div></div></div></span></div></div></div>';
     } else {
       item.innerHTML +=
-        '<div class="ellipsis"><img src="/static/icons/ellipsis.svg" class="dots"/><div class="dropdown hide"><div class="dropdown-content"><span class="dropdown-item" action="delete">Delete</span></div></div></div>';
+        '<div class="ellipsis"><img src="/static/icons/ellipsis.svg" class="dots"/><div class="dropdown hide"><div class="dropdown-content"><span class="dropdown-item" action="delete">Delete</span><span class="dropdown-item" action="visibility">Change visibility<div class="dropdown dropdown-fold"><div class="dropdown-content"><div class="dropdown-item" action="public">Public</div><div class="dropdown-item" action="hidden">Hidden</div><div class="dropdown-item" action="private">Private</div><div class="dropdown-item" action="inherit">Inherit</div></div></div></span></div></div></div>';
     }
     item
       .getElementsByClassName("dots")[0]
@@ -236,7 +242,10 @@ function addDots() {
 
     let options = item.getElementsByClassName("dropdown-item");
     for (const option of options) {
-      option.addEventListener("click", (_e) => {
+      option.addEventListener("click", (event) => {
+        if (event.target != option) {
+          return;
+        }
         let action = option.getAttribute("action");
         let path =
           option.parentNode.parentNode.parentNode.parentNode.getAttribute(
@@ -250,7 +259,7 @@ function addDots() {
               .slice(1)
               .join("/")}`;
             break;
-          case "delete":
+          case "delete": {
             let delPath = path.split("/").slice(1).join("/");
             let token = getToken();
             let body = {
@@ -268,13 +277,104 @@ function addDots() {
               .then((response) => response.json())
               .then((data) => {
                 if (data.type == "error") {
-                  alert(`Error compiling: ${JSON.stringify(data.kind)}`);
+                  alert(`Error deleting file: ${JSON.stringify(data.kind)}`);
                   return;
                 }
                 refresh();
               })
               .catch((error) => console.error(error));
             break;
+          }
+          case "visibility":
+            alert("You should choose a visibility option instead");
+            break;
+          case "public":
+          case "private":
+          case "hidden": {
+            let vispath =
+              option.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode
+                .getAttribute("path")
+                .split("/")
+                .slice(1)
+                .join("/");
+            let token = getToken();
+            let body = {
+              path: `tex/${vispath}`,
+              token,
+              visibility: action,
+            };
+
+            fetch("/api/storage/v1/set-visibility", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(body),
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                if (data.type == "error") {
+                  alert(
+                    `Error changing visibility: ${JSON.stringify(data.kind)}`
+                  );
+                  return;
+                }
+                for (const path in cache) {
+                  if (
+                    path.startsWith(
+                      `${window.history.state.path.split("/")[0]}/${vispath}`
+                    )
+                  ) {
+                    delete cache[path];
+                  }
+                }
+                refresh();
+              })
+              .catch((error) => console.error(error));
+            break;
+          }
+          case "inherit": {
+            let vispath =
+              option.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode
+                .getAttribute("path")
+                .split("/")
+                .slice(1)
+                .join("/");
+            let token = getToken();
+            let body = {
+              path: `tex/${vispath}`,
+              token,
+            };
+
+            fetch("/api/storage/v1/remove-visibility", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(body),
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                if (data.type == "error") {
+                  alert(
+                    `Error changing visibility: ${JSON.stringify(data.kind)}`
+                  );
+                  return;
+                }
+                for (const path in cache) {
+                  if (
+                    path.startsWith(
+                      `${window.history.state.path.split("/")[0]}/${vispath}`
+                    )
+                  ) {
+                    delete cache[path];
+                  }
+                }
+                refresh();
+              })
+              .catch((error) => console.error(error));
+            break;
+          }
           default:
             console.error(`Unknown action "${action}"`);
         }

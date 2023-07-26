@@ -1,4 +1,5 @@
 use goodmorning_bindings::services::v1::V1DirItem;
+use goodmorning_services::structs::{ItemVisibility, Visibility};
 use serde::Serialize;
 use yew::{function_component, html, Html, Properties};
 
@@ -31,6 +32,7 @@ pub struct FsItem {
     pub name: String,
     pub is_file: bool,
     pub size: u64,
+    pub visibility: Visibility,
 }
 
 impl From<V1DirItem> for FsItem {
@@ -39,6 +41,7 @@ impl From<V1DirItem> for FsItem {
             name: value.name,
             is_file: value.is_file,
             size: value.size,
+            visibility: value.visibility.into(),
         }
     }
 }
@@ -57,17 +60,22 @@ pub fn FsItems(prop: &FsItemProp) -> Html {
         <><ul id="fslist">
         {
             for prop.items.iter().map(|item| {
+                let vis_icon = html! {<img src={match item.visibility.visibility {
+                    ItemVisibility::Public => "/static/icons/public.svg",
+                    ItemVisibility::Hidden => "/static/icons/hidden.svg",
+                    ItemVisibility::Private => "/static/icons/private.svg",
+                }} class={if item.visibility.inherited {"icon icon-inherit"} else {"icon"}}/>};
             let path = if prop.path.is_empty() { format!("{}/{}", prop.id, item.name)} else {format!("{}/{}/{}", prop.id, prop.path, item.name)};
                 if item.is_file {
                 if item.name.starts_with('.') {
-                      html! {<li class="hidden-file" path={path} isFile="true">{&item.name}</li>}
+                      html! {<li class="hidden-file" path={path} isFile="true">{vis_icon}{&item.name}</li>}
                 } else {
-                      html! {<li class="file" path={path} isFile="true">{&item.name}</li>}
+                      html! {<li class="file" path={path} isFile="true">{vis_icon}{&item.name}</li>}
                 }
             } else if item.name.starts_with('.') {
-                  html! {<li class="hidden-dir" path={path}>{format!("{}/", item.name)}</li>}
+                  html! {<li class="hidden-dir" path={path}>{vis_icon}{format!("{}/", item.name)}</li>}
             } else {
-                  html! {<li class="dir" path={path}>{format!("{}/", item.name)}</li>}
+                  html! {<li class="dir" path={path}>{vis_icon}{format!("{}/", item.name)}</li>}
             }})
         }
         </ul>

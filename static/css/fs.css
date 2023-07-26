@@ -201,15 +201,40 @@ li:hover .dropdown {
   border-radius: 8px;
 }
 
+.dropdown-item *,
+.dropdown-fold {
+  white-space: nowrap;
+}
+
 .dropdown-content {
   margin-top: 30px;
   padding: 0px;
   border-radius: 8px;
   position: absolute;
-  /* transform: translateX(-9px); */
+  transform: translateX(-9px);
   z-index: 999;
 }
 
 .hide {
-  display: none !important;
+  display: none;
+}
+
+.icon {
+  opacity: 50%;
+  height: 15px;
+  width: 15px;
+  margin-right: 5px;
+  transform: translateY(2px);
+}
+
+.icon-inherit {
+  opacity: 20%;
+}
+
+.dropdown-item:hover .dropdown {
+  display: inline-block;
+}
+
+.dropdown-fold {
+  transform: translate(-40px, -5px) !important;
 }
