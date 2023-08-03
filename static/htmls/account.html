@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/css/main.css" />
+    <link rel="stylesheet" href="/static/css/topbar.css" />
+    <link rel="stylesheet" href="/static/css/account.css" />
+    <link rel="stylesheet" href="/static/css/topbar-signedout.css" />
+    <link rel="stylesheet" href="/static/css/topbar-loggedin.css" />
+    <link rel="stylesheet" href="/static/css/dark/main.css" />
+    <link rel="stylesheet" href="/static/css/dark/account.css" />
+    <link rel="stylesheet" href="/static/css/dark/topbar.css" />
+    <link rel="stylesheet" href="/static/css/dark/topbar-signedout.css" />
+    <link
+      rel="shortcut icon"
+      href="/static/images/favicon-dark.svg"
+      type="image/x-icon"
+    />
+    <script src="/static/scripts/account.js" defer></script>
+    <title>Home - GoodMorning Tex</title>
+  </head>
+  <body>
+    <dialog id="addd">
+      <div id="x">&#x2715;</div>
+      <h2>Select a detail item</h2>
+      <div id="list-container">
+        <ul id="details-list">
+          <li field="cake day"><img src="/static/icons/cake.svg" />Cake day</li>
+          <li field="birthday"><img src="/static/icons/cake.svg" />Birthday</li>
+          <li field="location">
+            <img src="/static/icons/location.svg" />Location
+          </li>
+          <li field="occupation">
+            <img src="/static/icons/suitcase.svg" />Occupation
+          </li>
+          <li field="company">
+            <img src="/static/icons/business.svg" />Company
+          </li>
+          <li field="school"><img src="/static/icons/school.svg" />School</li>
+          <li field="education">
+            <img src="/static/icons/education.svg" />Education level
+          </li>
+        </ul>
+        <ul id="contacts-list">
+          <li field="email"><img src="/static/icons/envolope.svg" />Email</li>
+          <li field="matrix"><img src="/static/icons/matrix.svg" />Matrix</li>
+          <li field="mastodon">
+            <img src="/static/icons/mastodon.svg" />Mastodon
+          </li>
+          <li field="lemmy"><img src="/static/icons/lemmy.svg" />Lemmy</li>
+          <li field="github"><img src="/static/icons/github.svg" />Github</li>
+          <li field="gitlab"><img src="/static/icons/envolope.svg" />Gitlab</li>
+          <li field="bitbucket">
+            <img src="/static/icons/bitbucket.svg" />Bitbucket
+          </li>
+          <li field="reddit"><img src="/static/icons/reddit.svg" />Reddit</li>
+          <li field="discord">
+            <img src="/static/icons/discord.svg" />Discord
+          </li>
+          <li field="twitter">
+            <img src="/static/icons/twitter.svg" />Twitter
+          </li>
+          <li field="youtube">
+            <img src="/static/icons/youtube.svg" />YouTube
+          </li>
+          <li field="odysee"><img src="/static/icons/odysee.svg" />Odysee</li>
+          <li field="website"><img src="/static/icons/link.svg" />Website (URL)</li>
+        </ul>
+      </div>
+    </dialog>
+    <div id="top-bar">
+      <div id="top-bar-left">
+        <a href="/" id="top-bar-icon"
+          ><img src="/static/images/favicon-dark.svg" alt="" width="30"
+        /></a>
+        <a href="/docs" class="top-bar-link">API</a>
+        <a href="" class="top-bar-link">Blog</a>
+      </div>
+      <div id="top-bar-right">
+        <a href="/login" class="buttonlike buttonlike-hover" id="signin"
+          >Sign in</a
+        >
+        <a
+          href="/login?type=new"
+          class="buttonlike hover-dropshadow"
+          id="top-bar-register"
+          >Register</a
+        >
+      </div>
+    </div>
+    <div class="container">
+      <div id="profile-top">
+        <img
+          src="/api/tex/generic/v1/pfp/id/1"
+          width="100"
+          height="100"
+          alt=""
+        />
+        <div id="profile-top-right">
+          <input
+            type="text"
+            id="username"
+            value="siriusmart"
+            style="width: 200px"
+          /><img class="save" src="/static/icons/save.svg" field="username" />
+          <br />
+          <input
+            type="text"
+            id="status"
+            value="heres a cool status"
+            style="width: 200px"
+          /><img class="save" src="/static/icons/save.svg" field="status" />
+        </div>
+      </div>
+      <center id="bio">
+        <textarea rows="4" cols="55" id="bio-textarea">
+description text
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. </textarea
+        >
+      </center>
+      <ul id="badges">
+        <li class="badge" field="github">
+          <img
+            src="/static/icons/github.svg"
+            alt=""
+            draggable="true"
+          /><input type="text" class="badge-value" value="siriusmart" />
+        </li>
+        <li class="badge" field="email">
+          <img
+            src="/static/icons/envolope.svg"
+            alt=""
+            draggable="true"
+          /><input type="text" class="badge-value" value="siriusmart@tuta.io" />
+        </li>
+        <li class="badge" field="website">
+          <img
+            src="/static/icons/link.svg"
+            alt=""
+            draggable="true"
+          /><input
+            type="text"
+            class="badge-value"
+            value="siriusmart.github.io"
+          />
+        </li>
+      </ul>
+      <div id="details-buts">
+        <img id="add" src="/static/icons/plus.svg" />
+        <img class="save" src="/static/icons/save.svg" field="profile" />
+      </div>
+    </div>
+    <div id="backdrop" style="display: none"></div>
+  </body>
+</html>

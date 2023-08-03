@@ -1,0 +1,215 @@
+.container {
+  border-radius: 10px;
+  margin: auto;
+  width: 35em;
+  margin-top: 50px;
+  padding-right: 3em;
+  padding-left: 3em;
+  padding-top: 2em;
+  padding-bottom: 2em;
+}
+
+#profile-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#profile-top img {
+  border-radius: 30%;
+  margin-right: 20px;
+}
+
+input {
+  margin-top: 5px;
+}
+
+.badge {
+  align-items: center;
+  margin-right: 15px;
+}
+
+.badge:hover {
+  cursor: grab;
+}
+
+#badges {
+  margin-top: 5px;
+  margin-left: 10px;
+  display: inline-block;
+  list-style-type: none;
+}
+
+.badge img {
+  vertical-align: middle;
+  width: 20px;
+}
+
+.badge:before {
+  opacity: 0;
+  height: 1em;
+  width: 1em;
+  vertical-align: middle;
+  content: "";
+  display: inline-block;
+  background-image: url("/static/icons/arrows-up-down.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  margin-left: -35px;
+}
+
+.badge:hover:before {
+  opacity: 1;
+}
+
+.badge-value {
+  height: 20px;
+  font-size: 15px;
+  margin-left: 5px;
+}
+
+#username {
+  font-weight: bold;
+  font-size: 23px;
+}
+
+#status {
+  font-size: 15px;
+}
+
+.save {
+  display: inline-block;
+  height: 18px;
+  opacity: 50%;
+  margin-left: 5px;
+}
+
+.save:hover {
+  opacity: 1;
+  cursor: pointer;
+}
+
+#details-buts {
+  display: block;
+  margin-left: 250px;
+}
+
+#details-buts img {
+  opacity: 50%;
+  display: inline-block;
+  margin: 0;
+  height: 18px;
+  width: 18px;
+}
+
+#details-buts img:hover {
+  opacity: 1;
+  cursor: pointer;
+}
+
+input,
+textarea {
+  border-radius: 10px;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+textarea {
+  resize: none;
+  font-size: 15px;
+  font-family: Inter, sans-serif;
+}
+
+#bio {
+  margin-top: 10px;
+}
+
+#addd * {
+  font-weight: 350;
+  font-family: Inter, sans-serif;
+}
+
+#addd {
+  z-index: 9999;
+  position: absolute;
+  top: 40%;
+  transform: translateY(-50%);
+  border-radius: 8px;
+  min-width: 400px;
+}
+
+#addd h2 {
+  text-align: center;
+}
+
+#x {
+  font-size: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+}
+
+#x:hover {
+  cursor: pointer;
+}
+
+#backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9998; /* Ensure the backdrop is behind the dialog */
+}
+
+#list-container li img:first-child {
+  opacity: 50%;
+  transform: translateY(-3px);
+}
+
+#list-container li:hover img:first-child {
+  opacity: 1;
+}
+
+.plus {
+  display: none;
+  opacity: 50%;
+}
+
+#details-list {
+  min-width: 160px;
+}
+
+li:hover .plus {
+  display: inline;
+}
+
+#list-container li:hover {
+  cursor: pointer;
+}
+
+#list-container li img {
+  width: 1em;
+  height: 1em;
+  vertical-align: middle;
+  margin-right: 3px;
+  margin-left: 3px;
+}
+
+#list-container ul {
+  display: inline-block;
+  list-style-type: none;
+}
+
+#list-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.badge img:first-child {
+  height: 20px;
+}

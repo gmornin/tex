@@ -39,3 +39,17 @@
 #status {
   font-size: 15px;
 }
+
+#edit img {
+  display: inline;
+  height: 15px;
+  opacity: 50%;
+}
+
+#edit img:hover {
+  opacity: 1;
+}
+
+#edit {
+  margin-left: 5px;
+}
