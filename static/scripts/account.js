@@ -159,10 +159,8 @@ for (const add of Array.from(document.querySelectorAll("#list-container li"))) {
     input.type = "text";
     input.placeholder = fieldPlaceHolder(field);
 
-    li.appendChild(document.createTextNode("\n"));
     li.appendChild(img);
     li.appendChild(input);
-    li.appendChild(document.createTextNode("\n"));
     badges.appendChild(li);
     addBackspace(li);
   };

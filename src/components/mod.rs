@@ -8,3 +8,5 @@ mod file;
 pub use file::*;
 mod editor;
 pub use editor::*;
+mod account;
+pub use account::*;

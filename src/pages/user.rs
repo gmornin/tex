@@ -27,11 +27,11 @@ async fn profile_task(id: Path<i64>, req: HttpRequest) -> Result<HttpResponse, B
         Err(res) => return Ok(res),
     };
 
-    let account = if account.is_some() && account.as_ref().unwrap().id == *id {
-        account.unwrap()
+    let (account, is_owner) = if account.is_some() && account.as_ref().unwrap().id == *id {
+        (account.unwrap(), true)
     } else {
         match Account::find_by_id(*id, ACCOUNTS.get().unwrap()).await? {
-            Some(account) => account,
+            Some(account) => (account, false),
             None => {
                 return Ok(NamedFile::open_async("static/htmls/notfound.html")
                     .await?
@@ -52,6 +52,7 @@ async fn profile_task(id: Path<i64>, req: HttpRequest) -> Result<HttpResponse, B
     let pf = yew::ServerRenderer::<ProfileInfo>::with_props(move || ProfileInfoProp {
         account: to_profile_acccount(account),
         profile: pf,
+        is_owner,
     })
     .render()
     .await;

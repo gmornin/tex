@@ -12,7 +12,8 @@ pub fn ProfileInfo(prop: &ProfileInfoProp) -> Html {
       <div id="profile-top">
         <img src={format!("/api/tex/generic/v1/pfp/id/{}", prop.account.id)} width="100" height="100" alt="" />
         <div id="profile-top-right">
-          <span id="username">{&prop.account.username}</span>
+          <span id="username">{&prop.account.username}</span>{if prop.is_owner{ html!{ <a href="/account/profile" id="edit"><img src="/static/icons/edit.svg"
+          /></a>}} else {Html::default()}}
           <br />
           <span id="status">{&prop.account.status}</span>
         </div>
@@ -31,6 +32,7 @@ pub fn ProfileInfo(prop: &ProfileInfoProp) -> Html {
 pub struct ProfileInfoProp {
     pub account: ProfileAccount,
     pub profile: ProfileCustomisable,
+    pub is_owner: bool,
 }
 
 pub fn badge(detail: ProfileDetail) -> Html {

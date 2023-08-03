@@ -1,3 +1,4 @@
+mod account;
 mod edit;
 mod fs;
 mod hard_links;
@@ -19,4 +20,5 @@ pub fn scope() -> Scope {
         .service(fs::fspath)
         .service(fs::root)
         .service(edit::edit)
+        .service(account::scope())
 }
