@@ -1,5 +1,25 @@
 let pathDisplay = document.getElementById("path-display");
 let fslist = document.getElementById("fslist");
+let copyd = document.getElementById("copyd");
+let copy_from = document.querySelector("#copy-from span");
+let copy_target = document.getElementById("copytarget");
+let copybut = document.getElementById("copybut");
+
+function getCurrentTime() {
+  const now = new Date();
+
+  const currentTime = `${now.getFullYear()}${(now.getMonth() + 1)
+    .toString()
+    .padStart(2, "0")}${now.getDate().toString().padStart(2, "0")}-${now
+    .getHours()
+    .toString()
+    .padStart(2, "0")}${now.getMinutes().toString().padStart(2, "0")}${now
+    .getSeconds()
+    .toString()
+    .padStart(2, "0")}`;
+
+  return currentTime;
+}
 
 function getCookie(name) {
   const value = `; ${document.cookie}`;
@@ -102,6 +122,14 @@ function trimPath(path) {
 
 function displayPath(path) {
   let spans = pathDisplay.getElementsByTagName("span");
+
+  let uploadbut = document.getElementById("upload");
+  let splitted = path.split("/");
+  if (splitted.length > 2 || splitted[1] !== ".system") {
+    uploadbut.style.display = "inline";
+  } else {
+    uploadbut.style.display = "none";
+  }
 
   for (let i = spans.length - 1; i >= 0; i--) {
     spans[i].parentNode.removeChild(spans[i]);
@@ -217,22 +245,36 @@ window.addEventListener("popstate", function (_event) {
   go(path, true);
 });
 
+copyd.addEventListener("close", function (_event) {
+  backdrop.style.display = "none";
+});
+
+document.getElementById("copyx").onclick = () => {
+  copyd.close();
+};
+
 function addDots() {
   let items = fslist.children;
   for (const item of items) {
     let path = item.getAttribute("path").split("/");
-    if (path.length < 2 || path[1] === ".system") {
-      continue;
-    }
-    if (
-      item.classList.contains("file") ||
-      item.classList.contains("hidden-file")
-    ) {
-      item.innerHTML +=
-        '<div class="ellipsis"><img src="/static/icons/ellipsis.svg" class="dots"/><div class="dropdown hide"><div class="dropdown-content"><span class="dropdown-item" action="edit">Edit</span><span class="dropdown-item" action="delete">Delete</span><span class="dropdown-item" action="visibility">Change visibility<div class="dropdown dropdown-fold"><div class="dropdown-content"><div class="dropdown-item" action="public">Public</div><div class="dropdown-item" action="hidden">Hidden</div><div class="dropdown-item" action="private">Private</div><div class="dropdown-item" action="inherit">Inherit</div></div></div></span></div></div></div>';
+    let id = window.history.state.path.split("/")[0];
+    // if (path.length < 2) {
+    //   continue;
+    // }
+    if (id === localStorage.getItem("userid") && path[1] !== ".system") {
+      if (
+        item.classList.contains("file") ||
+        item.classList.contains("hidden-file")
+      ) {
+        item.innerHTML +=
+          '<div class="ellipsis"><img src="/static/icons/ellipsis.svg" class="dots"/><div class="dropdown hide"><div class="dropdown-content"><span class="dropdown-item" action="edit">Edit</span><span class="dropdown-item" action="copy">Copy</span><span class="dropdown-item" action="delete">Delete</span><span class="dropdown-item" action="visibility">Change visibility<div class="dropdown dropdown-fold"><div class="dropdown-content"><div class="dropdown-item" action="public">Public</div><div class="dropdown-item" action="hidden">Hidden</div><div class="dropdown-item" action="private">Private</div><div class="dropdown-item" action="inherit">Inherit</div></div></div></span></div></div></div>';
+      } else {
+        item.innerHTML +=
+          '<div class="ellipsis"><img src="/static/icons/ellipsis.svg" class="dots"/><div class="dropdown hide"><div class="dropdown-content"><span class="dropdown-item" action="copy">Copy</span><span class="dropdown-item" action="delete">Delete</span><span class="dropdown-item" action="visibility">Change visibility<div class="dropdown dropdown-fold"><div class="dropdown-content"><div class="dropdown-item" action="public">Public</div><div class="dropdown-item" action="hidden">Hidden</div><div class="dropdown-item" action="private">Private</div><div class="dropdown-item" action="inherit">Inherit</div></div></div></span></div></div></div>';
+      }
     } else {
       item.innerHTML +=
-        '<div class="ellipsis"><img src="/static/icons/ellipsis.svg" class="dots"/><div class="dropdown hide"><div class="dropdown-content"><span class="dropdown-item" action="delete">Delete</span><span class="dropdown-item" action="visibility">Change visibility<div class="dropdown dropdown-fold"><div class="dropdown-content"><div class="dropdown-item" action="public">Public</div><div class="dropdown-item" action="hidden">Hidden</div><div class="dropdown-item" action="private">Private</div><div class="dropdown-item" action="inherit">Inherit</div></div></div></span></div></div></div>';
+        '<div class="ellipsis"><img src="/static/icons/ellipsis.svg" class="dots"/><div class="dropdown hide"><div class="dropdown-content"><span class="dropdown-item" action="copy">Copy</span></div></div>';
     }
     item
       .getElementsByClassName("dots")[0]
@@ -375,6 +417,47 @@ function addDots() {
               .catch((error) => console.error(error));
             break;
           }
+          case "copy":
+            let slash_i = path.lastIndexOf("/") + 1;
+            let file_name = path.substring(slash_i);
+            let dot_i = file_name.lastIndexOf(".");
+            let file = cache[window.history.state.path].find(
+              (item) => item.name === file_name
+            );
+            copybut.setAttribute("path", path);
+            copy_from.innerText = `${path} (${formatBytes(file.size)})`;
+
+            if (file.is_file) {
+              if (dot_i === 0) {
+                copy_target.value = `/${path
+                  .substring(0, slash_i)
+                  .split("/")
+                  .slice(1)
+                  .join("/")}${file_name}-${getCurrentTime()}`;
+              } else {
+                copy_target.value = `/${path
+                  .substring(0, slash_i)
+                  .split("/")
+                  .slice(1)
+                  .join("/")}${file_name.substring(
+                  0,
+                  dot_i
+                )}-${getCurrentTime()}${file_name.substring(dot_i)}`;
+              }
+            } else {
+              copy_target.value = `/${path
+                .substring(0, slash_i)
+                .split("/")
+                .slice(1)
+                .join("/")}${file.name}-${getCurrentTime()}/`;
+            }
+
+            backdrop.style.display = "block";
+            copyd.showModal();
+            copybut.innerText = "Copy";
+            copybut.classList.remove("not-allowed");
+            copybut.removeAttribute("disabled");
+            break;
           default:
             console.error(`Unknown action "${action}"`);
         }
@@ -405,10 +488,50 @@ window.addEventListener("click", (event) => {
   if (!event.target.classList.contains("dots")) dropdownsHideExcept();
 });
 
+copybut.onclick = () => {
+  if (copybut.disabled) {
+    return;
+  }
+
+  copybut.disabled = true;
+  copybut.innerText = "Copying...";
+  if (!copy_target.value.startsWith("/")) {
+    copy_target.value = "/" + copy_target.value;
+  }
+
+  let from = copybut.getAttribute("path").split(/\/(.*)/s);
+  let body = {
+    token: getToken(),
+    "from-userid": parseInt(from[0]),
+    from: `/tex/${from[1]}`,
+    to: `/tex${copy_target.value}`,
+  };
+
+  let url = "/api/storage/v1/copy-overwrite";
+  fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      copybut.classList.add("not-allowed");
+      if (data.type == "error") {
+        copybut.innerText = "Copy failed";
+        alert(`Error copying: ${JSON.stringify(data.kind)}`);
+        return;
+      }
+      copybut.innerText = "Copied!";
+      refresh();
+    })
+    .catch((error) => console.error(error));
+};
+
 function conditionallyAddDots() {
   let token = getToken();
-  let id = window.history.state.path.split("/")[0];
-  if (id === localStorage.getItem("userid") && token) {
+  if (token) {
     addDots();
   }
 }

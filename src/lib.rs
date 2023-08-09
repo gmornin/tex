@@ -2,6 +2,7 @@
 #![feature(iter_intersperse)]
 #![allow(hidden_glob_reexports)]
 #![allow(clippy::too_many_arguments)]
+#![feature(let_chains)]
 
 mod r#static;
 pub use r#static::*;

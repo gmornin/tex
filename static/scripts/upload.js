@@ -12,6 +12,7 @@ let target = document.getElementById("target");
 let uploadbut = document.getElementById("uploadbut");
 let fileInput = document.querySelector("#fileupload input");
 let folderInput = document.querySelector("#folderupload input");
+let dialogs = Array.from(document.getElementsByTagName("dialog"));
 
 function disableOtherFileInputs() {
   const fileInputs = document.querySelectorAll('input[type="file"]');
@@ -39,7 +40,7 @@ document.getElementById("upload").onclick = () => {
   backdrop.style.display = "block";
 };
 
-document.getElementById("x").onclick = () => {
+document.getElementById("uploadx").onclick = () => {
   dialog.close();
 };
 
@@ -142,7 +143,9 @@ function folderUploadFile(files, path, totalFiles, totalBytes, uploadedBytes) {
   const xhr = new XMLHttpRequest();
   xhr.open(
     "POST",
-    `/api/storage/v1/upload-createdirs-overwrite/${getCookie("token")}${uploadPath}`,
+    `/api/storage/v1/upload-createdirs-overwrite/${getCookie(
+      "token"
+    )}${uploadPath}`,
     true
   );
 
@@ -221,7 +224,7 @@ function fileUploadProgress(event) {
 
 // function fileUploadComplete(event) {}
 
-uploadbut.addEventListener("click", (_e) => {
+uploadbut.onclick = () => {
   if (uploadbut.disabled) {
     return;
   }
@@ -232,7 +235,7 @@ uploadbut.addEventListener("click", (_e) => {
   }
 
   uploadFolder(Array.from(folderInput.files), getPath(target.value));
-});
+};
 
 target.addEventListener("input", targetInput);
 

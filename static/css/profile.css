@@ -2,11 +2,15 @@
   border-radius: 10px;
   margin: auto;
   width: 35em;
-  margin-top: 50px;
+  margin-top: 20px;
   padding-right: 3em;
   padding-left: 3em;
   padding-top: 2em;
   padding-bottom: 2em;
+}
+
+#basic-info {
+  margin-top: 50px;
 }
 
 #profile-top {

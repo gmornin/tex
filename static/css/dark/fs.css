@@ -10,13 +10,13 @@
   color: #ffaa99;
 }
 
-#uploadd {
+dialog {
   background-color: #222222;
   border: rgba(255, 255, 255, 0.2) solid 1px;
   color: white;
 }
 
-#target {
+#target, #copytarget {
   background-color: #181a1b;
   color: white;
   border: rgba(255, 255, 255, 0.1) solid 1px;
@@ -27,7 +27,7 @@
   background-color: rgba(0, 0, 0, 0.5);
 }
 
-#uploadbut {
+#uploadbut, #copybut {
   color: white;
   background-color: #2266cc;
 }

@@ -23,21 +23,21 @@
   vertical-align: start;
 }
 
-#uploadd * {
+dialog * {
   font-weight: 350;
   font-family: Inter, sans-serif;
 }
 
-#uploadd {
+dialog {
   z-index: 9999;
   position: absolute;
-  top: 40%;
+  top: 20%;
   transform: translateY(-50%);
   border-radius: 8px;
 }
 
 #upload-types,
-#uploadd h2 {
+dialog h2 {
   text-align: center;
 }
 
@@ -45,11 +45,11 @@
   margin-right: 20px;
 }
 
-#upload-from {
+#upload-from, #copy-from {
   font-size: 0.7em;
 }
 
-#target {
+#target, #copytarget {
   transition: 100ms;
   width: calc(20em - 20px);
   display: block;
@@ -76,7 +76,8 @@
   z-index: 9998; /* Ensure the backdrop is behind the dialog */
 }
 
-#uploadbut {
+#uploadbut,
+#copybut {
   transition: 100ms;
   width: calc(20em - 10px);
   display: block;
@@ -90,15 +91,15 @@
   margin-top: 18px;
 }
 
-#uploadbut:hover {
+#uploadbut:hover, #copybut:hover {
   cursor: pointer;
 }
 
-#uploadbut:disabled:hover {
+#uploadbut:disabled:hover, #copybut:disabled:hover {
   cursor: wait;
 }
 
-#uploadbut:disabled.not-allowed:hover {
+#uploadbut:disabled.not-allowed:hover, #copybut:disabled.not-allowed:hover{
   cursor: not-allowed;
 }
 
@@ -117,7 +118,7 @@ img.disabled:hover {
   cursor: not-allowed !important;
 }
 
-#x {
+#uploadx, #copyx {
   font-size: 20px;
   margin-left: auto;
   margin-right: auto;
@@ -126,7 +127,7 @@ img.disabled:hover {
   text-align: center;
 }
 
-#x:hover {
+#uploadx:hover, #copyx:hover {
   cursor: pointer;
 }
 

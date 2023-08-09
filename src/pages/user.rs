@@ -27,8 +27,8 @@ async fn profile_task(id: Path<i64>, req: HttpRequest) -> Result<HttpResponse, B
         Err(res) => return Ok(res),
     };
 
-    let (account, is_owner) = if account.is_some() && account.as_ref().unwrap().id == *id {
-        (account.unwrap(), true)
+    let (account, is_owner) = if let Some(account) = account && account.id == *id {
+        (account, true)
     } else {
         match Account::find_by_id(*id, ACCOUNTS.get().unwrap()).await? {
             Some(account) => (account, false),
@@ -83,6 +83,12 @@ async fn profile_task(id: Path<i64>, req: HttpRequest) -> Result<HttpResponse, B
   <body>
     {topbar}
     {pf}
+    <div class="container" id="places">
+      <h2>Places</h2>
+      <ul>
+        <li><a class="linklike" href="/fs/{id}">User file system</a></li>
+      </ul>
+    </div>
   </body>
 </html>
 "#

@@ -1,4 +1,5 @@
 use std::borrow::Cow;
+use std::fmt::Write;
 
 pub fn editor(
     topbar: &str,
@@ -22,10 +23,13 @@ pub fn editor(
         </div>
       </div>
                 "#,
-            target_exts
-                .iter()
-                .map(|ext| format!(r#"<span class="dropdown-item" target="{ext}">To {ext}</span>"#))
-                .collect::<String>()
+            target_exts.iter().fold(String::new(), |mut s, ext| {
+                let _ = write!(
+                    s,
+                    r#"<span class="dropdown-item" target="{ext}">To {ext}</span>"#
+                );
+                s
+            })
         ))
     };
 

@@ -51,8 +51,8 @@ async fn fs_task(
 
     let is_owner = account.as_ref().is_some_and(|account| account.id == id);
 
-    let account = if account.is_some() && account.as_ref().unwrap().id == id {
-        account.unwrap()
+    let account = if let Some(account) = account && account.id == id {
+        account
     } else {
         match Account::find_by_id(id, ACCOUNTS.get().unwrap()).await? {
             Some(account) => account,
@@ -120,10 +120,14 @@ async fn dir(
     let path_display = yew::ServerRenderer::<components::Path>::with_props(|| path_props)
         .render()
         .await;
+    let upload = if path.starts_with(".system") || !is_owner {
+        r#"<img src="/static/icons/upload.svg" alt="" width="18px" id="upload" style="display: none;" />"#
+    } else {
+        r#"<img src="/static/icons/upload.svg" alt="" width="18px" id="upload" />"#
+    };
 
-    let html = if is_owner {
-        format!(
-            r#"<!DOCTYPE html>
+    let html = format!(
+        r#"<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -148,7 +152,7 @@ async fn dir(
   </head>
   <body>
     <dialog id="uploadd">
-      <div id="x">&#x2715;</div>
+      <div id="uploadx">&#x2715;</div>
       <h2>Upload a file or folder</h2>
       <div id="upload-types">
         <label id="fileupload">
@@ -161,14 +165,7 @@ async fn dir(
             id="upload-folder"
             height="50px"
           />
-          <input
-            type="file"
-            webkitdirectory
-            mozdirectory
-            msdirectory
-            odirectory
-            directory
-          />
+          <input type="file" directory />
         </label>
       </div>
       <p id="upload-from">Source: <span>select a source</span></p>
@@ -180,55 +177,26 @@ async fn dir(
       />
       <button id="uploadbut" disabled class="not-allowed">Upload</button>
     </dialog>
+    <dialog id="copyd">
+      <div id="copyx">&#x2715;</div>
+      <h2>Copy item</h2>
+      <center><img src="/static/icons/copy.svg" height="50px" /></center>
+      <p id="copy-from">Copy from: <span></span></p>
+      <input type="text" name="target" id="copytarget" placeholder="Copy target" />
+      <button id="copybut" class="not-allowed">Copy</button>
+    </dialog>
   {topbar}
 <div id="path-display">
   {path_display}
-  <img src="/static/icons/upload.svg" alt="" width="18px" id="upload" />
+  {upload}
 </div>
   {items_display}
   <script src="/static/scripts/fs.js" defer></script>
   <script src="/static/scripts/upload.js" defer></script>
   </body>
 </html>"#,
-            html_escape::encode_safe(&format!("{}/{path}", account.id))
-        )
-    } else {
-        format!(
-            r#"<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/static/css/main.css" />
-    <link rel="stylesheet" href="/static/css/topbar.css" />
-    <link rel="stylesheet" href="/static/css/topbar-signedout.css" />
-    <link rel="stylesheet" href="/static/css/fs.css" />
-    <link rel="stylesheet" href="/static/css/path.css" />
-    <link rel="stylesheet" href="/static/css/topbar-loggedin.css" />
-    <link rel="stylesheet" href="/static/css/dark/main.css" />
-    <link rel="stylesheet" href="/static/css/dark/topbar.css" />
-    <link rel="stylesheet" href="/static/css/dark/fs.css" />
-    <link rel="stylesheet" href="/static/css/dark/path.css" />
-    <link rel="stylesheet" href="/static/css/dark/topbar-signedout.css" />
-    <link
-      rel="shortcut icon"
-      href="/static/images/favicon-dark.svg"
-      type="image/x-icon"
-    />
-    <title>{}</title>
-  </head>
-  <body>
-  {topbar}
-<div id="path-display">
-  {path_display}
-</div>
-  {items_display}
-  <script src="/static/scripts/fs.js" defer></script>
-  </body>
-</html>"#,
-            html_escape::encode_safe(&format!("{}/{path}", account.id))
-        )
-    };
+        html_escape::encode_safe(&format!("{}/{path}", account.id))
+    );
 
     Ok(HttpResponse::Ok()
         .content_type(ContentType::html())
