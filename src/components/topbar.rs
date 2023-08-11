@@ -15,6 +15,8 @@ use actix_web::{HttpRequest, HttpResponse};
 use goodmorning_services::structs::Account;
 use yew::{function_component, html, Html, Properties};
 
+use crate::BEEN_LOGGEDOUT;
+
 pub const TOPBAR_LOGGEDOUT: &str = r#"
     <div id="top-bar">
       <div id="top-bar-left">
@@ -41,7 +43,7 @@ pub fn TopbarLoggedin(props: &TopbarLoggedinProps) -> Html {
       </div>
       <div id="top-bar-right">
         <img src="/static/icons/bell.svg" id="notif-bell" alt="" width="15" />
-        <a href={format!("/user/{}", props.id)}> <img src={format!("/api/tex/generic/v1/pfp/id/{}", props.id)} id="topbar-pfp" alt="" width="30" height="30" /></a>
+        <a href={format!("/user/{}", props.id)}> <img src={format!("/api/generic/v1/pfp/id/{}", props.id)} id="topbar-pfp" alt="" width="30" height="30" /></a>
       </div>
     </div>
     }
@@ -91,11 +93,9 @@ pub async fn topbar_option_from_token(
             let account = match Account::find_by_token(token).await? {
                 Some(account) => account,
                 None => {
-                    return Ok(Err(NamedFile::open_async(
-                        "static/htmls/been-loggedout.html",
-                    )
-                    .await?
-                    .into_response(req)))
+                    return Ok(Err(NamedFile::open_async(BEEN_LOGGEDOUT.get().unwrap())
+                        .await?
+                        .into_response(req)))
                 }
             };
 

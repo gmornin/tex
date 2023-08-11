@@ -1,4 +1,6 @@
-use crate::{components::*, functions::internalserver_error, CSP_BASE};
+use crate::{
+    components::*, functions::internalserver_error, BEEN_LOGGEDOUT, CSP_BASE, FINISH_SETUP,
+};
 use actix_files::NamedFile;
 use actix_web::{get, http::header::ContentType, HttpRequest, HttpResponse};
 use goodmorning_services::{
@@ -41,7 +43,7 @@ async fn home(req: HttpRequest) -> HttpResponse {
     let account = match Account::find_by_token(token.unwrap()).await {
         Ok(Some(account)) => account,
         Ok(None) => {
-            return match NamedFile::open_async("static/htmls/been-loggedout.html").await {
+            return match NamedFile::open_async(BEEN_LOGGEDOUT.get().unwrap()).await {
                 Ok(file) => file.into_response(&req),
                 Err(e) => internalserver_error(e.into()),
             }
@@ -52,7 +54,7 @@ async fn home(req: HttpRequest) -> HttpResponse {
     };
 
     if !account.services.contains(&GMServices::Tex) {
-        return match NamedFile::open_async("static/htmls/finish-setup.html").await {
+        return match NamedFile::open_async(FINISH_SETUP.get().unwrap()).await {
             Ok(file) => file.into_response(&req),
             Err(e) => internalserver_error(e.into()),
         };

@@ -4,14 +4,15 @@ use actix_files::NamedFile;
 use actix_web::http::header::ContentType;
 use actix_web::web::Path;
 use actix_web::{get, HttpRequest, HttpResponse};
-use goodmorning_services::functions::{read_profile, to_profile_acccount};
+use goodmorning_services::functions::to_profile_acccount;
 use goodmorning_services::structs::Account;
 use goodmorning_services::traits::CollectionItem;
 use goodmorning_services::ACCOUNTS;
 
 use crate::components::{topbar_from_req, ProfileInfo, ProfileInfoProp};
 use crate::functions::internalserver_error;
-use crate::CSP_BASE;
+use crate::structs::TexProfile;
+use crate::{CSP_BASE, NOT_FOUND};
 
 #[get("/user/{id}")]
 pub async fn profile(path: Path<i64>, req: HttpRequest) -> HttpResponse {
@@ -33,7 +34,7 @@ async fn profile_task(id: Path<i64>, req: HttpRequest) -> Result<HttpResponse, B
         match Account::find_by_id(*id, ACCOUNTS.get().unwrap()).await? {
             Some(account) => (account, false),
             None => {
-                return Ok(NamedFile::open_async("static/htmls/notfound.html")
+                return Ok(NamedFile::open_async(NOT_FOUND.get().unwrap())
                     .await?
                     .into_response(&req))
             }
@@ -44,11 +45,11 @@ async fn profile_task(id: Path<i64>, req: HttpRequest) -> Result<HttpResponse, B
         .services
         .contains(&goodmorning_services::structs::GMServices::Tex)
     {
-        return Ok(NamedFile::open_async("static/htmls/notfound.html")
+        return Ok(NamedFile::open_async(NOT_FOUND.get().unwrap())
             .await?
             .into_response(&req));
     }
-    let pf = read_profile(account.id, goodmorning_services::structs::GMServices::Tex).await?;
+    let pf = TexProfile::find_default(account.id).await?.profile;
     let pf = yew::ServerRenderer::<ProfileInfo>::with_props(move || ProfileInfoProp {
         account: to_profile_acccount(account),
         profile: pf,

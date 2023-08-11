@@ -25,7 +25,7 @@
   </head>
   <body>
     <dialog id="uploadd">
-      <div id="x">&#x2715;</div>
+      <div class="x">&#x2715;</div>
       <h2>Upload a file or folder</h2>
       <div id="upload-types">
         <label id="fileupload">
@@ -38,31 +38,34 @@
             id="upload-folder"
             height="50px"
           />
-          <input
-            type="file"
-            webkitdirectory
-            mozdirectory
-            msdirectory
-            odirectory
-            directory
-          />
+          <input type="file" directory />
         </label>
       </div>
       <p id="upload-from">Source: <span>select a source</span></p>
-      <input
-        type="text"
-        name="target"
-        id="target"
-        placeholder="Upload target"
-      />
-      <button id="uploadbut" disabled class="not-allowed">Upload</button>
+      <input type="text" id="target" placeholder="Upload target" />
+      <button id="uploadbut" disabled class="submitbut">Upload</button>
+    </dialog>
+    <dialog id="touchd" open>
+      <div class="x">&#x2715;</div>
+      <h2>Create a file or folder</h2>
+      <div id="create-types">
+        <img src="/static/icons/fileadd.svg" height="50px" id="create-file" />
+        <img
+          src="/static/icons/folderadd.svg"
+          height="50px"
+          id="create-folder"
+        />
+      </div>
+      <p id="create-tip">End path with <code>/</code> to create a directory.</p>
+      <input type="text" id="createtarget" placeholder="Create path" />
+      <button id="createbut" disabled class="submitbut">Create</button>
     </dialog>
     <dialog id="copyd">
-      <div id="x">&#x2715;</div>
+      <div class="x">&#x2715;</div>
       <h2>Copy item</h2>
       <p id="copy-from">Copy from: <span></span></p>
-      <input type="text" name="target" id="target" placeholder="Copy target" />
-      <button id="copybut" class="not-allowed">Copy</button>
+      <input type="text" id="copytarget" placeholder="Copy target" />
+      <button id="copybut" class="submitbut">Copy</button>
     </dialog>
     <div id="top-bar">
       <div id="top-bar-left">
@@ -75,7 +78,7 @@
       <div id="top-bar-right">
         <img src="/static/icons/bell.svg" id="notif-bell" alt="" width="15" />
         <img
-          src="/api/tex/generic/v1/pfp/id/1"
+          src="/api/generic/v1/pfp/id/1"
           id="topbar-pfp"
           alt=""
           width="30"
@@ -89,7 +92,9 @@
       <span class="fragment">projects</span>
       <span class="connect">&gt;</span>
       <span class="fragment">gmt-server</span>
-      <img src="/static/icons/upload.svg" alt="" width="18px" id="upload" />
+      <div id="pathitems">
+        <img src="/static/icons/fileadd.svg" alt="" width="20px" height="20px" id="create" /><img src="/static/icons/upload.svg" alt="" width="20px" height="20px" id="upload" />
+      </div>
     </div>
     <!-- <label id="upload"> -->
     <!--   <input type="file" /> -->

@@ -21,7 +21,7 @@ use crate::{
         self, html_friendly_mime, topbar_from_req, FsItem, FsItemProp, Img, ImgProp, PathProp,
     },
     functions::{from_res, gen_nonce},
-    CSP_BASE,
+    CSP_BASE, NOT_FOUND,
 };
 
 #[get("/fs/{id}/{path:.*}")]
@@ -57,7 +57,7 @@ async fn fs_task(
         match Account::find_by_id(id, ACCOUNTS.get().unwrap()).await? {
             Some(account) => account,
             None => {
-                return Ok(NamedFile::open_async("static/htmls/notfound.html")
+                return Ok(NamedFile::open_async(NOT_FOUND.get().unwrap())
                     .await?
                     .into_response(req))
             }
@@ -121,9 +121,9 @@ async fn dir(
         .render()
         .await;
     let upload = if path.starts_with(".system") || !is_owner {
-        r#"<img src="/static/icons/upload.svg" alt="" width="18px" id="upload" style="display: none;" />"#
+        r#"<img src="/static/icons/fileadd.svg" alt="" width="20px" height="20px" id="create" style="display: none;" /><img src="/static/icons/upload.svg" width="20px" height="20px" id="upload" style="display: none;" />"#
     } else {
-        r#"<img src="/static/icons/upload.svg" alt="" width="18px" id="upload" />"#
+        r#"<img src="/static/icons/fileadd.svg" width="20px" height="20px" id="create" /><img src="/static/icons/upload.svg" width="20px" height="20px" id="upload" />"#
     };
 
     let html = format!(
@@ -152,7 +152,7 @@ async fn dir(
   </head>
   <body>
     <dialog id="uploadd">
-      <div id="uploadx">&#x2715;</div>
+      <div class="x">&#x2715;</div>
       <h2>Upload a file or folder</h2>
       <div id="upload-types">
         <label id="fileupload">
@@ -169,26 +169,36 @@ async fn dir(
         </label>
       </div>
       <p id="upload-from">Source: <span>select a source</span></p>
-      <input
-        type="text"
-        name="target"
-        id="target"
-        placeholder="Upload target"
-      />
-      <button id="uploadbut" disabled class="not-allowed">Upload</button>
+      <input type="text" id="target" placeholder="Upload target" />
+      <button id="uploadbut" disabled class="submitbut">Upload</button>
+    </dialog>
+    <dialog id="touchd">
+      <div class="x">&#x2715;</div>
+      <h2>Create a file or folder</h2>
+      <div id="create-types">
+        <img src="/static/icons/fileadd.svg" height="50px" id="create-file" />
+        <img
+          src="/static/icons/folderadd.svg"
+          height="50px"
+          id="create-folder"
+        />
+      </div>
+      <p id="create-tip">End path with <code>/</code> to create a directory.</p>
+      <input type="text" id="createtarget" placeholder="Create path" />
+      <button id="createbut" disabled class="submitbut">Create</button>
     </dialog>
     <dialog id="copyd">
-      <div id="copyx">&#x2715;</div>
+      <div class="x">&#x2715;</div>
       <h2>Copy item</h2>
       <center><img src="/static/icons/copy.svg" height="50px" /></center>
       <p id="copy-from">Copy from: <span></span></p>
-      <input type="text" name="target" id="copytarget" placeholder="Copy target" />
-      <button id="copybut" class="not-allowed">Copy</button>
+      <input type="text" id="copytarget" placeholder="Copy target" />
+      <button id="copybut" class="submitbut">Copy</button>
     </dialog>
   {topbar}
 <div id="path-display">
   {path_display}
-  {upload}
+  <div id="pathitems">{upload}</div>
 </div>
   {items_display}
   <script src="/static/scripts/fs.js" defer></script>

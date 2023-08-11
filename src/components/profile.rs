@@ -10,7 +10,7 @@ pub fn ProfileInfo(prop: &ProfileInfoProp) -> Html {
     html! {
     <div class="container">
       <div id="profile-top">
-        <img src={format!("/api/tex/generic/v1/pfp/id/{}", prop.account.id)} width="100" height="100" alt="" />
+        <img src={format!("/api/generic/v1/pfp/id/{}", prop.account.id)} width="100" height="100" alt="" />
         <div id="profile-top-right">
           <span id="username">{&prop.account.username}</span>{if prop.is_owner{ html!{ <a href="/account/profile" id="edit"><img src="/static/icons/edit.svg"
           /></a>}} else {Html::default()}}

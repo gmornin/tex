@@ -254,7 +254,7 @@ function saveProfile(elem) {
     profile: genProfileTree(),
   };
 
-  fetch("/api/tex/generic/v1/set-profile", {
+  fetch("/api/generic/v1/set-profile", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

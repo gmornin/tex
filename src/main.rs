@@ -1,6 +1,6 @@
 use actix_web::web::Data;
 use actix_web::{middleware::Logger, App, HttpServer};
-use gmt_server::pages;
+use gmt_server::{api, pages};
 use goodmorning_services::structs::Jobs;
 use goodmorning_services::{init as valinit, *};
 use rustls::{Certificate, PrivateKey, ServerConfig};
@@ -18,7 +18,7 @@ async fn main() {
 
     valinit().await;
     init();
-    gmt_server::gmtvalinit();
+    gmt_server::gmtvalinit().await;
 
     CombinedLogger::init(vec![
         TermLogger::new(

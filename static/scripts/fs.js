@@ -4,6 +4,14 @@ let copyd = document.getElementById("copyd");
 let copy_from = document.querySelector("#copy-from span");
 let copy_target = document.getElementById("copytarget");
 let copybut = document.getElementById("copybut");
+let touchd = document.getElementById("touchd");
+let create = document.getElementById("create");
+let createbut = document.getElementById("createbut");
+let folderadd = document.getElementById("create-folder");
+let fileadd = document.getElementById("create-file");
+let create_target = document.getElementById("createtarget");
+
+let isFileAdd = true;
 
 function getCurrentTime() {
   const now = new Date();
@@ -99,8 +107,10 @@ function go(path, skipCheck) {
   }
 }
 
-function refresh() {
-  let path = window.history.state.path;
+function refresh(path) {
+  if (path === undefined) {
+    path = window.history.state.path;
+  }
   delete cache[path];
   go(path, true);
 }
@@ -123,12 +133,15 @@ function trimPath(path) {
 function displayPath(path) {
   let spans = pathDisplay.getElementsByTagName("span");
 
+  let create = document.getElementById("create");
   let uploadbut = document.getElementById("upload");
   let splitted = path.split("/");
   if (splitted.length > 2 || splitted[1] !== ".system") {
     uploadbut.style.display = "inline";
+    create.style.display = "inline";
   } else {
     uploadbut.style.display = "none";
+    create.style.display = "none";
   }
 
   for (let i = spans.length - 1; i >= 0; i--) {
@@ -249,7 +262,12 @@ copyd.addEventListener("close", function (_event) {
   backdrop.style.display = "none";
 });
 
-document.getElementById("copyx").onclick = () => {
+touchd.addEventListener("close", function (_event) {
+  backdrop.style.display = "none";
+  create_reset();
+});
+
+document.querySelector("#copyd .x").onclick = () => {
   copyd.close();
 };
 
@@ -258,9 +276,6 @@ function addDots() {
   for (const item of items) {
     let path = item.getAttribute("path").split("/");
     let id = window.history.state.path.split("/")[0];
-    // if (path.length < 2) {
-    //   continue;
-    // }
     if (id === localStorage.getItem("userid") && path[1] !== ".system") {
       if (
         item.classList.contains("file") ||
@@ -524,7 +539,12 @@ copybut.onclick = () => {
         return;
       }
       copybut.innerText = "Copied!";
-      refresh();
+      refresh(
+        `${localStorage.getItem("userid")}${copy_target.value
+          .split("/")
+          .slice(-1)
+          .join("/")}`
+      );
     })
     .catch((error) => console.error(error));
 };
@@ -536,4 +556,121 @@ function conditionallyAddDots() {
   }
 }
 
+copy_target.oninput = () => {
+  if (!copy_target.value.startsWith("/")) {
+    copy_target.value = "/" + copy_target.value;
+  }
+};
+
+create_target.oninput = () => {
+  check_path();
+};
+
 conditionallyAddDots();
+
+create.onclick = () => {
+  touchd.showModal();
+  backdrop.style.display = "block";
+};
+
+document.querySelector("#touchd .x").onclick = () => {
+  touchd.close();
+};
+
+function create_highlight() {
+  if (isFileAdd) {
+    folderadd.style.opacity = 0.5;
+    fileadd.style.opacity = 1;
+  } else {
+    fileadd.style.opacity = 0.5;
+    folderadd.style.opacity = 1;
+  }
+}
+
+function create_reset() {
+  createbut.disabled = true;
+  createbut.classList.add("not-allowed");
+  isFileAdd = true;
+  create_highlight();
+  create_target.value = "";
+  createbut.innerText = "Copy";
+}
+
+fileadd.onclick = () => {
+  isFileAdd = true;
+  create_highlight();
+  if (create_target.value.endsWith("/")) {
+    create_target.value = create_target.value.replace(/\/+$/, "");
+  }
+};
+
+folderadd.onclick = () => {
+  if (isFileAdd) {
+    isFileAdd = false;
+    create_highlight();
+    if (!create_target.value.endsWith("/") && create_target.value.length !== 0)
+      create_target.value += "/";
+  }
+};
+
+function check_path() {
+  isFileAdd = !create_target.value.endsWith("/");
+  create_highlight();
+  if (create_target.value.length === 0) {
+    createbut.disabled = true;
+    createbut.classList.add("not-allowed");
+  } else {
+    createbut.disabled = false;
+    createbut.classList.remove("not-allowed");
+  }
+}
+
+create_reset();
+
+createbut.onclick = () => {
+  createbut.disabled = true;
+  let splitted = window.history.state.path.trim().split("/");
+  let path;
+
+  if (splitted.length > 1) {
+    path = `/tex/${splitted.slice(1).join("/")}/${create_target.value}`;
+  } else {
+    path = `/tex/${create_target.value}`;
+  }
+  let body = {
+    token: getToken(),
+    path,
+  };
+
+  let url;
+  if (isFileAdd) {
+    url = "/api/storage/v1/touch";
+  } else {
+    url = "/api/storage/v1/mkdir";
+  }
+
+  fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.type == "error") {
+        alert(`Error creating file item: ${JSON.stringify(data.kind)}`);
+        return;
+      }
+      createbut.classList.add("not-allowed");
+      createbut.innerText = "Created!";
+      refresh(
+        `${localStorage.getItem("userid")}/${path
+          .replace(/^\/+|\/+$/g, "")
+          .split("/")
+          .slice(1, -1)
+          .join("/")}`
+      );
+    })
+    .catch((error) => console.error(error));
+};

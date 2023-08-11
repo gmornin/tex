@@ -2,12 +2,12 @@ use std::error::Error;
 
 use actix_files::NamedFile;
 use actix_web::{get, http::header::ContentType, HttpRequest, HttpResponse};
-use goodmorning_services::functions::read_profile;
 
 use crate::{
     components::{topbar_option_from_req, DetailsProp, ProfileEditBadges},
     functions::from_res,
-    CSP_BASE,
+    structs::TexProfile,
+    CREATE_ACC, CSP_BASE,
 };
 
 #[get("/profile")]
@@ -19,14 +19,15 @@ async fn profile_task(req: &HttpRequest) -> Result<HttpResponse, Box<dyn Error>>
     let (topbar, account) = match topbar_option_from_req(req).await? {
         Ok(Some(stuff)) => stuff,
         Ok(None) => {
-            return Ok(NamedFile::open_async("static/htmls/create-acc.html")
+            return Ok(NamedFile::open_async(CREATE_ACC.get().unwrap())
                 .await?
                 .into_response(req))
         }
         Err(res) => return Ok(res),
     };
 
-    let userpf = read_profile(account.id, goodmorning_services::structs::GMServices::Tex).await?;
+    let userpf = TexProfile::find_default(account.id).await?.profile;
+    // let userpf = read_profile(account.id, goodmorning_services::structs::GMServices::Tex).await?;
     let username = html_escape::encode_safe(&account.username);
     let status = html_escape::encode_safe(&account.status);
     let desc = html_escape::encode_safe(&userpf.description);
@@ -113,7 +114,7 @@ async fn profile_task(req: &HttpRequest) -> Result<HttpResponse, Box<dyn Error>>
     <div class="container">
       <div id="profile-top">
         <img
-          src="/api/tex/generic/v1/pfp/id/1"
+          src="/api/generic/v1/pfp/id/1"
           width="100"
           height="100"
           alt=""

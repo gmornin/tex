@@ -1,5 +1,5 @@
 function create() {
-  let url = "/api/tex/generic/v1/create";
+  let url = "/api/generic/v1/create";
   let token = getCookie("token");
   if (token === null) {
     window.location.pathname = "/login";

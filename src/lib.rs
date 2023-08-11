@@ -7,9 +7,11 @@
 mod r#static;
 pub use r#static::*;
 
+pub mod api;
 pub mod components;
 pub mod functions;
 pub mod pages;
+pub mod structs;
 
 mod values;
 pub use values::*;

@@ -186,7 +186,7 @@ function save(f) {
 saveBtn.onclick = save;
 
 function compileFile(target, btn) {
-  let url = "/api/tex/compile/v1/simple";
+  let url = "/api/compile/v1/simple";
   let data = {
     token,
     path: compilePath,

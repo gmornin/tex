@@ -16,7 +16,7 @@ dialog {
   color: white;
 }
 
-#target, #copytarget {
+#target, #copytarget, #createtarget {
   background-color: #181a1b;
   color: white;
   border: rgba(255, 255, 255, 0.1) solid 1px;
@@ -27,22 +27,22 @@ dialog {
   background-color: rgba(0, 0, 0, 0.5);
 }
 
-#uploadbut, #copybut {
+.submitbut {
   color: white;
   background-color: #2266cc;
 }
 
-#uploadbut:hover {
+.submitbut:hover {
   background-color: #4488ff;
   cursor: pointer;
 }
 
-#uploadbut[disabled="disabled"],
-#uploadbut:disabled {
+.submitbut[disabled="disabled"],
+.submitbut:disabled {
   background-color: #4488ff;
 }
 
-#x:hover {
+.x:hover {
   color: #ff6666;
 }
 

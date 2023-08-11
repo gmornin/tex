@@ -9,7 +9,7 @@ use tokio::fs;
 use crate::{
     components::{self, available_targets, ext_to_mode, topbar_option_from_req},
     functions::{from_res, gen_nonce},
-    CSP_BASE,
+    CREATE_ACC, CSP_BASE, NOT_TXT,
 };
 
 #[get("/edit/{path:.*}")]
@@ -21,7 +21,7 @@ async fn edit_task(path: Path<String>, req: &HttpRequest) -> Result<HttpResponse
     let (topbar, account) = match topbar_option_from_req(req).await? {
         Ok(Some(stuff)) => stuff,
         Ok(None) => {
-            return Ok(NamedFile::open_async("static/htmls/create-acc.html")
+            return Ok(NamedFile::open_async(CREATE_ACC.get().unwrap())
                 .await?
                 .into_response(req))
         }
@@ -57,7 +57,7 @@ async fn edit_task(path: Path<String>, req: &HttpRequest) -> Result<HttpResponse
     let content = match std::str::from_utf8(&buf) {
         Ok(s) => s,
         Err(_) => {
-            return Ok(NamedFile::open_async("static/htmls/not-txt.html")
+            return Ok(NamedFile::open_async(NOT_TXT.get().unwrap())
                 .await?
                 .into_response(req))
         }

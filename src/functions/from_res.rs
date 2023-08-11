@@ -1,7 +1,9 @@
 use actix_files::NamedFile;
 use actix_web::{http::StatusCode, HttpRequest, HttpResponse};
 use goodmorning_bindings::{services::v1::V1Error, traits::ErrorTrait};
-use std::error::Error;
+use std::{error::Error, path::Path};
+
+use crate::BEEN_LOGGEDOUT;
 
 use super::internalserver_error;
 
@@ -20,14 +22,14 @@ pub async fn from_res(
     };
 
     let path = match v1e {
-        V1Error::InvalidToken => "static/htmls/been-loggedout.html",
+        V1Error::InvalidToken => BEEN_LOGGEDOUT.get().unwrap(),
         _ => return internalserver_error(err),
     };
 
     file(path, req, v1e.status_code()).await
 }
 
-pub async fn file(path: &str, req: &HttpRequest, code: u16) -> HttpResponse {
+pub async fn file(path: &Path, req: &HttpRequest, code: u16) -> HttpResponse {
     match NamedFile::open_async(path).await {
         Ok(file) => {
             let mut res = file.into_response(req);

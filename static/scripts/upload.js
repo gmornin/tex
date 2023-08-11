@@ -40,7 +40,7 @@ document.getElementById("upload").onclick = () => {
   backdrop.style.display = "block";
 };
 
-document.getElementById("uploadx").onclick = () => {
+document.querySelector("#uploadd .x").onclick = () => {
   dialog.close();
 };
 
