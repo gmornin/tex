@@ -41,3 +41,13 @@ pub fn internalserver_error(e: Box<dyn Error>) -> HttpResponse {
     );
     HttpResponse::InternalServerError().body(body)
 }
+
+#[macro_export]
+macro_rules! intererr {
+    ($res: expr) => {
+        match $res {
+            Ok(r) => r,
+            Err(e) => return $crate::functions::internalserver_error(e.into()),
+        }
+    };
+}

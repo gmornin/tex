@@ -8,3 +8,5 @@ mod size;
 pub use size::*;
 mod gets;
 pub use gets::*;
+mod get_file;
+pub use get_file::*;

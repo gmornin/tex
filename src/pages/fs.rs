@@ -3,11 +3,11 @@ use std::{borrow::Cow, error::Error, ffi::OsStr, path::PathBuf};
 use actix_files::NamedFile;
 use actix_web::{
     get,
-    http::header::{ContentDisposition, ContentType},
+    http::header::{ContentDisposition, ContentType, HeaderValue},
     web::Path,
     HttpRequest, HttpResponse,
 };
-use goodmorning_bindings::services::v1::V1Error;
+use goodmorning_services::bindings::services::v1::V1Error;
 use goodmorning_services::{
     functions::{dir_items, get_user_dir},
     structs::{Account, GMServices, ItemVisibility, Visibilities},
@@ -20,17 +20,39 @@ use crate::{
     components::{
         self, html_friendly_mime, topbar_from_req, FsItem, FsItemProp, Img, ImgProp, PathProp,
     },
-    functions::{from_res, gen_nonce},
-    CSP_BASE, NOT_FOUND,
+    functions::{from_res, gen_nonce, get_file},
+    intererr, CSP_BASE, IMG_NOT_FOUND, NOT_FOUND,
 };
 
 #[get("/fs/{id}/{path:.*}")]
 pub async fn fspath(path: Path<(i64, String)>, req: HttpRequest) -> HttpResponse {
+    if !req
+        .headers()
+        .get("accept")
+        .unwrap_or(&HeaderValue::from_str("html").unwrap())
+        .to_str()
+        .unwrap()
+        .contains("html")
+    {
+        let (id, path) = path.into_inner();
+        return get_file(id, &path, &req).await;
+    }
     from_res(fs_task(path, &req).await, &req).await
 }
 
 #[get("/fs/{id}")]
 pub async fn root(path: Path<i64>, req: HttpRequest) -> HttpResponse {
+    if !req
+        .headers()
+        .get("accept")
+        .unwrap_or(&HeaderValue::from_str("html").unwrap())
+        .to_str()
+        .unwrap()
+        .contains("html")
+    {
+        return intererr!(NamedFile::open_async(IMG_NOT_FOUND.get().unwrap()).await)
+            .into_response(&req);
+    }
     from_res(
         fs_task(Path::from((path.into_inner(), String::new())), &req).await,
         &req,

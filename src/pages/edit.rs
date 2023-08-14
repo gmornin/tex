@@ -1,11 +1,13 @@
 use std::{error::Error, ffi::OsStr, path::PathBuf};
 
 use actix_files::NamedFile;
+use actix_web::http::header::HeaderValue;
 use actix_web::{get, http::header::ContentType, web::Path, HttpRequest, HttpResponse};
-use goodmorning_bindings::services::v1::V1Error;
+use goodmorning_services::bindings::services::v1::V1Error;
 use goodmorning_services::{functions::get_user_dir, structs::GMServices};
 use tokio::fs;
 
+use crate::functions::get_file_noid;
 use crate::{
     components::{self, available_targets, ext_to_mode, topbar_option_from_req},
     functions::{from_res, gen_nonce},
@@ -14,6 +16,17 @@ use crate::{
 
 #[get("/edit/{path:.*}")]
 pub async fn edit(path: Path<String>, req: HttpRequest) -> HttpResponse {
+    if !req
+        .headers()
+        .get("accept")
+        .unwrap_or(&HeaderValue::from_str("html").unwrap())
+        .to_str()
+        .unwrap()
+        .contains("html")
+    {
+        return get_file_noid(&path, &req).await;
+    }
+
     from_res(edit_task(path, &req).await, &req).await
 }
 

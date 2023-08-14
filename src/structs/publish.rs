@@ -1,5 +1,5 @@
 use futures_util::StreamExt;
-use goodmorning_bindings::services::v1::V1TexUserPublish;
+use goodmorning_services::bindings::services::v1::V1TexUserPublish;
 use mongodb::options::FindOptions;
 use serde::{Deserialize, Serialize};
 use std::error::Error;

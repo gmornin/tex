@@ -1,6 +1,6 @@
 use actix_files::NamedFile;
 use actix_web::{http::StatusCode, HttpRequest, HttpResponse};
-use goodmorning_bindings::{services::v1::V1Error, traits::ErrorTrait};
+use goodmorning_services::bindings::{services::v1::V1Error, traits::ErrorTrait};
 use std::{error::Error, path::Path};
 
 use crate::BEEN_LOGGEDOUT;

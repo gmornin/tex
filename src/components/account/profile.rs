@@ -1,4 +1,6 @@
-use goodmorning_bindings::structs::{BirthDayDetail, CakeDayDetail, ContactDetail, ProfileDetail};
+use goodmorning_services::bindings::structs::{
+    BirthDayDetail, CakeDayDetail, ContactDetail, ProfileDetail,
+};
 use yew::{function_component, html, Html, Properties};
 
 #[derive(PartialEq, Properties)]

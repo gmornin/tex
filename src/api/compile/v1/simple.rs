@@ -5,8 +5,10 @@ use actix_web::{
     web::{self, Json},
     HttpResponse,
 };
-use goodmorning_bindings::services::v1::*;
+use goodmorning_services::bindings::services::v1::*;
 use goodmorning_services::{functions::*, structs::*, *};
+
+use crate::structs::CompileTask;
 
 #[post("/simple")]
 async fn simple(post: Json<V1Compile>, jobs: web::Data<Jobs>) -> HttpResponse {
@@ -31,16 +33,16 @@ async fn simple_task(
     }
 
     let res = jobs
-        .run_with_limit(
+        .v1_run_with_limit(
             account.id,
-            SingleTask::Compile {
+            Box::new(CompileTask {
                 from: post.from,
                 to: post.to,
                 compiler: post.compiler.unwrap_or_default(),
                 source,
                 user_path,
                 restrict_path,
-            },
+            }),
             *MAX_CONCURRENT.get().unwrap(),
         )
         .await?;

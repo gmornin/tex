@@ -79,3 +79,9 @@ span.running:hover {
   font-family: Inter, sans-serif;
   font-weight: 300;
 }
+
+#html-preview img {
+  max-width: 30vw;
+  margin-left: auto;
+  margin-right: auto;
+}

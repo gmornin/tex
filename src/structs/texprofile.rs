@@ -1,4 +1,4 @@
-use goodmorning_bindings::structs::ProfileCustomisable;
+use goodmorning_services::bindings::structs::ProfileCustomisable;
 use goodmorning_services::traits::CollectionItem;
 use serde::{Deserialize, Serialize};
 use std::error::Error;

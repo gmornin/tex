@@ -1,4 +1,4 @@
-use goodmorning_bindings::services::v1::V1DirItem;
+use goodmorning_services::bindings::services::v1::V1DirItem;
 use goodmorning_services::structs::{ItemVisibility, Visibility};
 use serde::Serialize;
 use yew::{function_component, html, Html, Properties};

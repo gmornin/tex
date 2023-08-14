@@ -18,6 +18,7 @@ pub static PUBLISHES_DB: OnceCell<Database> = OnceCell::new();
 pub static TEX_DB: OnceCell<Database> = OnceCell::new();
 pub static STATIC_PATH: OnceCell<PathBuf> = OnceCell::new();
 pub static STATIC_PATH_STR: OnceCell<String> = OnceCell::new();
+pub static PFP_DEFAULT: OnceCell<PathBuf> = OnceCell::new();
 
 // paths
 pub static BEEN_LOGGEDOUT: OnceCell<PathBuf> = OnceCell::new();
@@ -29,6 +30,7 @@ pub static FINISH_SETUP: OnceCell<PathBuf> = OnceCell::new();
 pub static LOGIN_ASK_LOGOUT: OnceCell<PathBuf> = OnceCell::new();
 pub static REGISTER: OnceCell<PathBuf> = OnceCell::new();
 pub static LOGIN: OnceCell<PathBuf> = OnceCell::new();
+pub static IMG_NOT_FOUND: OnceCell<PathBuf> = OnceCell::new();
 // pub static REGISTER: OnceCell<PathBuf> = OnceCell::new();
 
 pub static PROFILES: OnceCell<Collection<TexProfile>> = OnceCell::new();
@@ -53,6 +55,7 @@ pub async fn gmtvalinit() {
     STATIC_PATH_STR
         .set(STATIC_PATH.get().unwrap().to_str().unwrap().to_string())
         .unwrap();
+    PFP_DEFAULT.set(parse_path(tex_config.pfp_default)).unwrap();
 
     BEEN_LOGGEDOUT
         .set(STATIC_PATH.get().unwrap().join("htmls/been-loggedout.html"))
@@ -85,6 +88,9 @@ pub async fn gmtvalinit() {
         .unwrap();
     LOGIN
         .set(STATIC_PATH.get().unwrap().join("htmls/login.html"))
+        .unwrap();
+    IMG_NOT_FOUND
+        .set(STATIC_PATH.get().unwrap().join("icons/notfound.svg"))
         .unwrap();
 
     PROFILES.set(get_tex_profiles()).unwrap();

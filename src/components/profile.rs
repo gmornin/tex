@@ -1,4 +1,4 @@
-use goodmorning_bindings::structs::{
+use goodmorning_services::bindings::structs::{
     BirthDayDetail, CakeDayDetail, ContactDetail, ProfileAccount, ProfileCustomisable,
     ProfileDetail,
 };

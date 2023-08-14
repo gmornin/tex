@@ -1,7 +1,7 @@
 use std::error::Error;
 
 use actix_web::{post, web::Json, HttpResponse};
-use goodmorning_bindings::{
+use goodmorning_services::bindings::{
     services::v1::{V1Error, V1ProfileOnly, V1Response},
     structs::ProfileDetail,
 };

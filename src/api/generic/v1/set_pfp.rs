@@ -2,7 +2,7 @@ use std::error::Error;
 
 use actix_multipart::Multipart;
 use actix_web::{post, web::Path, HttpRequest, HttpResponse};
-use goodmorning_bindings::services::v1::{V1Error, V1Response};
+use goodmorning_services::bindings::services::v1::{V1Error, V1Response};
 use goodmorning_services::{functions::*, structs::*, *};
 use tokio::{fs::OpenOptions, io::AsyncWriteExt};
 

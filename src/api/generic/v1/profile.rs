@@ -1,7 +1,7 @@
 use std::error::Error;
 
 use actix_web::{get, web, HttpResponse};
-use goodmorning_bindings::services::v1::{V1Error, V1Response};
+use goodmorning_services::bindings::services::v1::{V1Error, V1Response};
 use goodmorning_services::{
     functions::*,
     structs::{Account, GMServices},

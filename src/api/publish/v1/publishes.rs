@@ -7,7 +7,7 @@ use actix_web::{
 };
 use goodmorning_services::{functions::*, structs::*};
 
-use goodmorning_bindings::services::v1::V1Response;
+use goodmorning_services::bindings::services::v1::V1Response;
 use serde::Deserialize;
 
 use crate::structs::TexPublish;

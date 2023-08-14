@@ -2,13 +2,14 @@ use std::error::Error;
 
 use actix_files::NamedFile;
 use actix_web::{get, web, HttpRequest, HttpResponse};
-use goodmorning_bindings::services::v1::{V1Error, V1Response};
+use goodmorning_services::bindings::services::v1::{V1Error, V1Response};
 use goodmorning_services::{
     functions::*,
     structs::{Account, GMServices},
-    PFP_DEFAULT,
 };
 use tokio::fs;
+
+use crate::PFP_DEFAULT;
 
 #[get("/pfp/id/{id}")]
 async fn pfp(id: web::Path<i64>, req: HttpRequest) -> HttpResponse {
