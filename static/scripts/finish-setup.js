@@ -26,7 +26,7 @@ function create() {
     .then((data) => {
       switch (data.type) {
         case "error":
-          errorDisplay.innerHTML = `Server responded with error <code>${data.kind}</code>`;
+          errorDisplay.innerHTML = `Server responded with error <code>${JSON.stringify(data.kind)}</code>`;
           break;
         case "service created":
           button.removeAttribute("disabled");
