@@ -214,3 +214,37 @@ li:hover .plus {
 .badge img:first-child {
   height: 20px;
 }
+
+#pfp-container {
+  position: relative;
+}
+
+#pfp-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: scale(30%);
+  opacity: 0;
+}
+
+#pfp-container:hover {
+  cursor: pointer;
+}
+
+.hover-loading:hover {
+  cursor: wait !important;
+}
+
+#pfp-container:hover #pfp {
+  filter: brightness(50%);
+  transition: 0.1s;
+}
+
+#pfp-container:hover #pfp-overlay {
+  transition: 0.1s;
+  opacity: 1;
+}
+
+#pfp-container input {
+  display: none;
+}

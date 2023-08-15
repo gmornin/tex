@@ -187,7 +187,7 @@ async fn dir(
             id="upload-folder"
             height="50px"
           />
-          <input type="file" directory />
+          <input type="file" directory webkitdirectory multiple />
         </label>
       </div>
       <p id="upload-from">Source: <span>select a source</span></p>

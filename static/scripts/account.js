@@ -3,6 +3,9 @@ let addbut = document.getElementById("add");
 let addd = document.getElementById("addd");
 let backdrop = document.getElementById("backdrop");
 let badges = document.getElementById("badges");
+let pfp = document.getElementById("pfp");
+let pfp_input = document.querySelector("#pfp-container input");
+let pfp_container = document.getElementById("pfp-container");
 
 function updateHeight(ele) {
   ele.style.height = ""; /* Reset the height*/
@@ -340,3 +343,36 @@ for (const save of Array.from(document.getElementsByClassName("save"))) {
     }
   };
 }
+
+pfp_input.oninput = (_event) => {
+  pfp_input.disabled = true;
+  pfp_container.classList.add("hover-loading");
+
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", `/api/generic/v1/set-pfp/${getCookie("token")}`, true);
+
+  const formData = new FormData();
+  formData.append("file", pfp_input.files[0]);
+
+  xhr.onreadystatechange = function (event) {
+    if (xhr.readyState === 4) {
+      let res = JSON.parse(event.target.responseText);
+      if (res.type == "error") {
+        console.error(res);
+        alert(
+          `Upload failed: ${res.kind.type}\nNote that only pngs are allowed at the moment`
+        );
+      } else {
+        pfp.src = `/api/generic/v1/pfp/id/${localStorage.getItem(
+          "userid"
+        )}?time=${Date.now()}`;
+        alert(
+          "Pfp updated, wait while the cached image wears off in other pages"
+        );
+      }
+      pfp_input.removeAttribute("disabled");
+      pfp_container.classList.remove("hover-loading");
+    }
+  };
+  xhr.send(formData);
+};

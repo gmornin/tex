@@ -1,6 +1,7 @@
 use std::error::Error;
 
 use actix_files::NamedFile;
+use actix_web::http::header::{self, HeaderValue};
 use actix_web::{get, web, HttpRequest, HttpResponse};
 use goodmorning_services::bindings::services::v1::{V1Error, V1Response};
 use goodmorning_services::{
@@ -64,5 +65,10 @@ async fn pfp_name_task(
             .into_response(&req));
     }
 
-    Ok(NamedFile::open_async(path).await?.into_response(&req))
+    let mut res = NamedFile::open_async(path).await?.into_response(&req);
+    res.headers_mut().insert(
+        header::CACHE_CONTROL,
+        HeaderValue::from_static("max-age=60"),
+    );
+    Ok(res)
 }

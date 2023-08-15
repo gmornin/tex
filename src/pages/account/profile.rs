@@ -27,6 +27,7 @@ async fn profile_task(req: &HttpRequest) -> Result<HttpResponse, Box<dyn Error>>
     };
 
     let userpf = TexProfile::find_default(account.id).await?.profile;
+    let id = account.id;
     // let userpf = read_profile(account.id, goodmorning_services::structs::GMServices::Tex).await?;
     let username = html_escape::encode_safe(&account.username);
     let status = html_escape::encode_safe(&account.status);
@@ -113,12 +114,11 @@ async fn profile_task(req: &HttpRequest) -> Result<HttpResponse, Box<dyn Error>>
     {topbar}
     <div class="container">
       <div id="profile-top">
-        <img
-          src="/api/generic/v1/pfp/id/1"
-          width="100"
-          height="100"
-          alt=""
-        />
+        <label id="pfp-container">
+          <input type="file" accept=".png" />
+          <img src="/api/generic/v1/pfp/id/{id}" width="100" height="100" id="pfp" />
+          <img src="/static/icons/edit.svg" id="pfp-overlay" />
+        </label>
         <div id="profile-top-right">
           <input
             type="text"

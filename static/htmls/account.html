@@ -65,7 +65,9 @@
             <img src="/static/icons/youtube.svg" />YouTube
           </li>
           <li field="odysee"><img src="/static/icons/odysee.svg" />Odysee</li>
-          <li field="website"><img src="/static/icons/link.svg" />Website (URL)</li>
+          <li field="website">
+            <img src="/static/icons/link.svg" />Website (URL)
+          </li>
         </ul>
       </div>
     </dialog>
@@ -91,12 +93,11 @@
     </div>
     <div class="container">
       <div id="profile-top">
-        <img
-          src="/api/generic/v1/pfp/id/1"
-          width="100"
-          height="100"
-          alt=""
-        />
+        <label id="pfp-container">
+          <input type="file" />
+          <img src="/api/generic/v1/pfp/id/1" width="100" height="100" id="pfp" />
+          <img src="/static/icons/edit.svg" id="pfp-overlay" />
+        </label>
         <div id="profile-top-right">
           <input
             type="text"
@@ -122,25 +123,21 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
       </center>
       <ul id="badges">
         <li class="badge" field="github">
-          <img
-            src="/static/icons/github.svg"
-            alt=""
-            draggable="true"
-          /><input type="text" class="badge-value" value="siriusmart" />
+          <img src="/static/icons/github.svg" alt="" draggable="true" /><input
+            type="text"
+            class="badge-value"
+            value="siriusmart"
+          />
         </li>
         <li class="badge" field="email">
-          <img
-            src="/static/icons/envolope.svg"
-            alt=""
-            draggable="true"
-          /><input type="text" class="badge-value" value="siriusmart@tuta.io" />
+          <img src="/static/icons/envolope.svg" alt="" draggable="true" /><input
+            type="text"
+            class="badge-value"
+            value="siriusmart@tuta.io"
+          />
         </li>
         <li class="badge" field="website">
-          <img
-            src="/static/icons/link.svg"
-            alt=""
-            draggable="true"
-          /><input
+          <img src="/static/icons/link.svg" alt="" draggable="true" /><input
             type="text"
             class="badge-value"
             value="siriusmart.github.io"
