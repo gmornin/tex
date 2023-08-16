@@ -11,6 +11,9 @@ use tokio::fs;
 use tokio::io::AsyncWriteExt;
 use tokio::process::Command;
 
+use crate::structs::FirejailBehavior;
+use crate::{FIREJAIL_BEHAVIOR, PDFLATEX};
+
 #[derive(Clone, Debug)]
 pub struct CompileTask {
     pub from: FromFormat,
@@ -66,7 +69,8 @@ impl TaskItem for CompileTask {
                 "md",
             ) => pulldown_cmark_md2html(&self.source, &self.user_path, ver, id).await,
             (FromFormat::Latex, ToFormat::Pdf, Compiler::Default | Compiler::Pdflatex, "tex") => {
-                pdflatex_latex2pdf(id, &self.user_path, &self.restrict_path, ver).await
+                pdflatex_latex2pdf(id, &self.user_path, &self.source, &self.restrict_path, ver)
+                    .await
             }
             _ => CommonRes::any_err(Box::new(TexCompileError::InvalidCompileRequest), ver),
         }
@@ -151,30 +155,50 @@ pub async fn pdflatex_latex2pdf(
     // source: &Path,
     taskid: u64,
     user_path: &Path,
+    source: &Path,
     restrict_path: &Path,
     ver: &ApiVer,
 ) -> CommonRes {
     let output = catch!(
-        Command::new("firejail")
-            .arg(format!("--private={}", restrict_path.to_str().unwrap()))
-            .arg("--noprofile")
-            .arg("pdflatex")
-            .arg("-interaction")
-            .arg("nonstopmode")
-            .arg("-halt-on-error")
-            .arg("-file-line-error")
-            .arg(format!(
-                "-output-directory=./{}",
-                user_path
-                    .parent()
-                    .unwrap_or(Path::new(""))
-                    .to_str()
-                    .unwrap()
-                    .trim_start_matches('/')
-            ))
-            .arg(user_path.to_str().unwrap())
-            .output()
-            .await,
+        match FIREJAIL_BEHAVIOR.get().unwrap() {
+            FirejailBehavior::Arch =>
+                Command::new("firejail")
+                    .arg(format!("--private={}", restrict_path.to_str().unwrap()))
+                    .arg("--noprofile")
+                    .arg(PDFLATEX.get().unwrap())
+                    .arg("-interaction")
+                    .arg("nonstopmode")
+                    .arg("-halt-on-error")
+                    .arg("-file-line-error")
+                    .arg(format!(
+                        "-output-directory=./{}",
+                        user_path
+                            .parent()
+                            .unwrap_or(Path::new(""))
+                            .to_str()
+                            .unwrap()
+                            .trim_start_matches('/')
+                    ))
+                    .arg(user_path.to_str().unwrap())
+                    .output()
+                    .await,
+            FirejailBehavior::Debian =>
+                Command::new("firejail")
+                    .arg(format!("--private={}", restrict_path.to_str().unwrap()))
+                    .arg("--noprofile")
+                    .arg(PDFLATEX.get().unwrap())
+                    .arg("-interaction")
+                    .arg("nonstopmode")
+                    .arg("-halt-on-error")
+                    .arg("-file-line-error")
+                    .arg(format!(
+                        "-output-directory={}",
+                        source.parent().unwrap_or(Path::new("")).to_str().unwrap()
+                    ))
+                    .arg(source.to_str().unwrap())
+                    .output()
+                    .await,
+        },
         ver
     );
 

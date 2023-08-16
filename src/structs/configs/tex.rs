@@ -12,6 +12,10 @@ pub struct TexConfig {
     pub publishes_db: String,
     #[serde(default = "static_path_default")]
     pub static_path: String,
+    #[serde(default)]
+    pub firejail_behavior: FirejailBehavior,
+    #[serde(default)]
+    pub locations: TexLocations,
 }
 
 impl Default for TexConfig {
@@ -21,6 +25,8 @@ impl Default for TexConfig {
             generic_db: generic_db_default(),
             static_path: static_path_default(),
             pfp_default: pfp_default_default(),
+            firejail_behavior: Default::default(),
+            locations: Default::default(),
         }
     }
 }
@@ -43,4 +49,36 @@ fn static_path_default() -> String {
 
 fn pfp_default_default() -> String {
     "assets/pfp-default.svg".to_string()
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub enum FirejailBehavior {
+    #[serde(rename = "arch")]
+    Arch,
+    #[serde(rename = "debian")]
+    Debian,
+}
+
+impl Default for FirejailBehavior {
+    fn default() -> Self {
+        Self::Arch
+    }
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct TexLocations {
+    #[serde(default = "pdflatex_default")]
+    pub pdflatex: String,
+}
+
+fn pdflatex_default() -> String {
+    "pdflatex".to_string()
+}
+
+impl Default for TexLocations {
+    fn default() -> Self {
+        Self {
+            pdflatex: pdflatex_default(),
+        }
+    }
 }

@@ -10,7 +10,7 @@ use once_cell::sync::OnceCell;
 
 use crate::{
     functions::get_tex_profiles,
-    structs::{TexConfig, TexProfile},
+    structs::{FirejailBehavior, TexConfig, TexProfile},
 };
 
 pub static CSP_BASE: OnceCell<String> = OnceCell::new();
@@ -19,6 +19,8 @@ pub static TEX_DB: OnceCell<Database> = OnceCell::new();
 pub static STATIC_PATH: OnceCell<PathBuf> = OnceCell::new();
 pub static STATIC_PATH_STR: OnceCell<String> = OnceCell::new();
 pub static PFP_DEFAULT: OnceCell<PathBuf> = OnceCell::new();
+pub static FIREJAIL_BEHAVIOR: OnceCell<FirejailBehavior> = OnceCell::new();
+pub static PDFLATEX: OnceCell<String> = OnceCell::new();
 
 // paths
 pub static BEEN_LOGGEDOUT: OnceCell<PathBuf> = OnceCell::new();
@@ -56,6 +58,8 @@ pub async fn gmtvalinit() {
         .set(STATIC_PATH.get().unwrap().to_str().unwrap().to_string())
         .unwrap();
     PFP_DEFAULT.set(parse_path(tex_config.pfp_default)).unwrap();
+    FIREJAIL_BEHAVIOR.set(tex_config.firejail_behavior).unwrap();
+    PDFLATEX.set(tex_config.locations.pdflatex).unwrap();
 
     BEEN_LOGGEDOUT
         .set(STATIC_PATH.get().unwrap().join("htmls/been-loggedout.html"))
