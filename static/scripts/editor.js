@@ -4,7 +4,7 @@ function getCookie(name) {
   if (parts.length === 2) return parts.pop().split(";").shift();
 }
 
-let compilePath = window.location.pathname.split("/").slice(2).join("/");
+let compilePath = decodeURIComponent(window.location.pathname.split("/").slice(2).join("/"));
 let savePath = `tex/${compilePath}`;
 
 document.getElementById("undo").onclick = () => editor.undo();

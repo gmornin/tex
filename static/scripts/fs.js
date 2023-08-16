@@ -539,10 +539,11 @@ copybut.onclick = () => {
         return;
       }
       copybut.innerText = "Copied!";
+      console.log(copy_target.value.split("/").slice(1, -1).join("/"));
       refresh(
-        `${localStorage.getItem("userid")}${copy_target.value
+        `${localStorage.getItem("userid")}/${copy_target.value
           .split("/")
-          .slice(-1)
+          .slice(1, -1)
           .join("/")}`
       );
     })
@@ -593,7 +594,7 @@ function create_reset() {
   isFileAdd = true;
   create_highlight();
   create_target.value = "";
-  createbut.innerText = "Copy";
+  createbut.innerText = "Create";
 }
 
 fileadd.onclick = () => {
