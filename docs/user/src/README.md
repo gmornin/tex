@@ -8,8 +8,22 @@ You have the freedom to publish your work privately or publicly, written in any 
 
 > GM Tex is a fresh project in its early development, ***missing features are expected***.
 
-## Why GoodMorning Tex
+## Roadmap
 
-**Because it feels like home**, everyone is given their own file system. You are completely free to structure your document however you wish. Such flexibility is not permitted in services such as [Overleaf](https://www.overleaf.com/), as you were forced to organised into a flat list of documents - without nesting support.
+As in early development, here are some of the features which GM Tex currently offers, or are planned to be implemented.
 
-In GM Tex, nesting can easily be achieved. As it is a **basic file system features** to create folders and subfolders, the file system on GM Tex is just as powerful as the one running on your system.
+- [x] Compiling LaTex, Markdown documents.
+- [x] Previewing plain text files, images and documents.
+- [x] Editing files in web editor.
+- [ ] Basic file operations. (missing moving/renaming files)
+- [x] Full profile customisations.
+
+---
+
+- [ ] Publishing documents (cannot directly access items using publish ID, nor is it in web UI)
+- [ ] Creating collections from published items.
+- [ ] Following users, collections, and get notifications from it.
+
+## Goals
+
+The goal is to create a **federated publishing service**, for learners to read and write notes, and *I-want-internet-validation* people to publish articles for upvotes.

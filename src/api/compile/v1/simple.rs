@@ -5,7 +5,7 @@ use actix_web::{
     web::{self, Json},
     HttpResponse,
 };
-use goodmorning_services::bindings::services::v1::*;
+use goodmorning_services::bindings::{services::v1::*, structs::ApiVer};
 use goodmorning_services::{functions::*, structs::*, *};
 
 use crate::structs::CompileTask;
@@ -32,8 +32,8 @@ async fn simple_task(
         return Err(V1Error::PermissionDenied.into());
     }
 
-    let res = jobs
-        .v1_run_with_limit(
+    Ok(jobs
+        .run_with_limit(
             account.id,
             Box::new(CompileTask {
                 from: post.from,
@@ -42,10 +42,11 @@ async fn simple_task(
                 source,
                 user_path,
                 restrict_path,
-            }),
+            },
+            ),
             *MAX_CONCURRENT.get().unwrap(),
+                ApiVer::V1
         )
-        .await?;
-
-    Ok(res)
+        .await
+        .as_v1()?)
 }

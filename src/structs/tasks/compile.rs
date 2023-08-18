@@ -206,13 +206,13 @@ pub async fn pdflatex_latex2pdf(
         return match ver {
             ApiVer::V1 => CommonRes::V1(Err(V1Error::CompileError {
                 content: catch!(String::from_utf8(output.stdout), ver)
-                    .lines()
-                    .rev()
-                    .skip(2)
-                    .step_by(2)
-                    .take(2)
-                    .collect::<Vec<_>>()
-                    .join("\n"),
+                    // .lines()
+                    // .rev()
+                    // .skip(2)
+                    // .step_by(2)
+                    // .take(2)
+                    // .collect::<Vec<_>>()
+                    // .join("\n"),
             })),
         };
     }
