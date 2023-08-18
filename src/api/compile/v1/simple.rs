@@ -42,10 +42,9 @@ async fn simple_task(
                 source,
                 user_path,
                 restrict_path,
-            },
-            ),
+            }),
             *MAX_CONCURRENT.get().unwrap(),
-                ApiVer::V1
+            ApiVer::V1,
         )
         .await
         .as_v1()?)

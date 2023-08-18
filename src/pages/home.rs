@@ -34,6 +34,10 @@ async fn home(req: HttpRequest) -> HttpResponse {
   </head>
   <body>
   {}
+  <center>
+  Currenly in closed alpha.<br />
+  Message me (<a href="https://matrix.to/#/@siriusmart:matrix.org" target=_blank class="linklike">siriusmart:matrix.org</a>) for access, or <a href="https://github.com/gmornin/gmt-server" target=_blank class="linklike">host your own instance</a>.
+  </center>
   </body>
 </html>"#,
                 TOPBAR_LOGGEDOUT

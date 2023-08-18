@@ -1,5 +1,5 @@
 use futures_util::StreamExt;
-use goodmorning_services::bindings::services::v1::V1TexUserPublish;
+use goodmorning_services::bindings::services::v1::*;
 use mongodb::options::FindOptions;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
@@ -75,6 +75,18 @@ impl TexPublish {
 impl From<TexPublish> for V1TexUserPublish {
     fn from(val: TexPublish) -> Self {
         V1TexUserPublish {
+            id: val.id,
+            published: val.published,
+            title: val.title,
+            desc: val.desc,
+            ext: val.ext,
+        }
+    }
+}
+
+impl From<TexPublish> for V1SingleTexUserPublish {
+    fn from(val: TexPublish) -> Self {
+        V1SingleTexUserPublish {
             id: val.id,
             published: val.published,
             title: val.title,
