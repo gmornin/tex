@@ -17,9 +17,7 @@ use goodmorning_services::{
 use tokio::fs;
 
 use crate::{
-    components::{
-        self, html_friendly_mime, topbar_from_req, FsItem, FsItemProp, Img, ImgProp, PathProp,
-    },
+    components::{self, html_friendly_mime, topbar_from_req, FsItem, FsItemProp, PathProp},
     functions::{from_res, gen_nonce, get_file},
     intererr, CSP_BASE, IMG_NOT_FOUND, NOT_FOUND,
 };
@@ -217,6 +215,14 @@ async fn dir(
       <input type="text" id="copytarget" placeholder="Copy target" />
       <button id="copybut" class="submitbut">Copy</button>
     </dialog>
+    <dialog id="moved">
+      <div class="x">&#x2715;</div>
+      <h2>Move item</h2>
+      <center><img src="/static/icons/folder-tree.svg" height="50px" /></center>
+      <p id="move-from">Move from: <span></span></p>
+      <input type="text" id="movetarget" placeholder="Move to" />
+      <button id="movebut" class="submitbut">Move</button>
+    </dialog>
   {topbar}
 <div id="path-display">
   {path_display}
@@ -278,9 +284,7 @@ async fn file(
         "html" => components::html(&pathbuf).await?,
         _ => match (mime.type_(), mime.subtype()) {
             (mime::IMAGE, _) => (
-                yew::ServerRenderer::<Img>::with_props(move || ImgProp { url })
-                    .render()
-                    .await,
+                components::img(&url),
                 "<link rel=\"stylesheet\" href=\"/static/css/img.css\" />",
             ),
             (mime::AUDIO, _) => (
@@ -305,6 +309,16 @@ async fn file(
         },
     };
 
+    let path_escaped = html_escape::encode_safe(&path);
+    let footurls = format!(
+        r#"{}<a class="linklike" href="{url}" target=_blank>Raw</a><a class="linklike" href="{url}" download>Download</a>"#,
+        if is_owner {
+            format!(r#"<a class="linklike" id="footurls" href="/edit/{path_escaped}">Edit</a>"#)
+        } else {
+            String::new()
+        }
+    );
+
     let path_display = yew::ServerRenderer::<components::Path>::with_props(move || PathProp {
         id: account.id,
         path,
@@ -325,6 +339,7 @@ async fn file(
     <link rel="stylesheet" href="/static/css/topbar.css" />
     <link rel="stylesheet" href="/static/css/topbar-signedout.css" />
     <link rel="stylesheet" href="/static/css/path.css" />
+    <link rel="stylesheet" href="/static/css/file-previews.css" />
     <link rel="stylesheet" href="/static/css/topbar-loggedin.css" />
     <link rel="stylesheet" href="/static/css/dark/main.css" />
     <link rel="stylesheet" href="/static/css/dark/topbar.css" />
@@ -348,7 +363,7 @@ async fn file(
     <div id="display">
         {display}
         <br />
-        <center><code id="info">{info}</code></center>
+        <center><code id="info">{info}</code><br /><code id="footurls">{footurls}</code></center>
     </div>
   </body>
 </html>"#,

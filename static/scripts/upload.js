@@ -111,9 +111,7 @@ function uploadFile(file, path) {
   xhr.onreadystatechange = function (event) {
     if (xhr.readyState === 4) {
       let res = JSON.parse(event.target.responseText);
-      console.log(res);
       if (res.type == "error") {
-        console.log(res);
         uploadbut.innerText = `Upload failed: ${res.kind.type}`;
         return;
       }

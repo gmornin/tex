@@ -26,7 +26,9 @@ function create() {
     .then((data) => {
       switch (data.type) {
         case "error":
-          errorDisplay.innerHTML = `Server responded with error <code>${JSON.stringify(data.kind)}</code>`;
+          errorDisplay.innerHTML = `Server responded with error <code>${JSON.stringify(
+            data.kind
+          )}</code>`;
           break;
         case "service created":
           button.removeAttribute("disabled");
@@ -37,9 +39,11 @@ function create() {
           errorDisplay.classList.add("hide");
           return;
         default:
-          errorDisplay.innerText = `Unexpected server response (check console)`;
-          console.log(
-            `Expected server to respond with type "error" or "service created", instead got "${data.type}"`
+          errorDisplay.innerText = `Unexpected server response`;
+          alert(
+            `Expected server to respond with type "error" or "service created", instead got ${JSON.stringify(
+              data.type
+            )}`
           );
       }
       button.removeAttribute("disabled");

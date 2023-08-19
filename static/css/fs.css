@@ -53,12 +53,14 @@ dialog h2 {
 
 #upload-from,
 #copy-from,
+#move-from,
 #create-tip {
   font-size: 0.7em;
 }
 
 #target,
 #copytarget,
+#movetarget,
 #createtarget {
   transition: 100ms;
   width: calc(20em - 20px);

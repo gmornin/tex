@@ -1,5 +1,9 @@
 let pathDisplay = document.getElementById("path-display");
 let fslist = document.getElementById("fslist");
+let moved = document.getElementById("moved");
+let move_from = document.querySelector("#move-from span");
+let move_target = document.getElementById("movetarget");
+let movebut = document.getElementById("movebut");
 let copyd = document.getElementById("copyd");
 let copy_from = document.querySelector("#copy-from span");
 let copy_target = document.getElementById("copytarget");
@@ -224,6 +228,7 @@ function addListeners() {
       );
     }
   );
+  if (!fslist) return;
   Array.from(fslist.children).forEach((fragment) => {
     let path = fragment.getAttribute("path");
     fragment.addEventListener("auxclick", (_event) =>
@@ -258,420 +263,531 @@ window.addEventListener("popstate", function (_event) {
   go(path, true);
 });
 
-copyd.addEventListener("close", function (_event) {
-  backdrop.style.display = "none";
-});
+if (fslist) {
+  touchd.onclose =
+    copyd.onclose =
+    moved.onclose =
+      () => {
+        backdrop.style.display = "none";
+        create_reset();
+      };
+  document.querySelector("#moved .x").onclick = () => moved.close();
+  document.querySelector("#copyd .x").onclick = () => copyd.close();
 
-touchd.addEventListener("close", function (_event) {
-  backdrop.style.display = "none";
-  create_reset();
-});
-
-document.querySelector("#copyd .x").onclick = () => {
-  copyd.close();
-};
-
-function addDots() {
-  let items = fslist.children;
-  for (const item of items) {
-    let path = item.getAttribute("path").split("/");
-    let id = window.history.state.path.split("/")[0];
-    if (id === localStorage.getItem("userid") && path[1] !== ".system") {
-      if (
-        item.classList.contains("file") ||
-        item.classList.contains("hidden-file")
-      ) {
-        item.innerHTML +=
-          '<div class="ellipsis"><img src="/static/icons/ellipsis.svg" class="dots"/><div class="dropdown hide"><div class="dropdown-content"><span class="dropdown-item" action="edit">Edit</span><span class="dropdown-item" action="copy">Copy</span><span class="dropdown-item" action="delete">Delete</span><span class="dropdown-item" action="visibility">Change visibility<div class="dropdown dropdown-fold"><div class="dropdown-content"><div class="dropdown-item" action="public">Public</div><div class="dropdown-item" action="hidden">Hidden</div><div class="dropdown-item" action="private">Private</div><div class="dropdown-item" action="inherit">Inherit</div></div></div></span></div></div></div>';
+  function addDots() {
+    let items = fslist.children;
+    for (const item of items) {
+      let path = item.getAttribute("path").split("/");
+      let id = window.history.state.path.split("/")[0];
+      if (id === localStorage.getItem("userid") && path[1] !== ".system") {
+        if (
+          item.classList.contains("file") ||
+          item.classList.contains("hidden-file")
+        ) {
+          item.innerHTML +=
+            '<div class="ellipsis"><img src="/static/icons/ellipsis.svg" class="dots"/><div class="dropdown hide"><div class="dropdown-content"><span class="dropdown-item" action="edit">Edit</span><span class="dropdown-item" action="move">Move</span><span class="dropdown-item" action="copy">Copy</span><span class="dropdown-item" action="download">Download</span><span class="dropdown-item" action="delete">Delete</span><span class="dropdown-item" action="visibility">Change visibility<div class="dropdown dropdown-fold"><div class="dropdown-content"><div class="dropdown-item" action="public">Public</div><div class="dropdown-item" action="hidden">Hidden</div><div class="dropdown-item" action="private">Private</div><div class="dropdown-item" action="inherit">Inherit</div></div></div></span></div></div></div>';
+        } else {
+          item.innerHTML +=
+            '<div class="ellipsis"><img src="/static/icons/ellipsis.svg" class="dots"/><div class="dropdown hide"><div class="dropdown-content"><span class="dropdown-item" action="move">Move</span><span class="dropdown-item" action="copy">Copy</span><span class="dropdown-item" action="delete">Delete</span><span class="dropdown-item" action="visibility">Change visibility<div class="dropdown dropdown-fold"><div class="dropdown-content"><div class="dropdown-item" action="public">Public</div><div class="dropdown-item" action="hidden">Hidden</div><div class="dropdown-item" action="private">Private</div><div class="dropdown-item" action="inherit">Inherit</div></div></div></span></div></div></div>';
+        }
       } else {
         item.innerHTML +=
-          '<div class="ellipsis"><img src="/static/icons/ellipsis.svg" class="dots"/><div class="dropdown hide"><div class="dropdown-content"><span class="dropdown-item" action="copy">Copy</span><span class="dropdown-item" action="delete">Delete</span><span class="dropdown-item" action="visibility">Change visibility<div class="dropdown dropdown-fold"><div class="dropdown-content"><div class="dropdown-item" action="public">Public</div><div class="dropdown-item" action="hidden">Hidden</div><div class="dropdown-item" action="private">Private</div><div class="dropdown-item" action="inherit">Inherit</div></div></div></span></div></div></div>';
+          '<div class="ellipsis"><img src="/static/icons/ellipsis.svg" class="dots"/><div class="dropdown hide"><div class="dropdown-content"><span class="dropdown-item" action="copy">Copy</span></div></div>';
       }
-    } else {
-      item.innerHTML +=
-        '<div class="ellipsis"><img src="/static/icons/ellipsis.svg" class="dots"/><div class="dropdown hide"><div class="dropdown-content"><span class="dropdown-item" action="copy">Copy</span></div></div>';
-    }
-    item
-      .getElementsByClassName("dots")[0]
-      .addEventListener("click", () =>
-        clickDots(item.getElementsByClassName("ellipsis")[0])
-      );
+      item
+        .getElementsByClassName("dots")[0]
+        .addEventListener("click", () =>
+          clickDots(item.getElementsByClassName("ellipsis")[0])
+        );
 
-    let options = item.getElementsByClassName("dropdown-item");
-    for (const option of options) {
-      option.addEventListener("click", (event) => {
-        if (event.target != option) {
-          return;
-        }
-        let action = option.getAttribute("action");
-        let path =
-          option.parentNode.parentNode.parentNode.parentNode.getAttribute(
-            "path"
-          );
-
-        switch (action) {
-          case "edit":
-            window.location.pathname = `/edit/${path
-              .split("/")
-              .slice(1)
-              .join("/")}`;
-            break;
-          case "delete": {
-            let delPath = path.split("/").slice(1).join("/");
-            let token = getToken();
-            let body = {
-              path: `tex/${delPath}`,
-              token,
-            };
-
-            fetch("/api/storage/v1/delete", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(body),
-            })
-              .then((response) => response.json())
-              .then((data) => {
-                if (data.type == "error") {
-                  alert(`Error deleting file: ${JSON.stringify(data.kind)}`);
-                  return;
-                }
-                refresh();
-              })
-              .catch((error) => console.error(error));
-            break;
+      let options = item.getElementsByClassName("dropdown-item");
+      for (const option of options) {
+        option.addEventListener("click", (event) => {
+          if (event.target != option) {
+            return;
           }
-          case "visibility":
-            alert("You should choose a visibility option instead");
-            break;
-          case "public":
-          case "private":
-          case "hidden": {
-            let vispath =
-              option.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode
-                .getAttribute("path")
-                .split("/")
-                .slice(1)
-                .join("/");
-            let token = getToken();
-            let body = {
-              path: `tex/${vispath}`,
-              token,
-              visibility: action,
-            };
-
-            fetch("/api/storage/v1/set-visibility", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(body),
-            })
-              .then((response) => response.json())
-              .then((data) => {
-                if (data.type == "error") {
-                  alert(
-                    `Error changing visibility: ${JSON.stringify(data.kind)}`
-                  );
-                  return;
-                }
-                for (const path in cache) {
-                  if (
-                    path.startsWith(
-                      `${window.history.state.path.split("/")[0]}/${vispath}`
-                    )
-                  ) {
-                    delete cache[path];
-                  }
-                }
-                refresh();
-              })
-              .catch((error) => console.error(error));
-            break;
-          }
-          case "inherit": {
-            let vispath =
-              option.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode
-                .getAttribute("path")
-                .split("/")
-                .slice(1)
-                .join("/");
-            let token = getToken();
-            let body = {
-              path: `tex/${vispath}`,
-              token,
-            };
-
-            fetch("/api/storage/v1/remove-visibility", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(body),
-            })
-              .then((response) => response.json())
-              .then((data) => {
-                if (data.type == "error") {
-                  alert(
-                    `Error changing visibility: ${JSON.stringify(data.kind)}`
-                  );
-                  return;
-                }
-                for (const path in cache) {
-                  if (
-                    path.startsWith(
-                      `${window.history.state.path.split("/")[0]}/${vispath}`
-                    )
-                  ) {
-                    delete cache[path];
-                  }
-                }
-                refresh();
-              })
-              .catch((error) => console.error(error));
-            break;
-          }
-          case "copy":
-            let slash_i = path.lastIndexOf("/") + 1;
-            let file_name = path.substring(slash_i);
-            let dot_i = file_name.lastIndexOf(".");
-            let file = cache[window.history.state.path].find(
-              (item) => item.name === file_name
+          let action = option.getAttribute("action");
+          let path =
+            option.parentNode.parentNode.parentNode.parentNode.getAttribute(
+              "path"
             );
-            copybut.setAttribute("path", path);
-            copy_from.innerText = `${path} (${formatBytes(file.size)})`;
 
-            if (file.is_file) {
-              if (dot_i === 0) {
-                copy_target.value = `/${path
-                  .substring(0, slash_i)
+          switch (action) {
+            case "edit":
+              window.location.pathname = `/edit/${path
+                .split("/")
+                .slice(1)
+                .join("/")}`;
+              break;
+            case "download":
+              path = path.split("/");
+              let id = parseInt(path.shift());
+              let url;
+              path = path.join("/");
+
+              console.log(id);
+              console.log(path);
+              if (id == localStorage.getItem("userid")) {
+                url = `/api/storage/v1/file/${getToken()}/tex/${path}`;
+              } else {
+                url = `/api/usercontent/v1/file/id/${id}/tex/${path}`;
+              }
+              var link = document.createElement("a");
+              link.download = path.split("/").pop();
+              link.href = url;
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+              delete link;
+              break;
+            case "delete": {
+              let delPath = path.split("/").slice(1).join("/");
+              let token = getToken();
+              let body = {
+                path: `tex/${delPath}`,
+                token,
+              };
+
+              fetch("/api/storage/v1/delete", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(body),
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  if (data.type == "error") {
+                    alert(`Error deleting file: ${JSON.stringify(data.kind)}`);
+                    return;
+                  }
+                  refresh();
+                })
+                .catch((error) => console.error(error));
+              break;
+            }
+            case "visibility":
+              alert("You should choose a visibility option instead");
+              break;
+            case "public":
+            case "private":
+            case "hidden": {
+              let vispath =
+                option.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode
+                  .getAttribute("path")
                   .split("/")
                   .slice(1)
-                  .join("/")}${file_name}-${getCurrentTime()}`;
+                  .join("/");
+              let token = getToken();
+              let body = {
+                path: `tex/${vispath}`,
+                token,
+                visibility: action,
+              };
+
+              fetch("/api/storage/v1/set-visibility", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(body),
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  if (data.type == "error") {
+                    alert(
+                      `Error changing visibility: ${JSON.stringify(data.kind)}`
+                    );
+                    return;
+                  }
+                  for (const path in cache) {
+                    if (
+                      path.startsWith(
+                        `${window.history.state.path.split("/")[0]}/${vispath}`
+                      )
+                    ) {
+                      delete cache[path];
+                    }
+                  }
+                  refresh();
+                })
+                .catch((error) => console.error(error));
+              break;
+            }
+            case "inherit": {
+              let vispath =
+                option.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode
+                  .getAttribute("path")
+                  .split("/")
+                  .slice(1)
+                  .join("/");
+              let token = getToken();
+              let body = {
+                path: `tex/${vispath}`,
+                token,
+              };
+
+              fetch("/api/storage/v1/remove-visibility", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(body),
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  if (data.type == "error") {
+                    alert(
+                      `Error changing visibility: ${JSON.stringify(data.kind)}`
+                    );
+                    return;
+                  }
+                  for (const path in cache) {
+                    if (
+                      path.startsWith(
+                        `${window.history.state.path.split("/")[0]}/${vispath}`
+                      )
+                    ) {
+                      delete cache[path];
+                    }
+                  }
+                  refresh();
+                })
+                .catch((error) => console.error(error));
+              break;
+            }
+            case "copy": {
+              let slash_i = path.lastIndexOf("/") + 1;
+              let file_name = path.substring(slash_i);
+              let dot_i = file_name.lastIndexOf(".");
+              let file = cache[window.history.state.path].find(
+                (item) => item.name === file_name
+              );
+              copybut.setAttribute("path", path);
+              copy_from.innerText = `${path} (${formatBytes(file.size)})`;
+
+              if (file.is_file) {
+                if (dot_i === 0) {
+                  copy_target.value = `/${path
+                    .substring(0, slash_i)
+                    .split("/")
+                    .slice(1)
+                    .join("/")}${file_name}-${getCurrentTime()}`;
+                } else {
+                  copy_target.value = `/${path
+                    .substring(0, slash_i)
+                    .split("/")
+                    .slice(1)
+                    .join("/")}${file_name.substring(
+                    0,
+                    dot_i
+                  )}-${getCurrentTime()}${file_name.substring(dot_i)}`;
+                }
               } else {
                 copy_target.value = `/${path
                   .substring(0, slash_i)
                   .split("/")
                   .slice(1)
-                  .join("/")}${file_name.substring(
-                  0,
-                  dot_i
-                )}-${getCurrentTime()}${file_name.substring(dot_i)}`;
+                  .join("/")}${file.name}-${getCurrentTime()}/`;
               }
-            } else {
-              copy_target.value = `/${path
-                .substring(0, slash_i)
-                .split("/")
-                .slice(1)
-                .join("/")}${file.name}-${getCurrentTime()}/`;
+
+              backdrop.style.display = "block";
+              copyd.showModal();
+              copybut.innerText = "Copy";
+              copybut.classList.remove("not-allowed");
+              copybut.removeAttribute("disabled");
+              break;
             }
+            case "move": {
+              let slash_i = path.lastIndexOf("/") + 1;
+              let file_name = path.substring(slash_i);
+              let dot_i = file_name.lastIndexOf(".");
+              let file = cache[window.history.state.path].find(
+                (item) => item.name === file_name
+              );
+              movebut.setAttribute("path", path);
+              move_from.innerText = `${path} (${formatBytes(file.size)})`;
 
-            backdrop.style.display = "block";
-            copyd.showModal();
-            copybut.innerText = "Copy";
-            copybut.classList.remove("not-allowed");
-            copybut.removeAttribute("disabled");
-            break;
-          default:
-            console.error(`Unknown action "${action}"`);
+              if (file.is_file) {
+                if (dot_i === 0) {
+                  move_target.value = `/${path
+                    .substring(0, slash_i)
+                    .split("/")
+                    .slice(1)
+                    .join("/")}${file_name}-${getCurrentTime()}`;
+                } else {
+                  move_target.value = `/${path
+                    .substring(0, slash_i)
+                    .split("/")
+                    .slice(1)
+                    .join("/")}${file_name.substring(
+                    0,
+                    dot_i
+                  )}-${getCurrentTime()}${file_name.substring(dot_i)}`;
+                }
+              } else {
+                move_target.value = `/${path
+                  .substring(0, slash_i)
+                  .split("/")
+                  .slice(1)
+                  .join("/")}${file.name}-${getCurrentTime()}/`;
+              }
+
+              backdrop.style.display = "block";
+              moved.showModal();
+              movebut.innerText = "Move";
+              movebut.classList.remove("not-allowed");
+              movebut.removeAttribute("disabled");
+              break;
+            }
+            default:
+              console.error(`Unknown action "${action}"`);
+          }
+        });
+      }
+    }
+  }
+
+  function clickDots(parent) {
+    let dropdown = parent.getElementsByClassName("dropdown")[0];
+    if (!dropdown.classList.contains("hide")) {
+      return;
+    }
+    dropdown.classList.remove("hide");
+    dropdownsHideExcept(dropdown);
+  }
+
+  function dropdownsHideExcept(except) {
+    let dropdowns = document.getElementsByClassName("dropdown");
+    for (const dropdown of dropdowns) {
+      if (dropdown != except) {
+        dropdown.classList.add("hide");
+      }
+    }
+  }
+
+  window.addEventListener("click", (event) => {
+    if (!event.target.classList.contains("dots")) dropdownsHideExcept();
+  });
+
+  copybut.onclick = () => {
+    if (copybut.disabled) {
+      return;
+    }
+
+    copybut.disabled = true;
+    copybut.innerText = "Copying...";
+    if (!copy_target.value.startsWith("/")) {
+      copy_target.value = "/" + copy_target.value;
+    }
+
+    let from = copybut.getAttribute("path").split(/\/(.*)/s);
+    let body = {
+      token: getToken(),
+      "from-userid": parseInt(from[0]),
+      from: `/tex/${from[1]}`,
+      to: `/tex${copy_target.value}`,
+    };
+
+    let url = "/api/storage/v1/copy-overwrite";
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        copybut.classList.add("not-allowed");
+        if (data.type == "error") {
+          copybut.innerText = "Copy failed";
+          alert(`Error copying: ${JSON.stringify(data.kind)}`);
+          return;
         }
-      });
-    }
-  }
-}
-
-function clickDots(parent) {
-  let dropdown = parent.getElementsByClassName("dropdown")[0];
-  if (!dropdown.classList.contains("hide")) {
-    return;
-  }
-  dropdown.classList.remove("hide");
-  dropdownsHideExcept(dropdown);
-}
-
-function dropdownsHideExcept(except) {
-  let dropdowns = document.getElementsByClassName("dropdown");
-  for (const dropdown of dropdowns) {
-    if (dropdown != except) {
-      dropdown.classList.add("hide");
-    }
-  }
-}
-
-window.addEventListener("click", (event) => {
-  if (!event.target.classList.contains("dots")) dropdownsHideExcept();
-});
-
-copybut.onclick = () => {
-  if (copybut.disabled) {
-    return;
-  }
-
-  copybut.disabled = true;
-  copybut.innerText = "Copying...";
-  if (!copy_target.value.startsWith("/")) {
-    copy_target.value = "/" + copy_target.value;
-  }
-
-  let from = copybut.getAttribute("path").split(/\/(.*)/s);
-  let body = {
-    token: getToken(),
-    "from-userid": parseInt(from[0]),
-    from: `/tex/${from[1]}`,
-    to: `/tex${copy_target.value}`,
+        copybut.innerText = "Copied!";
+        refresh(
+          `${localStorage.getItem("userid")}/${copy_target.value
+            .split("/")
+            .slice(1, -1)
+            .join("/")}`
+        );
+      })
+      .catch((error) => console.error(error));
   };
 
-  let url = "/api/storage/v1/copy-overwrite";
-  fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      copybut.classList.add("not-allowed");
-      if (data.type == "error") {
-        copybut.innerText = "Copy failed";
-        alert(`Error copying: ${JSON.stringify(data.kind)}`);
-        return;
-      }
-      copybut.innerText = "Copied!";
-      console.log(copy_target.value.split("/").slice(1, -1).join("/"));
-      refresh(
-        `${localStorage.getItem("userid")}/${copy_target.value
-          .split("/")
-          .slice(1, -1)
-          .join("/")}`
-      );
+  movebut.onclick = () => {
+    if (movebut.disabled) {
+      return;
+    }
+
+    movebut.disabled = true;
+    movebut.innerText = "Moving...";
+    if (!move_target.value.startsWith("/")) {
+      move_target.value = "/" + move_target.value;
+    }
+
+    let from = movebut.getAttribute("path").split(/\/(.*)/s);
+    let body = {
+      token: getToken(),
+      "from-userid": parseInt(from[0]),
+      from: `/tex/${from[1]}`,
+      to: `/tex${move_target.value}`,
+    };
+
+    let url = "/api/storage/v1/move-overwrite";
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
     })
-    .catch((error) => console.error(error));
-};
+      .then((response) => response.json())
+      .then((data) => {
+        movebut.classList.add("not-allowed");
+        if (data.type == "error") {
+          movebut.innerText = "Move failed";
+          alert(`Error moving: ${JSON.stringify(data.kind)}`);
+          return;
+        }
+        movebut.innerText = "Moved!";
+        refresh(
+          `${localStorage.getItem("userid")}/${move_target.value
+            .split("/")
+            .slice(1, -1)
+            .join("/")}`
+        );
+      })
+      .catch((error) => console.error(error));
+  };
 
-function conditionallyAddDots() {
-  let token = getToken();
-  if (token) {
-    addDots();
+  function conditionallyAddDots() {
+    let token = getToken();
+    if (token) {
+      addDots();
+    }
   }
-}
 
-copy_target.oninput = () => {
-  if (!copy_target.value.startsWith("/")) {
-    copy_target.value = "/" + copy_target.value;
+  copy_target.oninput = () => {
+    if (!copy_target.value.startsWith("/")) {
+      copy_target.value = "/" + copy_target.value;
+    }
+  };
+
+  create_target.oninput = () => {
+    check_path();
+  };
+
+  conditionallyAddDots();
+
+  create.onclick = () => {
+    touchd.showModal();
+    backdrop.style.display = "block";
+  };
+
+  document.querySelector("#touchd .x").onclick = () => {
+    touchd.close();
+  };
+
+  function create_highlight() {
+    if (isFileAdd) {
+      folderadd.style.opacity = 0.5;
+      fileadd.style.opacity = 1;
+    } else {
+      fileadd.style.opacity = 0.5;
+      folderadd.style.opacity = 1;
+    }
   }
-};
 
-create_target.oninput = () => {
-  check_path();
-};
-
-conditionallyAddDots();
-
-create.onclick = () => {
-  touchd.showModal();
-  backdrop.style.display = "block";
-};
-
-document.querySelector("#touchd .x").onclick = () => {
-  touchd.close();
-};
-
-function create_highlight() {
-  if (isFileAdd) {
-    folderadd.style.opacity = 0.5;
-    fileadd.style.opacity = 1;
-  } else {
-    fileadd.style.opacity = 0.5;
-    folderadd.style.opacity = 1;
-  }
-}
-
-function create_reset() {
-  createbut.disabled = true;
-  createbut.classList.add("not-allowed");
-  isFileAdd = true;
-  create_highlight();
-  create_target.value = "";
-  createbut.innerText = "Create";
-}
-
-fileadd.onclick = () => {
-  isFileAdd = true;
-  create_highlight();
-  if (create_target.value.endsWith("/")) {
-    create_target.value = create_target.value.replace(/\/+$/, "");
-  }
-};
-
-folderadd.onclick = () => {
-  if (isFileAdd) {
-    isFileAdd = false;
-    create_highlight();
-    if (!create_target.value.endsWith("/") && create_target.value.length !== 0)
-      create_target.value += "/";
-  }
-};
-
-function check_path() {
-  isFileAdd = !create_target.value.endsWith("/");
-  create_highlight();
-  if (create_target.value.length === 0) {
+  function create_reset() {
     createbut.disabled = true;
     createbut.classList.add("not-allowed");
-  } else {
-    createbut.disabled = false;
-    createbut.classList.remove("not-allowed");
+    isFileAdd = true;
+    create_highlight();
+    create_target.value = "";
+    createbut.innerText = "Create";
   }
-}
 
-create_reset();
-
-createbut.onclick = () => {
-  createbut.disabled = true;
-  let splitted = window.history.state.path.trim().split("/");
-  let path;
-
-  if (splitted.length > 1) {
-    path = `/tex/${splitted.slice(1).join("/")}/${create_target.value}`;
-  } else {
-    path = `/tex/${create_target.value}`;
-  }
-  let body = {
-    token: getToken(),
-    path,
+  fileadd.onclick = () => {
+    isFileAdd = true;
+    create_highlight();
+    if (create_target.value.endsWith("/")) {
+      create_target.value = create_target.value.replace(/\/+$/, "");
+    }
   };
 
-  let url;
-  if (isFileAdd) {
-    url = "/api/storage/v1/touch";
-  } else {
-    url = "/api/storage/v1/mkdir";
+  folderadd.onclick = () => {
+    if (isFileAdd) {
+      isFileAdd = false;
+      create_highlight();
+      if (
+        !create_target.value.endsWith("/") &&
+        create_target.value.length !== 0
+      )
+        create_target.value += "/";
+    }
+  };
+
+  function check_path() {
+    isFileAdd = !create_target.value.endsWith("/");
+    create_highlight();
+    if (create_target.value.length === 0) {
+      createbut.disabled = true;
+      createbut.classList.add("not-allowed");
+    } else {
+      createbut.disabled = false;
+      createbut.classList.remove("not-allowed");
+    }
   }
 
-  fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.type == "error") {
-        alert(`Error creating file item: ${JSON.stringify(data.kind)}`);
-        return;
-      }
-      createbut.classList.add("not-allowed");
-      createbut.innerText = "Created!";
-      refresh(
-        `${localStorage.getItem("userid")}/${path
-          .replace(/^\/+|\/+$/g, "")
-          .split("/")
-          .slice(1, -1)
-          .join("/")}`
-      );
+  create_reset();
+
+  createbut.onclick = () => {
+    createbut.disabled = true;
+    let splitted = window.history.state.path.trim().split("/");
+    let path;
+
+    if (splitted.length > 1) {
+      path = `/tex/${splitted.slice(1).join("/")}/${create_target.value}`;
+    } else {
+      path = `/tex/${create_target.value}`;
+    }
+    let body = {
+      token: getToken(),
+      path,
+    };
+
+    let url;
+    if (isFileAdd) {
+      url = "/api/storage/v1/touch";
+    } else {
+      url = "/api/storage/v1/mkdir";
+    }
+
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
     })
-    .catch((error) => console.error(error));
-};
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.type == "error") {
+          alert(`Error creating file item: ${JSON.stringify(data.kind)}`);
+          return;
+        }
+        createbut.classList.add("not-allowed");
+        createbut.innerText = "Created!";
+        refresh(
+          `${localStorage.getItem("userid")}/${path
+            .replace(/^\/+|\/+$/g, "")
+            .split("/")
+            .slice(1, -1)
+            .join("/")}`
+        );
+      })
+      .catch((error) => console.error(error));
+  };
+}

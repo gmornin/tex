@@ -45,7 +45,7 @@
       <input type="text" id="target" placeholder="Upload target" />
       <button id="uploadbut" disabled class="submitbut">Upload</button>
     </dialog>
-    <dialog id="touchd" open>
+    <dialog id="touchd">
       <div class="x">&#x2715;</div>
       <h2>Create a file or folder</h2>
       <div id="create-types">
@@ -66,6 +66,14 @@
       <p id="copy-from">Copy from: <span></span></p>
       <input type="text" id="copytarget" placeholder="Copy target" />
       <button id="copybut" class="submitbut">Copy</button>
+    </dialog>
+    <dialog id="moved" open>
+      <div class="x">&#x2715;</div>
+      <h2>Move item</h2>
+      <center><img src="/static/icons/folder-tree.svg" height="50px" /></center>
+      <p id="move-from">Move from: <span></span></p>
+      <input type="text" id="movetarget" placeholder="Move to" />
+      <button id="movebut" class="submitbut">Copy</button>
     </dialog>
     <div id="top-bar">
       <div id="top-bar-left">

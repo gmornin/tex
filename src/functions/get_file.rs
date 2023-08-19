@@ -42,7 +42,6 @@ pub async fn get_file(id: i64, path: &str, req: &HttpRequest) -> HttpResponse {
 }
 
 pub async fn get_file_noid(path: &str, req: &HttpRequest) -> HttpResponse {
-    dbg!(path);
     let account = match match req.cookie("token") {
         Some(c) => intererr!(Account::find_by_token(c.value()).await),
         None => {

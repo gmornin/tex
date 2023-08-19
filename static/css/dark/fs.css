@@ -16,7 +16,7 @@ dialog {
   color: white;
 }
 
-#target, #copytarget, #createtarget {
+#target, #copytarget, #movetarget, #createtarget {
   background-color: #181a1b;
   color: white;
   border: rgba(255, 255, 255, 0.1) solid 1px;

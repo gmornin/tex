@@ -112,9 +112,11 @@ function signup() {
           )}`;
           return;
         default:
-          errorDisplay.innerText = `Unexpected server response (check console)`;
-          console.log(
-            `Expected server to respond with type "error" or "created", instead got "${data.type}"`
+          errorDisplay.innerText = `Unexpected server response`;
+          alert(
+            `Expected server to respond with type "error" or "created", instead got ${JSON.stringify(
+              data.type
+            )}`
           );
       }
       button.removeAttribute("disabled");
@@ -177,9 +179,11 @@ function signin() {
           window.location.pathname = "/";
           return;
         default:
-          errorDisplay.innerText = `Unexpected server response (check console)`;
-          console.log(
-            `Expected server to respond with type "error" or "success", instead got "${data.type}"`
+          errorDisplay.innerText = `Unexpected server response`;
+          alert(
+            `Expected server to respond with type "error" or "success", instead got ${JSON.stringify(
+              data.type
+            )}`
           );
       }
       button.removeAttribute("disabled");

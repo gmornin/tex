@@ -2,18 +2,12 @@ use std::{error::Error, ffi::OsStr};
 
 use log::*;
 use tokio::fs;
-use yew::{function_component, html, Html, Properties};
 
-#[derive(PartialEq, Properties)]
-pub struct ImgProp {
-    pub url: String,
-}
-
-#[function_component]
-pub fn Img(prop: &ImgProp) -> Html {
-    html! {
-        <img src={prop.url.clone()} id="img" />
-    }
+pub fn img(url: &str) -> String {
+    format!(
+        r#"<img src="{}" id="img" />"#,
+        html_escape::encode_safe(url)
+    )
 }
 
 pub fn audio(url: &str) -> String {
