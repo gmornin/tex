@@ -38,6 +38,10 @@ pub static LOGIN_ASK_LOGOUT: OnceCell<PathBuf> = OnceCell::new();
 pub static REGISTER: OnceCell<PathBuf> = OnceCell::new();
 pub static LOGIN: OnceCell<PathBuf> = OnceCell::new();
 pub static IMG_NOT_FOUND: OnceCell<PathBuf> = OnceCell::new();
+
+// generated htmls
+pub static TOPBAR_URLS: OnceCell<String> = OnceCell::new();
+pub static TOPBAR_LOGGEDOUT: OnceCell<String> = OnceCell::new();
 // pub static REGISTER: OnceCell<PathBuf> = OnceCell::new();
 
 pub static PROFILES: OnceCell<Collection<TexProfile>> = OnceCell::new();
@@ -103,6 +107,40 @@ pub async fn gmtvalinit() {
         .unwrap();
     IMG_NOT_FOUND
         .set(STATIC_PATH.get().unwrap().join("icons/notfound.svg"))
+        .unwrap();
+
+    TOPBAR_URLS
+        .set(
+            tex_config
+                .topbar_urls
+                .iter()
+                .map(|item| {
+                    format!(
+                        r#"<a href="{}" class="top-bar-link">{}</a>"#,
+                        html_escape::encode_safe(&item.url),
+                        html_escape::encode_safe(&item.label)
+                    )
+                })
+                .collect::<Vec<_>>()
+                .join(""),
+        )
+        .unwrap();
+    TOPBAR_LOGGEDOUT
+        .set(format!(
+            r#"<div id="top-bar">
+      <div id="top-bar-left">
+	<a href="/" id="top-bar-icon"><img src="/static/images/favicon-dark.svg" alt="" width="30"></a>
+    {}
+      </div>
+      <div id="top-bar-right">
+        <a href="/login" class="buttonlike buttonlike-hover" id="signin">Sign in</a>
+        <a href="/login?type=new" class="buttonlike hover-dropshadow" id="top-bar-register"
+          >Register</a
+        >
+      </div>
+    </div>"#,
+            TOPBAR_URLS.get().unwrap()
+        ))
         .unwrap();
 
     PROFILES.set(get_tex_profiles()).unwrap();

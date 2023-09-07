@@ -1,3 +1,16 @@
+const isMobile = (() => {
+  var match = window.matchMedia || window.msMatchMedia;
+  if (match) {
+    var mq = match("(pointer:coarse)");
+    return mq.matches;
+  }
+  return false;
+})();
+
+if (isMobile) {
+  document.body.id = "mobile";
+}
+
 let pathDisplay = document.getElementById("path-display");
 let fslist = document.getElementById("fslist");
 let moved = document.getElementById("moved");
@@ -284,15 +297,12 @@ if (fslist) {
           item.classList.contains("file") ||
           item.classList.contains("hidden-file")
         ) {
-          item.innerHTML +=
-            '<div class="ellipsis"><img src="/static/icons/ellipsis.svg" class="dots"/><div class="dropdown hide"><div class="dropdown-content"><span class="dropdown-item" action="edit">Edit</span><span class="dropdown-item" action="move">Move</span><span class="dropdown-item" action="copy">Copy</span><span class="dropdown-item" action="download">Download</span><span class="dropdown-item" action="delete">Delete</span><span class="dropdown-item" action="visibility">Change visibility<div class="dropdown dropdown-fold"><div class="dropdown-content"><div class="dropdown-item" action="public">Public</div><div class="dropdown-item" action="hidden">Hidden</div><div class="dropdown-item" action="private">Private</div><div class="dropdown-item" action="inherit">Inherit</div></div></div></span></div></div></div>';
+          item.innerHTML += `<div class="ellipsis"><img src="/static/icons/ellipsis.svg" class="dots"/><div class="dropdown hide"><div class="dropdown-content"><span class="dropdown-item" action="edit">Edit</span><span class="dropdown-item" action="move">Move</span><span class="dropdown-item" action="copy">Copy</span><span class="dropdown-item" action="download">Download</span><span class="dropdown-item" action="delete">Delete</span><span class="dropdown-item" action="visibility">Change visibility<div class="dropdown dropdown-fold"><div class="dropdown-content"><div class="dropdown-item" action="public">Public</div><div class="dropdown-item" action="hidden">Hidden</div><div class="dropdown-item" action="private">Private</div><div class="dropdown-item" action="inherit">Inherit</div></div></div></span></div></div></div>`;
         } else {
-          item.innerHTML +=
-            '<div class="ellipsis"><img src="/static/icons/ellipsis.svg" class="dots"/><div class="dropdown hide"><div class="dropdown-content"><span class="dropdown-item" action="move">Move</span><span class="dropdown-item" action="copy">Copy</span><span class="dropdown-item" action="delete">Delete</span><span class="dropdown-item" action="visibility">Change visibility<div class="dropdown dropdown-fold"><div class="dropdown-content"><div class="dropdown-item" action="public">Public</div><div class="dropdown-item" action="hidden">Hidden</div><div class="dropdown-item" action="private">Private</div><div class="dropdown-item" action="inherit">Inherit</div></div></div></span></div></div></div>';
+          item.innerHTML += `<div class="ellipsis"><img src="/static/icons/ellipsis.svg" class="dots"/><div class="dropdown hide"><div class="dropdown-content"><span class="dropdown-item" action="move">Move</span><span class="dropdown-item" action="copy">Copy</span><span class="dropdown-item" action="delete">Delete</span><span class="dropdown-item" action="visibility">Change visibility<div class="dropdown dropdown-fold"><div class="dropdown-content"><div class="dropdown-item" action="public">Public</div><div class="dropdown-item" action="hidden">Hidden</div><div class="dropdown-item" action="private">Private</div><div class="dropdown-item" action="inherit">Inherit</div></div></div></span></div></div></div>`;
         }
       } else {
-        item.innerHTML +=
-          '<div class="ellipsis"><img src="/static/icons/ellipsis.svg" class="dots"/><div class="dropdown hide"><div class="dropdown-content"><span class="dropdown-item" action="copy">Copy</span></div></div>';
+        item.innerHTML += `<div class="ellipsis"><img src="/static/icons/ellipsis.svg" class="dots"/><div class="dropdown hide"><div class="dropdown-content"><span class="dropdown-item" action="copy">Copy</span></div></div>`;
       }
       item
         .getElementsByClassName("dots")[0]
@@ -367,7 +377,9 @@ if (fslist) {
               break;
             }
             case "visibility":
-              alert("You should choose a visibility option instead");
+              option
+                .getElementsByClassName("dropdown-fold")[0]
+                .classList.remove("hide");
               break;
             case "public":
             case "private":
@@ -564,10 +576,19 @@ if (fslist) {
         dropdown.classList.add("hide");
       }
     }
+
+    let folds = document.getElementsByClassName("dropdown-fold");
+    for (const fold of folds) {
+      fold.classList.add("hide");
+    }
   }
 
   window.addEventListener("click", (event) => {
-    if (!event.target.classList.contains("dots")) dropdownsHideExcept();
+    if (
+      !event.target.classList.contains("dots") &&
+      event.target.getAttribute("action") !== "visibility"
+    )
+      dropdownsHideExcept();
   });
 
   copybut.onclick = () => {

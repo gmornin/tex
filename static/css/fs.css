@@ -5,7 +5,7 @@
 }
 
 #fslist li {
-  width: 60em;
+  width: min(60em, 90vw);
   margin-left: auto;
   margin-right: auto;
   padding: 10px;
@@ -35,8 +35,8 @@ dialog * {
 dialog {
   z-index: 9999;
   position: absolute;
-  top: 20%;
-  transform: translateY(-50%);
+  top: 10vh;
+  transform: translateY(-20%);
   border-radius: 8px;
 }
 
@@ -187,6 +187,10 @@ li:hover .dropdown {
   transform: translateX(23px);
 }
 
+#mobile li:hover .dropdown {
+  transform: translateX(0px);
+}
+
 .dropdown-item {
   padding: 14px !important;
   padding-top: 4px !important;
@@ -213,8 +217,16 @@ li:hover .dropdown {
   z-index: 999;
 }
 
+#mobile .dropdown-content {
+  transform: translateX(calc(-30px - 70%));
+}
+
 .hide {
   display: none;
+}
+
+#mobile .dots {
+  display: inline;
 }
 
 .icon {

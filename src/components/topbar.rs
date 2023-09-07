@@ -15,22 +15,22 @@ use actix_web::{HttpRequest, HttpResponse};
 use goodmorning_services::structs::Account;
 use yew::{function_component, html, Html, Properties};
 
-use crate::BEEN_LOGGEDOUT;
+use crate::{BEEN_LOGGEDOUT, TOPBAR_LOGGEDOUT, TOPBAR_URLS};
 
-pub const TOPBAR_LOGGEDOUT: &str = r#"
-    <div id="top-bar">
-      <div id="top-bar-left">
-	<a href="/" id="top-bar-icon"><img src="/static/images/favicon-dark.svg" alt="" width="30"></a>
-	<a href="/docs" class="top-bar-link">API</a>
-	<a href="" class="top-bar-link">Blog</a>
-      </div>
-      <div id="top-bar-right">
-        <a href="/login" class="buttonlike buttonlike-hover" id="signin">Sign in</a>
-        <a href="/login?type=new" class="buttonlike hover-dropshadow" id="top-bar-register"
-          >Register</a
-        >
-      </div>
-    </div>"#;
+// pub const TOPBAR_LOGGEDOUT: &str = r#"
+//     <div id="top-bar">
+//       <div id="top-bar-left">
+// 	<a href="/" id="top-bar-icon"><img src="/static/images/favicon-dark.svg" alt="" width="30"></a>
+// 	<a href="/docs" class="top-bar-link">API</a>
+// 	<a href="" class="top-bar-link">Blog</a>
+//       </div>
+//       <div id="top-bar-right">
+//         <a href="/login" class="buttonlike buttonlike-hover" id="signin">Sign in</a>
+//         <a href="/login?type=new" class="buttonlike hover-dropshadow" id="top-bar-register"
+//           >Register</a
+//         >
+//       </div>
+//     </div>"#;
 
 #[function_component]
 pub fn TopbarLoggedin(props: &TopbarLoggedinProps) -> Html {
@@ -38,8 +38,7 @@ pub fn TopbarLoggedin(props: &TopbarLoggedinProps) -> Html {
     <div id="top-bar">
       <div id="top-bar-left">
     <a href="/" id="top-bar-icon"><img src="/static/images/favicon-dark.svg" alt="" width="30"/></a>
-        <a href="/docs" class="top-bar-link">{"API"}</a>
-        <a href="" class="top-bar-link">{"Blog"}</a>
+        {Html::from_html_unchecked(implicit_clone::unsync::IString::Static(TOPBAR_URLS.get().unwrap()))}
       </div>
       <div id="top-bar-right">
         <img src="/static/icons/bell.svg" id="notif-bell" alt="" width="15" />
@@ -80,7 +79,7 @@ pub async fn topbar_from_token(
         Err(res) => return Ok(Err(res)),
     } {
         Some((topbar, account)) => Ok(Ok((topbar, Some(account)))),
-        None => Ok(Ok((Cow::Borrowed(TOPBAR_LOGGEDOUT), None))),
+        None => Ok(Ok((Cow::Borrowed(TOPBAR_LOGGEDOUT.get().unwrap()), None))),
     }
 }
 

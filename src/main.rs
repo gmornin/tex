@@ -34,6 +34,7 @@ async fn main() {
         // .wrap(middleware)
     });
 
+    println!("Server started");
     match (outbounds.enable_http, outbounds.enable_https) {
         (true, true) => server
             .bind(("0.0.0.0", outbounds.http_port))

@@ -1,5 +1,6 @@
 use crate::{
     components::*, functions::internalserver_error, BEEN_LOGGEDOUT, CSP_BASE, FINISH_SETUP,
+    TOPBAR_LOGGEDOUT,
 };
 use actix_files::NamedFile;
 use actix_web::{get, http::header::ContentType, HttpRequest, HttpResponse};
@@ -40,7 +41,7 @@ async fn home(req: HttpRequest) -> HttpResponse {
   </center>
   </body>
 </html>"#,
-                TOPBAR_LOGGEDOUT
+                TOPBAR_LOGGEDOUT.get().unwrap()
             ));
     }
 

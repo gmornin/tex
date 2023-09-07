@@ -1,12 +1,16 @@
 .container {
   border-radius: 10px;
   margin: auto;
-  width: 35em;
-  margin-top: 20px;
+  max-width: min(35em, 70vw);
+  margin-top: 10px;
   padding-right: 3em;
   padding-left: 3em;
   padding-top: 2em;
   padding-bottom: 2em;
+}
+
+.container:first-child {
+  margin-top: 20px;
 }
 
 #basic-info {

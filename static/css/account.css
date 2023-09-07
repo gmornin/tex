@@ -1,8 +1,7 @@
 .container {
   border-radius: 10px;
   margin: auto;
-  width: 35em;
-  margin-top: 50px;
+  max-width: min(35em, 70vw);
   padding-right: 3em;
   padding-left: 3em;
   padding-top: 2em;
@@ -138,7 +137,7 @@ textarea {
   top: 40%;
   transform: translateY(-50%);
   border-radius: 8px;
-  min-width: 400px;
+  min-width: min(400px, 90vw);
 }
 
 #addd h2 {
@@ -182,7 +181,7 @@ textarea {
 }
 
 #details-list {
-  min-width: 160px;
+  max-width: 160px;
 }
 
 li:hover .plus {
@@ -247,4 +246,8 @@ li:hover .plus {
 
 #pfp-container input {
   display: none;
+}
+
+#bio-textarea {
+  max-width: 100%;
 }

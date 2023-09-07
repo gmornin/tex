@@ -22,6 +22,8 @@ pub struct TexConfig {
     pub outbound: OutboundOptions,
     #[serde(default = "allow_create_default")]
     pub allow_create: bool,
+    #[serde(default = "topbar_urls_default")]
+    pub topbar_urls: Vec<UrlItem>,
 }
 
 fn allow_create_default() -> bool {
@@ -42,6 +44,12 @@ pub struct OutboundOptions {
     pub ssl_chain_path: String,
     #[serde(default = "key_default")]
     pub ssl_key_path: String,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct UrlItem {
+    pub label: String,
+    pub url: String,
 }
 
 impl Default for OutboundOptions {
@@ -93,6 +101,7 @@ impl Default for TexConfig {
             log: log_default(),
             outbound: OutboundOptions::default(),
             allow_create: allow_create_default(),
+            topbar_urls: topbar_urls_default(),
         }
     }
 }
@@ -157,4 +166,17 @@ fn log_default() -> LogOptions {
         term_log_level: goodmorning_services::LevelFilterSerde::Error,
         write_log_level: goodmorning_services::LevelFilterSerde::Debug,
     }
+}
+
+fn topbar_urls_default() -> Vec<UrlItem> {
+    vec![
+        UrlItem {
+            url: "https://siriusmart.github.io/gm-services".to_string(),
+            label: "API".to_string(),
+        },
+        UrlItem {
+            url: "https://github.com/gmornin/gmt-server".to_string(),
+            label: "Source code".to_string(),
+        },
+    ]
 }
