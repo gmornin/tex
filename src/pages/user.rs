@@ -79,7 +79,7 @@ async fn profile_task(id: Path<i64>, req: HttpRequest) -> Result<HttpResponse, B
       type="image/x-icon"
     />
     <script src="/static/scripts/remindverify.js" defer></script>
-    <title>User profile - GoodMorning Tex</title>
+    <title>User profile - GM Tex</title>
   </head>
   <body>
     {topbar}

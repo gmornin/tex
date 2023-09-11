@@ -56,3 +56,27 @@ a {
 .ghbutton:disabled:hover {
   cursor: wait;
 }
+
+input,
+textarea {
+  border-radius: 10px;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+textarea {
+  resize: none;
+  font-size: 15px;
+  font-family: Inter, sans-serif;
+}
+
+#backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9998; /* Ensure the backdrop is behind the dialog */
+}

@@ -47,11 +47,13 @@ async fn profile_task(req: &HttpRequest) -> Result<HttpResponse, Box<dyn Error>>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/static/css/main.css" />
     <link rel="stylesheet" href="/static/css/topbar.css" />
-    <link rel="stylesheet" href="/static/css/account.css" />
+    <link rel="stylesheet" href="/static/css/sprofile.css" />
+    <link rel="stylesheet" href="/static/css/settings.css" />
     <link rel="stylesheet" href="/static/css/topbar-signedout.css" />
     <link rel="stylesheet" href="/static/css/topbar-loggedin.css" />
     <link rel="stylesheet" href="/static/css/dark/main.css" />
-    <link rel="stylesheet" href="/static/css/dark/account.css" />
+    <link rel="stylesheet" href="/static/css/dark/sprofile.css" />
+    <link rel="stylesheet" href="/static/css/dark/settings.css" />
     <link rel="stylesheet" href="/static/css/dark/topbar.css" />
     <link rel="stylesheet" href="/static/css/dark/topbar-signedout.css" />
     <link
@@ -59,12 +61,11 @@ async fn profile_task(req: &HttpRequest) -> Result<HttpResponse, Box<dyn Error>>
       href="/static/images/favicon-dark.svg"
       type="image/x-icon"
     />
-    <script src="/static/scripts/account.js" defer></script>
-    <title>Account - GoodMorning Tex</title>
+    <title>Account - GM Tex</title>
   </head>
   <body>
     <dialog id="addd">
-      <div id="x">&#x2715;</div>
+      <div class="x">&#x2715;</div>
       <h2>Select a detail item</h2>
       <div id="list-container">
         <ul id="details-list">
@@ -112,6 +113,12 @@ async fn profile_task(req: &HttpRequest) -> Result<HttpResponse, Box<dyn Error>>
       </div>
     </dialog>
     {topbar}
+    <div id="bottom">
+      <div id="pages">
+        <div class="selected"><img src="/static/icons/user.svg">Public profile</div>
+        <div><img src="/static/icons/settings.svg"><a href="/settings/account">Account</a></div>
+      </div>
+      <div>
     <div class="container">
       <div id="profile-top">
         <label id="pfp-container">
@@ -123,6 +130,7 @@ async fn profile_task(req: &HttpRequest) -> Result<HttpResponse, Box<dyn Error>>
           <input
             type="text"
             id="username"
+            placeholder="Username"
             value="{username}"
             style="width: 200px"
           /><img class="save" src="/static/icons/save.svg" field="username" />
@@ -130,13 +138,14 @@ async fn profile_task(req: &HttpRequest) -> Result<HttpResponse, Box<dyn Error>>
           <input
             type="text"
             id="status"
+            placeholder="Status"
             value="{status}"
             style="width: 200px"
           /><img class="save" src="/static/icons/save.svg" field="status" />
         </div>
       </div>
       <center id="bio">
-        <textarea rows="4" cols="55" id="bio-textarea">{desc}</textarea>
+        <textarea rows="4" cols="55" id="bio-textarea" placeholder="Personal description here...">{desc}</textarea>
       </center>
       <ul id="badges">
         {badges}
@@ -146,7 +155,11 @@ async fn profile_task(req: &HttpRequest) -> Result<HttpResponse, Box<dyn Error>>
         <img class="save" src="/static/icons/save.svg" field="profile" />
       </div>
     </div>
+    </div>
+    </div>
     <div id="backdrop" style="display: none"></div>
+    <script src="/static/scripts/settings.js" defer></script>
+    <script src="/static/scripts/sprofile.js" defer></script>
   </body>
 </html>
             "#

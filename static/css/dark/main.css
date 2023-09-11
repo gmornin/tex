@@ -32,3 +32,18 @@ a {
 .ghbutton:disabled {
   background-color: #489646;
 }
+
+input, textarea {
+  background-color: #181a1b;
+  color: white;
+  border: rgba(255, 255, 255, 0.1) solid 1px;
+  outline: #2266aa;
+}
+
+input:focus, textarea:focus {
+  outline: 1px solid #2266aa;
+}
+
+#backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}

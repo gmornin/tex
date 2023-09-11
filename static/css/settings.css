@@ -1,0 +1,118 @@
+.container {
+  border-radius: 10px;
+  /* margin: auto; */
+  max-width: min(40em, 60vw);
+  padding: 20px;
+  display: block;
+  font-size: 0.9em;
+  font-weight: 350;
+}
+
+.container:not(:first-child) {
+  margin-top: 10px;
+}
+
+#bottom {
+  display: flex;
+  justify-content: center;
+}
+
+#pages {
+  margin-top: 40px;
+  display: inline-block;
+  margin-right: 20px;
+}
+
+#pages div:not(:last-child) {
+  border-bottom: 1px solid rgba(200, 200, 255, 0.3);
+}
+
+#pages div {
+  opacity: 50%;
+  padding: 3px;
+}
+
+#pages div.selected {
+  opacity: 1;
+  cursor: not-allowed;
+}
+
+#pages img {
+  width: 13px;
+  height: 13px;
+  margin-right: 3px;
+}
+
+.not-allowed:hover {
+  cursor: not-allowed !important;
+}
+
+.save {
+  display: inline-block;
+  height: 18px;
+  opacity: 50%;
+  margin: auto;
+  margin-left: 5px;
+}
+
+.save:hover {
+  opacity: 1;
+  cursor: pointer;
+}
+
+label {
+  display: block;
+}
+
+input {
+  font-size: 15px;
+  margin-top: 3px;
+  margin-bottom: 3px;
+}
+
+.save {
+  transform: translateY(3px);
+}
+
+button img {
+  height: 1em;
+  transform: translateY(3px);
+}
+
+dialog * {
+  font-weight: 350;
+  font-family: Inter, sans-serif;
+}
+
+dialog {
+  z-index: 9999;
+  position: absolute;
+  top: 10vh;
+  /* transform: translateY(-20%); */
+  border-radius: 8px;
+}
+
+dialog h2 {
+  text-align: center;
+}
+
+#x,
+.x {
+  font-size: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+}
+
+#x:hover,
+.x:hover {
+  cursor: pointer;
+}
+
+dialog p,
+dialog span {
+  max-width: 20em;
+  display: block;
+}

@@ -9,11 +9,11 @@ function update() {
   if (type === "new") {
     hide = "signin";
     show = "signup";
-    document.title = "Create account - GoodMorning Tex";
+    document.title = "Create account - GM Tex";
   } else {
     hide = "signup";
     show = "signin";
-    document.title = "Sign in - GoodMorning Tex";
+    document.title = "Sign in - GM Tex";
   }
   {
     let elements = document.getElementsByClassName(hide);

@@ -48,16 +48,17 @@
   font-size: 15px;
 }
 
-#edit img {
+#icons img {
   display: inline;
   height: 15px;
   opacity: 50%;
 }
 
-#edit img:hover {
+#icons img:hover {
   opacity: 1;
 }
 
-#edit {
+#icons img {
+  margin: 0;
   margin-left: 5px;
 }

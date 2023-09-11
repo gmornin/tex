@@ -23,10 +23,6 @@ dialog {
   outline: #2266aa;
 }
 
-#backdrop {
-  background-color: rgba(0, 0, 0, 0.5);
-}
-
 .submitbut {
   color: white;
   background-color: #2266cc;

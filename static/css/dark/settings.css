@@ -1,0 +1,28 @@
+.container {
+  border: rgba(255, 255, 255, 0.2) solid 1px;
+  background-color: #222222;
+}
+
+.warnbut:hover {
+  color: #990000;
+  background-color: #ffffaa;
+}
+
+.dangerbut {
+  background-color: #bb1111;
+}
+
+.dangerbut:hover, .dangerbut:disabled {
+  background-color: #ff0000;
+}
+
+dialog {
+  background-color: #222222;
+  border: rgba(255, 255, 255, 0.2) solid 1px;
+  color: white;
+}
+
+#x:hover, .x:hover {
+  color: #ff6666;
+}
+

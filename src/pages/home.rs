@@ -31,7 +31,7 @@ async fn home(req: HttpRequest) -> HttpResponse {
     <link rel="stylesheet" href="/static/css/dark/topbar.css" />
     <link rel="stylesheet" href="/static/css/dark/topbar-signedout.css" />
     <link rel="shortcut icon" href="/static/images/favicon-dark.svg" type="image/x-icon" />
-    <title>Home - GoodMorning Tex</title>
+    <title>Home - GM Tex</title>
   </head>
   <body>
   {}
@@ -86,7 +86,7 @@ async fn home(req: HttpRequest) -> HttpResponse {
     <link rel="stylesheet" href="/static/css/dark/topbar.css" />
     <link rel="stylesheet" href="/static/css/dark/topbar-signedout.css" />
     <link rel="shortcut icon" href="/static/images/favicon-dark.svg" type="image/x-icon" />
-    <title>Home - GoodMorning Tex</title>
+    <title>Home - GM Tex</title>
   </head>
   <body>
   {}

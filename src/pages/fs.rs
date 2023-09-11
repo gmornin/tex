@@ -274,6 +274,7 @@ async fn file(
     };
 
     let mime_str = html_friendly_mime(mime.essence_str());
+    let mut is_text = false;
 
     let (display, css) = match pathbuf
         .extension()
@@ -304,19 +305,27 @@ async fn file(
                     })
                     .into_response(req))
             }
-            (mime::TEXT, _) | (mime::APPLICATION, _) => components::text(&pathbuf).await?,
+            (mime::TEXT, _) | (mime::APPLICATION, _) => {
+                is_text = true;
+                components::text(&pathbuf).await?
+            }
             _ => todo!("{mimes:?}"),
         },
     };
 
     let path_escaped = html_escape::encode_safe(&path);
     let footurls = format!(
-        r#"{}<a class="linklike" href="{url}" target=_blank>Raw</a><a class="linklike" href="{url}" download>Download</a>"#,
+        r#"{}{}<a class="linklike" href="{url}" download>Download</a>"#,
         if is_owner {
             format!(r#"<a class="linklike" id="footurls" href="/edit/{path_escaped}">Edit</a>"#)
         } else {
             String::new()
-        }
+        },
+        if is_text {
+            format!(r#"<a class="linklike" href="{url}?display=text">Raw</a>"#)
+        } else {
+            String::new()
+        },
     );
 
     let path_display = yew::ServerRenderer::<components::Path>::with_props(move || PathProp {
@@ -353,7 +362,7 @@ async fn file(
       href="/static/images/favicon-dark.svg"
       type="image/x-icon"
     />
-    <title>Usercontent - GoodMorning Tex</title>
+    <title>Usercontent - GM Tex</title>
   </head>
   <body>
     {topbar}

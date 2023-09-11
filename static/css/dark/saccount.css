@@ -1,0 +1,31 @@
+#unverified img,
+#unverified span {
+  filter: brightness(80%) saturate(100%) invert(0%) sepia(90%) saturate(3)
+    hue-rotate(0deg) brightness(106%) contrast(101%);
+}
+
+#verified img,
+#verified span {
+  filter: brightness(80%) saturate(100%) invert(0%) sepia(90%) saturate(3)
+    hue-rotate(40deg) brightness(106%) contrast(101%);
+}
+
+.verification img {
+  height: 16px;
+}
+
+.verification {
+  border-bottom: 1px solid rgba(200, 220, 200, 0.3);
+}
+
+.ghbutton img {
+  filter: none !important;
+}
+
+#regen {
+  margin-top: 10px;
+}
+
+input {
+  padding: 5px;
+}

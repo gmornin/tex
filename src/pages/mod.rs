@@ -1,9 +1,9 @@
-mod account;
 mod edit;
 mod fs;
 mod hard_links;
 mod home;
 mod login;
+mod settings;
 mod user;
 use actix_web::Scope;
 pub use home::*;
@@ -20,5 +20,5 @@ pub fn scope() -> Scope {
         .service(fs::fspath)
         .service(fs::root)
         .service(edit::edit)
-        .service(account::scope())
+        .service(settings::scope())
 }

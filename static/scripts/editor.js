@@ -187,6 +187,16 @@ function save(f) {
 
 saveBtn.onclick = save;
 
+document.addEventListener("keydown", (e) => {
+  if (e.ctrlKey && e.key === "s") {
+    e.preventDefault();
+    save();
+  }
+  // if (e.shiftKey && e.ctrlKey && e.key === "c") {
+  //   e.preventDefault();
+  // }
+});
+
 function compileFile(target, btn) {
   let url = "/api/compile/v1/simple";
   let data = {

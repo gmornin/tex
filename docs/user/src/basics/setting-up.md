@@ -1,6 +1,6 @@
 # Setting up
 
-This article guides you from **creating your account**, to **editing your first document** on GoodMorning Tex.
+This article guides you from **creating your account**, to **editing your first document** on GM Tex.
 
 ## Development progress
 
@@ -76,6 +76,6 @@ Your document will be compiled to PDF using the **PDFLatex** compiler. Currently
 
 > More formats will be added, such as LaTeX to HTML and [Typst](https://github.com/typst/typst)
 
-And there you go. You have created, edited, and compiled your first LaTeX document on GoodMorning Tex!
+And there you go. You have created, edited, and compiled your first LaTeX document on GM Tex!
 
 ![](../assets/compiled.png)

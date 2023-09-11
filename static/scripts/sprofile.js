@@ -1,7 +1,6 @@
 let textarea = document.getElementById("bio-textarea");
 let addbut = document.getElementById("add");
 let addd = document.getElementById("addd");
-let backdrop = document.getElementById("backdrop");
 let badges = document.getElementById("badges");
 let pfp = document.getElementById("pfp");
 let pfp_input = document.querySelector("#pfp-container input");
@@ -71,11 +70,8 @@ for (const li of Array.from(document.querySelectorAll("#addd li"))) {
 
 addbut.onclick = () => {
   addd.setAttribute("open", "");
+  let backdrop = document.getElementById("backdrop");
   backdrop.style.display = "block";
-};
-document.getElementById("x").onclick = () => {
-  addd.removeAttribute("open");
-  backdrop.style.display = "none";
 };
 
 function addBackspace(elem) {
@@ -243,12 +239,6 @@ function getCookie(name) {
 
 function getToken() {
   return getCookie("token");
-}
-
-function turnItGreen(elem) {
-  elem.style.filter = "drop-shadow(0 0 2px lightgreen)";
-  elem.style.cursor = "";
-  setTimeout(() => (elem.style.filter = ""), 1000);
 }
 
 function saveProfile(elem) {

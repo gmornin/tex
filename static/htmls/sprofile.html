@@ -5,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/static/css/main.css" />
     <link rel="stylesheet" href="/static/css/topbar.css" />
-    <link rel="stylesheet" href="/static/css/account.css" />
+    <link rel="stylesheet" href="/static/css/sprofile.css" />
+    <link rel="stylesheet" href="/static/css/settings.css" />
     <link rel="stylesheet" href="/static/css/topbar-signedout.css" />
     <link rel="stylesheet" href="/static/css/topbar-loggedin.css" />
     <link rel="stylesheet" href="/static/css/dark/main.css" />
-    <link rel="stylesheet" href="/static/css/dark/account.css" />
+    <link rel="stylesheet" href="/static/css/dark/sprofile.css" />
+    <link rel="stylesheet" href="/static/css/dark/settings.css" />
     <link rel="stylesheet" href="/static/css/dark/topbar.css" />
     <link rel="stylesheet" href="/static/css/dark/topbar-signedout.css" />
     <link
@@ -17,8 +19,7 @@
       href="/static/images/favicon-dark.svg"
       type="image/x-icon"
     />
-    <script src="/static/scripts/account.js" defer></script>
-    <title>Home - GoodMorning Tex</title>
+    <title>Home - GM Tex</title>
   </head>
   <body>
     <dialog id="addd">
@@ -91,64 +92,87 @@
         >
       </div>
     </div>
-    <div class="container">
-      <div id="profile-top">
-        <label id="pfp-container">
-          <input type="file" />
-          <img src="/api/generic/v1/pfp/id/1" width="100" height="100" id="pfp" />
-          <img src="/static/icons/edit.svg" id="pfp-overlay" />
-        </label>
-        <div id="profile-top-right">
-          <input
-            type="text"
-            id="username"
-            value="siriusmart"
-            style="width: 200px"
-          /><img class="save" src="/static/icons/save.svg" field="username" />
-          <br />
-          <input
-            type="text"
-            id="status"
-            value="heres a cool status"
-            style="width: 200px"
-          /><img class="save" src="/static/icons/save.svg" field="status" />
+    <div id="bottom">
+      <div id="pages">
+        <div class="selected">
+          <img src="/static/icons/user.svg" />Public profile
+        </div>
+        <div>
+          <img src="/static/icons/settings.svg" /><a href="/settings/account"
+            >Account</a
+          >
         </div>
       </div>
-      <center id="bio">
-        <textarea rows="4" cols="55" id="bio-textarea">
-description text
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. </textarea
-        >
-      </center>
-      <ul id="badges">
-        <li class="badge" field="github">
-          <img src="/static/icons/github.svg" alt="" draggable="true" /><input
-            type="text"
-            class="badge-value"
-            value="siriusmart"
-          />
-        </li>
-        <li class="badge" field="email">
-          <img src="/static/icons/envolope.svg" alt="" draggable="true" /><input
-            type="text"
-            class="badge-value"
-            value="siriusmart@tuta.io"
-          />
-        </li>
-        <li class="badge" field="website">
-          <img src="/static/icons/link.svg" alt="" draggable="true" /><input
-            type="text"
-            class="badge-value"
-            value="siriusmart.github.io"
-          />
-        </li>
-      </ul>
-      <div id="details-buts">
-        <img id="add" src="/static/icons/plus.svg" />
-        <img class="save" src="/static/icons/save.svg" field="profile" />
+      <div>
+        <div class="container">
+          <div id="profile-top">
+            <label id="pfp-container">
+              <input type="file" accept=".png" />
+              <img
+                src="/api/generic/v1/pfp/id/1"
+                width="100"
+                height="100"
+                id="pfp"
+              />
+              <img src="/static/icons/edit.svg" id="pfp-overlay" />
+            </label>
+            <div id="profile-top-right">
+              <input
+                type="text"
+                id="username"
+                value="siriusmart"
+                style="width: 200px"
+              /><img
+                class="save"
+                src="/static/icons/save.svg"
+                field="username"
+              />
+              <br />
+              <input
+                type="text"
+                id="status"
+                value="test"
+                style="width: 200px"
+              /><img class="save" src="/static/icons/save.svg" field="status" />
+            </div>
+          </div>
+          <center id="bio">
+            <textarea rows="4" cols="55" id="bio-textarea"></textarea>
+          </center>
+          <ul id="badges">
+            <!--<[gmt_server::components::settings::profile::ProfileEditBadges]>-->
+            <li field="github" class="badge">
+              <img src="/static/icons/github.svg" /><input
+                value="siriusmart"
+                type="text"
+                class="badge-value"
+              />
+            </li>
+            <li field="email" class="badge">
+              <img src="/static/icons/envolope.svg" /><input
+                value="siriusmart@tuta.io"
+                type="text"
+                class="badge-value"
+              />
+            </li>
+            <li field="matrix" class="badge">
+              <img src="/static/icons/matrix.svg" /><input
+                value="siriusmart:matrix.org"
+                type="text"
+                class="badge-value"
+              />
+            </li>
+            <!--</[gmt_server::components::settings::profile::ProfileEditBadges]>-->
+          </ul>
+          <div id="details-buts">
+            <img id="add" src="/static/icons/plus.svg" />
+            <img class="save" src="/static/icons/save.svg" field="profile" />
+          </div>
+        </div>
       </div>
     </div>
     <div id="backdrop" style="display: none"></div>
+    <script src="/static/scripts/settings.js" defer></script>
+    <script src="/static/scripts/sprofile.js" defer></script>
   </body>
 </html>

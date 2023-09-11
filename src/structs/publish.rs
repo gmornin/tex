@@ -1,5 +1,6 @@
 use futures_util::StreamExt;
 use goodmorning_services::bindings::services::v1::*;
+use mongodb::bson::doc;
 use mongodb::options::FindOptions;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
@@ -8,7 +9,7 @@ use goodmorning_services::traits::CollectionItem;
 
 use crate::functions::get_tex_userpublishes;
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct TexPublish {
     #[serde(rename = "_id")]
     pub id: i64,
@@ -59,6 +60,8 @@ impl TexPublish {
         let mut find_options = FindOptions::default();
         find_options.skip = Some(page * page_size); // Skip the first 9 documents
         find_options.limit = Some(page_size as i64); // Retrieve 11 documents (10th to 20th)
+        find_options.batch_size = Some(page_size as u32);
+        find_options.sort = Some(doc! {"_id": -1});
 
         let mut cursor = collection.find(None, find_options).await.unwrap();
 
@@ -67,6 +70,8 @@ impl TexPublish {
         while let Some(document) = cursor.next().await {
             items.push(document?)
         }
+
+        dbg!(&items);
 
         Ok(items)
     }

@@ -53,7 +53,7 @@ async fn publishes_username_task(
     Ok(V1Response::TexUserPublishes {
         items: TexPublish::list(
             account.id,
-            query.page.unwrap_or(0) as u64,
+            query.page.unwrap_or(1) as u64,
             query.page_size.unwrap_or(10) as u64,
         )
         .await?
