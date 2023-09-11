@@ -47,7 +47,7 @@ function preview_url(path) {
         });
       break;
     case "pdf":
-      pdfPreview.setAttribute("src", `${url}&type=inline`);
+      pdfPreview.setAttribute("src", `${url}&display=inline`);
       previewsHideExcept(pdfPreview);
       break;
     default:
