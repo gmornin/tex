@@ -49,6 +49,8 @@ async fn profile_task(id: Path<i64>, req: HttpRequest) -> Result<HttpResponse, B
             .await?
             .into_response(&req));
     }
+    let username_safe = html_escape::encode_safe(&account.username).to_string();
+
     let pf = TexProfile::find_default(account.id).await?.profile;
     let pf = yew::ServerRenderer::<ProfileInfo>::with_props(move || ProfileInfoProp {
         account: to_profile_acccount(account),
@@ -79,7 +81,7 @@ async fn profile_task(id: Path<i64>, req: HttpRequest) -> Result<HttpResponse, B
       type="image/x-icon"
     />
     <script src="/static/scripts/remindverify.js" defer></script>
-    <title>User profile - GM Tex</title>
+    <title>{username_safe} - GM Tex</title>
   </head>
   <body>
     {topbar}

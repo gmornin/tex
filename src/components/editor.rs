@@ -50,6 +50,7 @@ pub fn editor(
     <link rel="stylesheet" href="/static/css/dark/topbar-signedout.css" />
     <link rel="stylesheet" href="/static/css/dark/editor.css" />
     <script src="/static/scripts/src-min-noconflict/ace.js"></script>
+    <link href="/static/css/textpreview.css" rel="stylesheet" /><link href="/static/css/html.css" rel="stylesheet" /><link href="/static/css/prism.css" rel="stylesheet" /><script src="/static/scripts/prism.js"></script>
     <link
       rel="shortcut icon"
       href="/static/images/favicon-dark.svg"
@@ -93,7 +94,7 @@ editor.session.setMode("ace/mode/{}");
 var previews = {};
     </script>
     <script src="/static/scripts/editor.js" defer></script>
-       <div id="preview">
+       <div id="display">
         <center id="no-preview" class="hide">
           <h2>Cannot find previews for this file</h2>
           <p>Try compiling this file to a previewable format.</p>

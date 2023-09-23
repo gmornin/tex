@@ -15,7 +15,7 @@ a {
   box-shadow: 0px 5px 12px -3px #232526;
 }
 
-.linklike {
+.linklike, #display a {
   color: #58a6ff;
 }
 

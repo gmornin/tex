@@ -80,7 +80,7 @@ async fn account_task(req: &HttpRequest) -> Result<HttpResponse, Box<dyn Error>>
       href="/static/images/favicon-dark.svg"
       type="image/x-icon"
     />
-    <title>Account details - GM Tex</title>
+    <title>Account - Settings</title>
   </head>
   <body>
     <dialog id="confirmd">

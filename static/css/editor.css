@@ -16,7 +16,7 @@ body {
   overflow: hidden;
 }
 
-#preview {
+#display {
   position: absolute;
   height: calc(100% - 90px);
   width: 49%;

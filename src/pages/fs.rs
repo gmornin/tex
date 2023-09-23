@@ -313,7 +313,8 @@ async fn file(
         },
     };
 
-    let path_escaped = html_escape::encode_safe(&path);
+    let id = account.id;
+    let path_escaped = html_escape::encode_safe(&path).to_string();
     let footurls = format!(
         r#"{}{}<a class="linklike" href="{url}" download>Download</a>"#,
         if is_owner {
@@ -362,7 +363,7 @@ async fn file(
       href="/static/images/favicon-dark.svg"
       type="image/x-icon"
     />
-    <title>Usercontent - GM Tex</title>
+    <title>{id}/{path_escaped}</title>
   </head>
   <body>
     {topbar}
@@ -372,8 +373,8 @@ async fn file(
     <div id="display">
         {display}
         <br />
-        <center><code id="info">{info}</code><br /><code id="footurls">{footurls}</code></center>
     </div>
+    <center><code id="info">{info}</code><br /><code id="footurls">{footurls}</code></center>
   </body>
 </html>"#,
         if mime.type_() == mime::TEXT {

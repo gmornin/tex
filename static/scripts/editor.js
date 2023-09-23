@@ -13,7 +13,7 @@ document.getElementById("undo").onclick = () => editor.undo();
 document.getElementById("redo").onclick = () => editor.redo();
 
 let htmlPreview = document.getElementById("html-preview");
-let preview = document.getElementById("preview");
+let preview = document.getElementById("display");
 let token = getCookie("token");
 let noPreview = document.getElementById("no-preview");
 let pdfPreview = document.getElementById("pdf-preview");
@@ -41,6 +41,7 @@ function preview_url(path) {
         .then(function (response) {
           htmlPreview.innerHTML = response;
           previewsHideExcept(htmlPreview);
+          Prism.highlightAll();
         })
         .catch(function (err) {
           alert("Fetch Error :-S", err);

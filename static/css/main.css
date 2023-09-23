@@ -39,12 +39,12 @@ a {
   transition: 350ms;
 }
 
-.linklike {
+.linklike, #display a {
   background-color: transparent;
   border: none;
 }
 
-.linklike:hover {
+.linklike:hover, #display a:hover {
   cursor: pointer;
   text-decoration: underline #2866bf;
 }

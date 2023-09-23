@@ -1,4 +1,5 @@
 #display {
   margin: auto;
-  max-width: 70em;
+  max-width: 65em;
+  padding: 5px;
 }

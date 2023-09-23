@@ -61,7 +61,7 @@ async fn profile_task(req: &HttpRequest) -> Result<HttpResponse, Box<dyn Error>>
       href="/static/images/favicon-dark.svg"
       type="image/x-icon"
     />
-    <title>Account - GM Tex</title>
+    <title>Public profile - Settings</title>
   </head>
   <body>
     <dialog id="addd">
