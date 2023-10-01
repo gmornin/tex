@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::{path::PathBuf, sync::OnceLock};
 
 use goodmorning_services::{
     functions::{get_client, get_database, parse_path},
@@ -6,45 +6,44 @@ use goodmorning_services::{
     LogOptions, SELF_ADDR,
 };
 use mongodb::{Collection, Database};
-use once_cell::sync::OnceCell;
 
 use crate::{
     functions::get_tex_profiles,
     structs::{FirejailBehavior, OutboundOptions, TexConfig, TexProfile},
 };
 
-pub static CSP_BASE: OnceCell<String> = OnceCell::new();
-pub static CSP_VAL: OnceCell<String> = OnceCell::new();
+pub static CSP_BASE: OnceLock<String> = OnceLock::new();
+pub static CSP_VAL: OnceLock<String> = OnceLock::new();
 
-pub static PUBLISHES_DB: OnceCell<Database> = OnceCell::new();
-pub static TEX_DB: OnceCell<Database> = OnceCell::new();
-pub static STATIC_PATH: OnceCell<PathBuf> = OnceCell::new();
-pub static STATIC_PATH_STR: OnceCell<String> = OnceCell::new();
-pub static PFP_DEFAULT: OnceCell<PathBuf> = OnceCell::new();
-pub static FIREJAIL_BEHAVIOR: OnceCell<FirejailBehavior> = OnceCell::new();
-pub static PDFLATEX: OnceCell<String> = OnceCell::new();
-pub static LOGOPTIONS: OnceCell<LogOptions> = OnceCell::new();
-pub static OUTBOUND: OnceCell<OutboundOptions> = OnceCell::new();
-pub static ALLOW_CREATE: OnceCell<bool> = OnceCell::new();
+pub static PUBLISHES_DB: OnceLock<Database> = OnceLock::new();
+pub static TEX_DB: OnceLock<Database> = OnceLock::new();
+pub static STATIC_PATH: OnceLock<PathBuf> = OnceLock::new();
+pub static STATIC_PATH_STR: OnceLock<String> = OnceLock::new();
+pub static PFP_DEFAULT: OnceLock<PathBuf> = OnceLock::new();
+pub static FIREJAIL_BEHAVIOR: OnceLock<FirejailBehavior> = OnceLock::new();
+pub static PDFLATEX: OnceLock<String> = OnceLock::new();
+pub static LOGOPTIONS: OnceLock<LogOptions> = OnceLock::new();
+pub static OUTBOUND: OnceLock<OutboundOptions> = OnceLock::new();
+pub static ALLOW_CREATE: OnceLock<bool> = OnceLock::new();
 
 // paths
-pub static BEEN_LOGGEDOUT: OnceCell<PathBuf> = OnceCell::new();
-pub static CREATE_ACC: OnceCell<PathBuf> = OnceCell::new();
-pub static NOT_TXT: OnceCell<PathBuf> = OnceCell::new();
-pub static NOT_FOUND: OnceCell<PathBuf> = OnceCell::new();
-pub static REMIND_VERIFY: OnceCell<PathBuf> = OnceCell::new();
-pub static FINISH_SETUP: OnceCell<PathBuf> = OnceCell::new();
-pub static LOGIN_ASK_LOGOUT: OnceCell<PathBuf> = OnceCell::new();
-pub static REGISTER: OnceCell<PathBuf> = OnceCell::new();
-pub static LOGIN: OnceCell<PathBuf> = OnceCell::new();
-pub static IMG_NOT_FOUND: OnceCell<PathBuf> = OnceCell::new();
+pub static BEEN_LOGGEDOUT: OnceLock<PathBuf> = OnceLock::new();
+pub static CREATE_ACC: OnceLock<PathBuf> = OnceLock::new();
+pub static NOT_TXT: OnceLock<PathBuf> = OnceLock::new();
+pub static NOT_FOUND: OnceLock<PathBuf> = OnceLock::new();
+pub static REMIND_VERIFY: OnceLock<PathBuf> = OnceLock::new();
+pub static FINISH_SETUP: OnceLock<PathBuf> = OnceLock::new();
+pub static LOGIN_ASK_LOGOUT: OnceLock<PathBuf> = OnceLock::new();
+pub static REGISTER: OnceLock<PathBuf> = OnceLock::new();
+pub static LOGIN: OnceLock<PathBuf> = OnceLock::new();
+pub static IMG_NOT_FOUND: OnceLock<PathBuf> = OnceLock::new();
 
 // generated htmls
-pub static TOPBAR_URLS: OnceCell<String> = OnceCell::new();
-pub static TOPBAR_LOGGEDOUT: OnceCell<String> = OnceCell::new();
-// pub static REGISTER: OnceCell<PathBuf> = OnceCell::new();
+pub static TOPBAR_URLS: OnceLock<String> = OnceLock::new();
+pub static TOPBAR_LOGGEDOUT: OnceLock<String> = OnceLock::new();
+// pub static REGISTER: OnceLock<PathBuf> = OnceLock::new();
 
-pub static PROFILES: OnceCell<Collection<TexProfile>> = OnceCell::new();
+pub static PROFILES: OnceLock<Collection<TexProfile>> = OnceLock::new();
 
 pub async fn gmtvalinit() {
     CSP_BASE

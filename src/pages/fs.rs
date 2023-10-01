@@ -115,13 +115,9 @@ async fn dir(
     topbar: Cow<'_, str>,
     is_owner: bool,
 ) -> Result<HttpResponse, Box<dyn Error>> {
-    let items = dir_items(
-        account.id,
-        &std::path::Path::new("tex").join(&path),
-        is_owner,
-        false,
-    )
-    .await?;
+    let pathbuf = std::path::Path::new("tex").join(&path);
+    let items = dir_items(account.id, &pathbuf, is_owner, false).await?;
+    let id = account.id;
     let nonce = gen_nonce();
     let csp_heaher = format!("{} 'nonce-{nonce}'", CSP_BASE.get().unwrap());
     let items_props = FsItemProp {
@@ -145,9 +141,11 @@ async fn dir(
     } else {
         r#"<img src="/static/icons/fileadd.svg" width="20px" height="20px" id="create" /><img src="/static/icons/upload.svg" width="20px" height="20px" id="upload" />"#
     };
+    let pathbuf_safe = html_escape::encode_safe(pathbuf.to_str().unwrap());
 
     let html = format!(
-        r#"<!DOCTYPE html>
+        r#"<!-- {{ "path": "{pathbuf_safe}", "id": {id} }} -->
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
