@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 # goodmorning-services = { path = "../goodmorning-services" }
-goodmorning-services = { git = "https://github.com/gmornin/services", rev = "7d8c6a0" }
+goodmorning-services = { git = "https://github.com/gmornin/services", rev = "d866d64" }
 actix-web = {version = "4.3", features = ["rustls"]}
 rustls = "0.20"
 rustls-pemfile = "1"
