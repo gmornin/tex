@@ -50,6 +50,7 @@ pub fn editor(
     <link rel="stylesheet" href="/static/css/dark/topbar-signedout.css" />
     <link rel="stylesheet" href="/static/css/dark/editor.css" />
     <script src="/static/scripts/src-min-noconflict/ace.js"></script>
+    <script src="/static/scripts/src-min-noconflict/ext-language_tools.js"></script>
     <link href="/static/css/textpreview.css" rel="stylesheet" /><link href="/static/css/html.css" rel="stylesheet" /><link href="/static/css/prism.css" rel="stylesheet" /><script src="/static/scripts/prism.js"></script>
     <link
       rel="shortcut icon"
@@ -77,10 +78,9 @@ pub fn editor(
       <div class="menubar-item" id="view-menu">
         <span id="view">View</span>
         <div class="dropdown-content hide">
-          <span class="dropdown-item" mode="vim">Vim</span
-          ><span class="dropdown-item" mode="emacs">Emacs</span>
-          <span class="dropdown-item" mode="sublime">Sublime</span
-          ><span class="dropdown-item" mode="vscode">Vscode</span>
+          <span class="dropdown-item" id="toggleEditor">Toggle editor</span
+          ><span class="dropdown-item" id="togglePreview">Toggle preview</span>
+          <span class="dropdown-item" id="openOptions">Editor options</span>
         </div>
       </div>
       {compile}
@@ -89,8 +89,15 @@ pub fn editor(
       <div id="editor">{}</div>
     <script nonce="{nonce}">
 var thisFormat = "{source_fmt}";
+var langTools = ace.require("ace/ext/language_tools");
 var editor = ace.edit("editor");
 editor.session.setMode("ace/mode/{}");
+editor.setShowPrintMargin(false);
+editor.setOptions({{
+    enableSnippets: true,
+    enableLiveAutocompletion: true,
+    enableBasicAutocompletion: true
+}})
 var previews = {};
     </script>
     <script src="/static/scripts/editor.js" defer></script>

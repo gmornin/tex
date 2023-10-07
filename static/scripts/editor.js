@@ -17,6 +17,65 @@ let preview = document.getElementById("display");
 let token = getCookie("token");
 let noPreview = document.getElementById("no-preview");
 let pdfPreview = document.getElementById("pdf-preview");
+let editorElem = document.getElementById("editor");
+let previewPath;
+let saved = true;
+
+try {
+  if (localStorage.getItem("aceOptions") == null) {
+    throw new Error("no");
+  }
+  let options = JSON.parse(localStorage.getItem("aceOptions"));
+  delete options.mode;
+  editor.setOptions(options);
+} catch (_) {
+  editor.setTheme("ace/theme/monokai");
+  editor.setOption("wrap", true);
+  editor.setShowPrintMargin(false);
+}
+
+let previewHidden = localStorage.getItem("previewHidden") == "true";
+let editorHidden = localStorage.getItem("editorHidden") == "true";
+let previewOutdated = true;
+
+previewsHideExcept(noPreview);
+
+function updateLayout() {
+  localStorage.setItem("previewHidden", previewHidden);
+  localStorage.setItem("editorHidden", editorHidden);
+  if (previewHidden) {
+    preview.classList.add("hide");
+  } else {
+    preview.classList.remove("hide");
+  }
+
+  if (editorHidden) {
+    editorElem.classList.add("hide");
+  } else {
+    editorElem.classList.remove("hide");
+  }
+
+  if (editorHidden != previewHidden) {
+    if (editorHidden) {
+      preview.classList.add("fullscreen");
+    } else {
+      editorElem.classList.add("fullscreen");
+    }
+  } else {
+    preview.classList.remove("fullscreen");
+    editorElem.classList.remove("fullscreen");
+  }
+}
+
+updateLayout();
+
+function openOptions() {
+  var commands = editor.commands.byName;
+  var command = commands["showSettingsMenu"];
+  if (command && command.exec) {
+    command.exec(editor);
+  }
+}
 
 function previewsHideExcept(except) {
   for (let i = 0; i < preview.children.length; i++) {
@@ -29,6 +88,12 @@ function previewsHideExcept(except) {
 }
 
 function preview_url(path) {
+  previewPath = path;
+  if (path == undefined) {
+    previewsHideExcept(noPreview);
+    return;
+  }
+  if (!previewOutdated || previewHidden) return;
   noPreview.classList.add("hide");
   let url = `/api/storage/v1/file/${token}/tex/${path}?time=${Date.now()}`;
   let ext = path.split(".").pop();
@@ -42,6 +107,7 @@ function preview_url(path) {
           htmlPreview.innerHTML = response;
           previewsHideExcept(htmlPreview);
           Prism.highlightAll();
+          previewOutdated = false;
         })
         .catch(function (err) {
           alert("Fetch Error :-S", err);
@@ -50,6 +116,7 @@ function preview_url(path) {
     case "pdf":
       pdfPreview.setAttribute("src", `${url}&display=inline`);
       previewsHideExcept(pdfPreview);
+      previewOutdated = false;
       break;
     default:
       alert(`Cannot preview files with extension ${ext}`);
@@ -57,17 +124,10 @@ function preview_url(path) {
 }
 
 switch (previews.length) {
-  case 0:
-    previewsHideExcept(noPreview);
-    break;
   case 1:
     preview_url(previews[0]);
     break;
 }
-
-editor.setTheme("ace/theme/monokai");
-editor.setOption("wrap", true);
-editor.setShowPrintMargin(false);
 
 let file = document.getElementById("file-menu");
 let edit = document.getElementById("edit-menu");
@@ -87,7 +147,10 @@ function hideAllDropdowns(except) {
 }
 
 document.addEventListener("click", function (event) {
-  if (!event.target.parentNode.classList) {
+  if (
+    event.target.parentNode == undefined ||
+    !event.target.parentNode.classList
+  ) {
     return;
   }
   if (event.target.parentNode.classList.contains("menubar-item")) {
@@ -114,6 +177,16 @@ function showCompile() {
     .getElementsByClassName("dropdown-content")[0]
     .classList.remove("hide");
 }
+function toggleEditor() {
+  editorHidden = !editorHidden;
+  updateLayout();
+}
+
+function togglePreview() {
+  previewHidden = !previewHidden;
+  updateLayout();
+  preview_url(previewPath);
+}
 document.getElementById("file").onclick = showFile;
 document.getElementById("edit").onclick = showEdit;
 document.getElementById("view").onclick = showView;
@@ -124,20 +197,21 @@ document.getElementById("view").onclick = showView;
   }
 }
 
-let modes = view.getElementsByClassName("dropdown-content")[0].childNodes;
+document.getElementById("toggleEditor").onclick = toggleEditor;
+document.getElementById("togglePreview").onclick = togglePreview;
+document.getElementById("openOptions").onclick = openOptions;
 
-for (let i = 0; i < modes.length; i++) {
-  modes[i].onclick = () => {
-    editor.setKeyboardHandler(`ace/keyboard/${modes[i].getAttribute("mode")}`);
-    localStorage.setItem("editor-mode", modes[i].getAttribute("mode"));
-  };
-}
+editor.on("change", function () {
+  saved = false;
+});
 
-if (localStorage.getItem("editor-mode")) {
-  editor.setKeyboardHandler(
-    `ace/keyboard/${localStorage.getItem("editor-mode")}`
-  );
-}
+window.addEventListener("beforeunload", function (e) {
+  localStorage.setItem("aceOptions", JSON.stringify(editor.getOptions()));
+  if (!saved) {
+    e.preventDefault();
+    e.returnValue = "";
+  }
+});
 
 function addRunning(element) {
   element.classList.add("running");
@@ -179,11 +253,13 @@ function save(f) {
         }
       } catch (_) {}
       removeRunning(saveBtn);
+      saved = true;
       if (typeof f == "function") {
         f();
       }
     }
   };
+  localStorage.setItem("aceOptions", JSON.stringify(editor.getOptions()));
 }
 
 saveBtn.onclick = save;
@@ -192,6 +268,10 @@ document.addEventListener("keydown", (e) => {
   if (e.ctrlKey && e.key === "s") {
     e.preventDefault();
     save();
+  }
+  if (e.ctrlKey && e.key === ",") {
+    e.preventDefault();
+    openOptions();
   }
   // if (e.shiftKey && e.ctrlKey && e.key === "c") {
   //   e.preventDefault();
@@ -220,6 +300,7 @@ function compileFile(target, btn) {
         alert(`Error compiling: ${JSON.stringify(data.kind)}`);
         return;
       }
+      previewOutdated = true;
       preview_url(data.newpath);
     })
     .catch((error) => console.error(error));

@@ -7,12 +7,35 @@
   background: #333536;
 }
 
-.menubar-item span:hover {
+.menubar-item span:hover,
+#ace_settingsmenu {
   background-color: #222222;
 }
 
 #display {
   color: white;
+}
+
+#ace_settingsmenu * {
+  color: #ccccbb;
+}
+
+#ace_settingsmenu button {
+  background-color: #222222;
+}
+
+#ace_settingsmenu select,
+#ace_settingsmenu input {
+  background-color: #222222;
+  border: 1px solid rgba(255, 200, 200, 0.2);
+}
+
+div[role="group"] {
+  border: 1px solid rgba(255, 200, 200, 0.2);
+}
+
+#ace_settingsmenu button[aria-pressed="true"] {
+  background: #000000;
 }
 
 .running {

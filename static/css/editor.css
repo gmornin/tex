@@ -8,6 +8,19 @@
   overflow: auto;
 }
 
+.fullscreen {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.fullscreen#disaplay {
+  width: 100% !important;
+}
+
+.fullscreen #html-preview {
+  margin: 10px !important;
+}
+
 #editor .ace_gutter {
   background: transparent;
 }
@@ -23,6 +36,7 @@ body {
   right: 0;
   top: 100px;
   overflow: auto;
+  padding: 0 !important;
 }
 
 #pdf-preview {
@@ -84,4 +98,46 @@ span.running:hover {
   max-width: 30vw;
   margin-left: auto;
   margin-right: auto;
+}
+
+.ace_autocomplete {
+  transform: scale(130%) translate(10%, 10%) !important;
+}
+
+#ace_settingsmenu {
+  box-shadow: none;
+}
+
+select {
+  outline: none;
+}
+
+#ace_settingsmenu button {
+  border: none;
+  box-shadow: none;
+  border-radius: 3px;
+  font-size: 1em;
+  transform: translateY(-1px);
+  cursor: pointer;
+}
+
+#ace_settingsmenu select,
+#ace_settingsmenu input {
+  border-radius: 3px;
+  font-size: 1em;
+  padding: 3px;
+}
+
+#ace_settingsmenu input[type="number"] {
+  appearance: textfield;
+}
+
+div[role="group"] {
+  padding: 3px;
+  display: inline-block;
+  border-radius: 3px;
+}
+
+.ace_optionsMenuEntry:hover {
+  background: none;
 }
