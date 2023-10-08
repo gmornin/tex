@@ -3,3 +3,13 @@
   max-width: 65em;
   padding: 5px;
 }
+
+#display * {
+  max-width: 100% !important;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+#display img {
+  border-radius: 5px;
+}
