@@ -7,7 +7,6 @@
 #display * {
   max-width: 100% !important;
   overflow-wrap: break-word;
-  white-space: pre-wrap;
 }
 
 #display img {

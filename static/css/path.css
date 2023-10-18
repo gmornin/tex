@@ -14,6 +14,7 @@
   padding-top: 10px;
   padding-bottom: 10px;
   border-radius: 10px;
+  overflow-wrap: break-word;
 }
 
 #path-display .fragment:not(:last-child):hover {
