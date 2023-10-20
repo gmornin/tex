@@ -15,7 +15,8 @@ a {
   box-shadow: 0px 5px 12px -3px #232526;
 }
 
-.linklike, #display a {
+.linklike,
+#display a {
   color: #58a6ff;
 }
 
@@ -33,14 +34,16 @@ a {
   background-color: #489646;
 }
 
-input, textarea {
+input,
+textarea {
   background-color: #181a1b;
   color: white;
   border: rgba(255, 255, 255, 0.1) solid 1px;
   outline: #2266aa;
 }
 
-input:focus, textarea:focus {
+input:focus,
+textarea:focus {
   outline: 1px solid #2266aa;
 }
 

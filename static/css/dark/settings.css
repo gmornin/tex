@@ -12,7 +12,8 @@
   background-color: #bb1111;
 }
 
-.dangerbut:hover, .dangerbut:disabled {
+.dangerbut:hover,
+.dangerbut:disabled {
   background-color: #ff0000;
 }
 
@@ -22,7 +23,7 @@ dialog {
   color: white;
 }
 
-#x:hover, .x:hover {
+#x:hover,
+.x:hover {
   color: #ff6666;
 }
-

@@ -124,6 +124,7 @@ async fn account_task(req: &HttpRequest) -> Result<HttpResponse, Box<dyn Error>>
           <label>Email</label>
           <input type="text" id="email" value="{email}" /><img
             class="save"
+            field="email"
             src="/static/icons/save.svg"
           />
         </div>

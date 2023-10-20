@@ -328,7 +328,7 @@ for (const save of Array.from(document.getElementsByClassName("save"))) {
         break;
       default:
         alert(
-          `I have died a horrible disease of "${save.getAttribute("field")}"`
+          `I have died a horrible disease of "${save.getAttribute("field")}"`,
         );
     }
   };
@@ -350,14 +350,14 @@ pfp_input.oninput = (_event) => {
       if (res.type == "error") {
         console.error(res);
         alert(
-          `Upload failed: ${res.kind.type}\nNote that only pngs are allowed at the moment`
+          `Upload failed: ${res.kind.type}\nNote that only pngs are allowed at the moment`,
         );
       } else {
         pfp.src = `/api/generic/v1/pfp/id/${localStorage.getItem(
-          "userid"
+          "userid",
         )}?time=${Date.now()}`;
         alert(
-          "Pfp updated, wait while the cached image wears off in other pages"
+          "Pfp updated, wait while the cached image wears off in other pages",
         );
       }
       pfp_input.removeAttribute("disabled");

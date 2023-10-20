@@ -6,7 +6,7 @@ Welcome to GoodMorning Tex - a minimal and easy to use **multiformat editor** an
 
 You have the freedom to publish your work privately or publicly, written in any format. Browse notes by others or take your own (the "I paid attention in class" flex), it's entirely up to you.
 
-> GM Tex is a fresh project in its early development, ***missing features are expected***.
+> GM Tex is a fresh project in its early development, **_missing features are expected_**.
 
 ## Roadmap
 
@@ -26,4 +26,4 @@ As in early development, here are some of the features which GM Tex currently of
 
 ## Goals
 
-The goal is to create a **federated publishing service**, for learners to read and write notes, and *I-want-internet-validation* people to publish articles for upvotes.
+The goal is to create a **federated publishing service**, for learners to read and write notes, and _I-want-internet-validation_ people to publish articles for upvotes.

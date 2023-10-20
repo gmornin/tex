@@ -5,7 +5,7 @@ function getCookie(name) {
 }
 
 let compilePath = decodeURIComponent(
-  window.location.pathname.split("/").slice(2).join("/")
+  window.location.pathname.split("/").slice(2).join("/"),
 );
 let savePath = `tex/${compilePath}`;
 
@@ -155,11 +155,11 @@ document.addEventListener("click", function (event) {
   }
   if (event.target.parentNode.classList.contains("menubar-item")) {
     hideAllDropdowns(
-      event.target.parentNode.getElementsByClassName("dropdown-content")[0]
+      event.target.parentNode.getElementsByClassName("dropdown-content")[0],
     );
   }
   hideAllDropdowns(
-    event.target.parentNode.getElementsByClassName("dropdown-content")[0]
+    event.target.parentNode.getElementsByClassName("dropdown-content")[0],
   );
 });
 
@@ -248,7 +248,7 @@ function save(f) {
         let res = JSON.parse(xhr.responseText);
         if (res.type === "error") {
           alert(
-            `There was an error saving this file: ${JSON.stringify(res.kind)}`
+            `There was an error saving this file: ${JSON.stringify(res.kind)}`,
           );
         }
       } catch (_) {}

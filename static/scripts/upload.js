@@ -98,7 +98,7 @@ function uploadFile(file, path) {
   xhr.open(
     "POST",
     `/api/storage/v1/upload-overwrite/${getCookie("token")}${path}`,
-    true
+    true,
   );
 
   xhr.upload.addEventListener("progress", fileUploadProgress);
@@ -142,9 +142,9 @@ function folderUploadFile(files, path, totalFiles, totalBytes, uploadedBytes) {
   xhr.open(
     "POST",
     `/api/storage/v1/upload-createdirs-overwrite/${getCookie(
-      "token"
+      "token",
     )}${uploadPath}`,
-    true
+    true,
   );
 
   xhr.upload.addEventListener("progress", (event) =>
@@ -153,8 +153,8 @@ function folderUploadFile(files, path, totalFiles, totalBytes, uploadedBytes) {
       uploadedBytes,
       totalBytes,
       totalFiles - files.length,
-      totalFiles
-    )
+      totalFiles,
+    ),
   );
 
   // xhr.addEventListener("load", fileUploadComplete);
@@ -170,10 +170,10 @@ function folderUploadFile(files, path, totalFiles, totalBytes, uploadedBytes) {
           () =>
             alert(
               `Error uploading "${path}", skipping this file.\n${JSON.stringify(
-                res.kind.type
-              )}`
+                res.kind.type,
+              )}`,
             ),
-          0
+          0,
         );
       }
 
@@ -202,7 +202,7 @@ function folderFileUploadProgress(
   uploadedBytes,
   totalBytes,
   uploadedFiles,
-  totalFiles
+  totalFiles,
 ) {
   if (event.lengthComputable) {
     uploadbut.innerText = `Uploading file ${uploadedFiles} of ${totalFiles} (${(
@@ -215,7 +215,7 @@ function folderFileUploadProgress(
 function fileUploadProgress(event) {
   if (event.lengthComputable) {
     uploadbut.innerText = `${formatBytes(event.loaded)}/${formatBytes(
-      event.total
+      event.total,
     )} (${((event.loaded / event.total) * 100).toFixed(2)}%)`;
   }
 }

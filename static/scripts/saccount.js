@@ -161,6 +161,7 @@ resendBut.onclick = () => {
 };
 
 function changeEmail(but) {
+  console.log(1);
   pwRun((pw) => {
     rusureRun((end) => {
       let body = {
@@ -262,6 +263,9 @@ for (const but of Array.from(document.getElementsByClassName("save"))) {
         }
 
         changePw(but);
+        return;
+      default:
+        console.log(`Unknown action ${action}`);
     }
   };
 }

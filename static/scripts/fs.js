@@ -76,7 +76,7 @@ function go(path, skipCheck) {
       `/api/storage/v1/diritems/${token}/tex/${path
         .split("/")
         .slice(1)
-        .join("/")}`
+        .join("/")}`,
     )
       .then((response) => response.json())
       .then((data) => {
@@ -86,7 +86,7 @@ function go(path, skipCheck) {
 
         if (data.type !== "dir content") {
           alert(
-            `Expected response type of "dir content", got ${data.type} instead`
+            `Expected response type of "dir content", got ${data.type} instead`,
           );
           return;
         }
@@ -101,7 +101,7 @@ function go(path, skipCheck) {
       `/api/usercontent/v1/diritems/id/${id}/tex/${path
         .split("/")
         .slice(1)
-        .join("/")}`
+        .join("/")}`,
     )
       .then((response) => response.json())
       .then((data) => {
@@ -111,7 +111,7 @@ function go(path, skipCheck) {
 
         if (data.type !== "dir content") {
           alert(
-            `Expected response type of "dir content", got ${data.type} instead`
+            `Expected response type of "dir content", got ${data.type} instead`,
           );
           return;
         }
@@ -237,15 +237,15 @@ function addListeners() {
       let path = fragment.getAttribute("path");
       fragment.addEventListener("click", (_ev) => go(path));
       fragment.addEventListener("auxclick", (_event) =>
-        window.open(`/fs/${path}`, "_blank").focus()
+        window.open(`/fs/${path}`, "_blank").focus(),
       );
-    }
+    },
   );
   if (!fslist) return;
   Array.from(fslist.children).forEach((fragment) => {
     let path = fragment.getAttribute("path");
     fragment.addEventListener("auxclick", (_event) =>
-      window.open(`/fs/${path}`, "_blank").focus()
+      window.open(`/fs/${path}`, "_blank").focus(),
     );
     if (fragment.getAttribute("isFile")) {
       fragment.addEventListener("click", (event) => {
@@ -307,7 +307,7 @@ if (fslist) {
       item
         .getElementsByClassName("dots")[0]
         .addEventListener("click", () =>
-          clickDots(item.getElementsByClassName("ellipsis")[0])
+          clickDots(item.getElementsByClassName("ellipsis")[0]),
         );
 
       let options = item.getElementsByClassName("dropdown-item");
@@ -319,7 +319,7 @@ if (fslist) {
           let action = option.getAttribute("action");
           let path =
             option.parentNode.parentNode.parentNode.parentNode.getAttribute(
-              "path"
+              "path",
             );
 
           switch (action) {
@@ -408,14 +408,14 @@ if (fslist) {
                 .then((data) => {
                   if (data.type == "error") {
                     alert(
-                      `Error changing visibility: ${JSON.stringify(data.kind)}`
+                      `Error changing visibility: ${JSON.stringify(data.kind)}`,
                     );
                     return;
                   }
                   for (const path in cache) {
                     if (
                       path.startsWith(
-                        `${window.history.state.path.split("/")[0]}/${vispath}`
+                        `${window.history.state.path.split("/")[0]}/${vispath}`,
                       )
                     ) {
                       delete cache[path];
@@ -450,14 +450,14 @@ if (fslist) {
                 .then((data) => {
                   if (data.type == "error") {
                     alert(
-                      `Error changing visibility: ${JSON.stringify(data.kind)}`
+                      `Error changing visibility: ${JSON.stringify(data.kind)}`,
                     );
                     return;
                   }
                   for (const path in cache) {
                     if (
                       path.startsWith(
-                        `${window.history.state.path.split("/")[0]}/${vispath}`
+                        `${window.history.state.path.split("/")[0]}/${vispath}`,
                       )
                     ) {
                       delete cache[path];
@@ -473,7 +473,7 @@ if (fslist) {
               let file_name = path.substring(slash_i);
               let dot_i = file_name.lastIndexOf(".");
               let file = cache[window.history.state.path].find(
-                (item) => item.name === file_name
+                (item) => item.name === file_name,
               );
               copybut.setAttribute("path", path);
               copy_from.innerText = `${path} (${formatBytes(file.size)})`;
@@ -492,7 +492,7 @@ if (fslist) {
                     .slice(1)
                     .join("/")}${file_name.substring(
                     0,
-                    dot_i
+                    dot_i,
                   )}-${getCurrentTime()}${file_name.substring(dot_i)}`;
                 }
               } else {
@@ -515,7 +515,7 @@ if (fslist) {
               let file_name = path.substring(slash_i);
               let dot_i = file_name.lastIndexOf(".");
               let file = cache[window.history.state.path].find(
-                (item) => item.name === file_name
+                (item) => item.name === file_name,
               );
               movebut.setAttribute("path", path);
               move_from.innerText = `${path} (${formatBytes(file.size)})`;
@@ -534,7 +534,7 @@ if (fslist) {
                     .slice(1)
                     .join("/")}${file_name.substring(
                     0,
-                    dot_i
+                    dot_i,
                   )}-${getCurrentTime()}${file_name.substring(dot_i)}`;
                 }
               } else {
@@ -631,7 +631,7 @@ if (fslist) {
           `${localStorage.getItem("userid")}/${copy_target.value
             .split("/")
             .slice(1, -1)
-            .join("/")}`
+            .join("/")}`,
         );
       })
       .catch((error) => console.error(error));
@@ -677,7 +677,7 @@ if (fslist) {
           `${localStorage.getItem("userid")}/${move_target.value
             .split("/")
             .slice(1, -1)
-            .join("/")}`
+            .join("/")}`,
         );
       })
       .catch((error) => console.error(error));
@@ -806,7 +806,7 @@ if (fslist) {
             .replace(/^\/+|\/+$/g, "")
             .split("/")
             .slice(1, -1)
-            .join("/")}`
+            .join("/")}`,
         );
       })
       .catch((error) => console.error(error));

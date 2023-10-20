@@ -12,11 +12,11 @@ This article guides you from **creating your account**, to **editing your first 
 
 ## 1. Create an account
 
-Click the *register* button to navigate to the sign up page.
+Click the _register_ button to navigate to the sign up page.
 
 Enter the basic details required for account creation.
 
-> A valid email address is required to receive the ***verification email***.
+> A valid email address is required to receive the **_verification email_**.
 
 ![](../assets/signup.png)
 
@@ -24,7 +24,7 @@ Congratulations! You have created your **GoodMorning account**.
 
 ## 2. Enabling GM Tex for your GoodMorning account
 
-Without going into great details as to why, **GM Tex** is merely a *service* available to GoodMorning accounts, and must be enabled before using.
+Without going into great details as to why, **GM Tex** is merely a _service_ available to GoodMorning accounts, and must be enabled before using.
 
 ![](../assets/createservice.png)
 
@@ -47,11 +47,11 @@ Upload or create a file to start editing.
 
 ## 4. Using the editor
 
-Click the ***3 dots*** and enter the editor.
+Click the **_3 dots_** and enter the editor.
 
 ![](../assets/enteredit.png)
 
-Paste in this ***LaTeX starter template*** and start editing.
+Paste in this **_LaTeX starter template_** and start editing.
 
 ```latex
 \documentclass{article}
@@ -69,10 +69,10 @@ Under the "compile" option, compile the LaTeX document to PDF.
 
 Your document will be compiled to PDF using the **PDFLatex** compiler. Currently compile formats and options are quite limited.
 
-|Source format|Target format|Compiler|
-|---|---|---|
-|LaTeX|PDF|PDFLatex|
-|Markdown|HTML|[pulldown-cmark](https://github.com/raphlinus/pulldown-cmark)|
+| Source format | Target format | Compiler                                                      |
+| ------------- | ------------- | ------------------------------------------------------------- |
+| LaTeX         | PDF           | PDFLatex                                                      |
+| Markdown      | HTML          | [pulldown-cmark](https://github.com/raphlinus/pulldown-cmark) |
 
 > More formats will be added, such as LaTeX to HTML and [Typst](https://github.com/typst/typst)
 

@@ -27,7 +27,7 @@ function create() {
       switch (data.type) {
         case "error":
           errorDisplay.innerHTML = `Server responded with error <code>${JSON.stringify(
-            data.kind
+            data.kind,
           )}</code>`;
           break;
         case "service created":
@@ -42,8 +42,8 @@ function create() {
           errorDisplay.innerText = `Unexpected server response`;
           alert(
             `Expected server to respond with type "error" or "service created", instead got ${JSON.stringify(
-              data.type
-            )}`
+              data.type,
+            )}`,
           );
       }
       button.removeAttribute("disabled");

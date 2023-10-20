@@ -12,13 +12,20 @@ use crate::r#static;
 
 pub fn scope() -> Scope {
     Scope::new("")
+        .service(fs::root)
         .service(home::home)
         .service(login::login)
+        .service(r#static::static_services)
         .service(r#static::r#static)
         .service(hard_links::remindverify)
         .service(user::profile)
         .service(fs::fspath)
-        .service(fs::root)
         .service(edit::edit)
         .service(settings::scope())
+        .service(goodmorning_services::pages::scope())
+}
+
+#[actix_web::get("/test")]
+async fn test() -> String {
+    "boop".to_string()
 }
