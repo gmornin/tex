@@ -28,7 +28,9 @@ async fn profile_task(id: Path<i64>, req: HttpRequest) -> Result<HttpResponse, B
         Err(res) => return Ok(res),
     };
 
-    let (account, is_owner) = if let Some(account) = account && account.id == *id {
+    let (account, is_owner) = if let Some(account) = account
+        && account.id == *id
+    {
         (account, true)
     } else {
         match Account::find_by_id(*id, ACCOUNTS.get().unwrap()).await? {

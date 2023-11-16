@@ -12,13 +12,9 @@ async fn main() {
     logs_init(LOGOPTIONS.get().unwrap());
 
     let outbounds = OUTBOUND.get().unwrap().clone();
-    let config = load_rustls_config(
-        &parse_path(outbounds.ssl_chain_path),
-        &parse_path(outbounds.ssl_key_path),
-    );
     let jobs: Data<Jobs> = Data::new(Jobs::default());
 
-    let server = HttpServer::new(move || {
+    let mut server = HttpServer::new(move || {
         // let backend = InMemoryBackend::builder().build();
         // let input = SimpleInputFunctionBuilder::new(Duration::from_secs(60), 5)
         //     .real_ip_key()
@@ -34,28 +30,22 @@ async fn main() {
         // .wrap(middleware)
     });
 
-    println!("Server started");
-    match (outbounds.enable_http, outbounds.enable_https) {
-        (true, true) => server
+    if outbounds.enable_http {
+        server = server
             .bind(("0.0.0.0", outbounds.http_port))
             .expect("cannot bind to port")
-            .bind_rustls(("0.0.0.0", outbounds.https_port), config)
-            .unwrap()
-            .run()
-            .await
-            .unwrap(),
-        (true, false) => server
-            .bind(("0.0.0.0", outbounds.http_port))
-            .expect("cannot bind to port")
-            .run()
-            .await
-            .unwrap(),
-        (false, true) => server
-            .bind_rustls(("0.0.0.0", outbounds.https_port), config)
-            .unwrap()
-            .run()
-            .await
-            .unwrap(),
-        _ => panic!("enabled either http or https bro"),
     }
+
+    if outbounds.enable_https {
+        let config = load_rustls_config(
+            &parse_path(outbounds.ssl_chain_path),
+            &parse_path(outbounds.ssl_key_path),
+        );
+        server = server
+            .bind_rustls(("0.0.0.0", outbounds.https_port), config)
+            .expect("cannot bind to port")
+    }
+
+    println!("Server started");
+    server.run().await.unwrap()
 }

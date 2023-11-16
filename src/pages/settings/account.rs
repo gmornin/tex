@@ -2,6 +2,7 @@ use std::error::Error;
 
 use actix_files::NamedFile;
 use actix_web::{get, http::header::ContentType, HttpRequest, HttpResponse};
+use goodmorning_services::VERIFICATION;
 
 use crate::{components::topbar_option_from_req, functions::from_res, CREATE_ACC, CSP_BASE};
 
@@ -22,7 +23,9 @@ async fn account_task(req: &HttpRequest) -> Result<HttpResponse, Box<dyn Error>>
     };
 
     let email = html_escape::encode_safe(&acc.email);
-    let verified = if acc.verified {
+    let verified = if !*VERIFICATION.get().unwrap() {
+        ""
+    } else if acc.verified {
         r#"
             <div id="unverified" class="verification hide">
               <img src="/static/icons/unverified.svg" />

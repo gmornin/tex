@@ -14,6 +14,7 @@ pub struct TexPublish {
     #[serde(rename = "_id")]
     pub id: i64,
     pub published: u64,
+    pub updated: u64,
     pub title: String,
     pub desc: String,
     pub ext: String,
@@ -33,9 +34,11 @@ impl TexPublish {
         desc: String,
         ext: String,
     ) -> Result<Self, Box<dyn Error>> {
+        let now = chrono::Utc::now().timestamp() as u64;
         let s = Self {
             id: *publishid,
-            published: chrono::Utc::now().timestamp() as u64,
+            published: now,
+            updated: now,
             title,
             desc,
             ext,

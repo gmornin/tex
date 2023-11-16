@@ -1,4 +1,3 @@
-#![allow(private_in_public)]
 #![feature(if_let_guard)]
 #![feature(iter_intersperse)]
 #![allow(hidden_glob_reexports)]

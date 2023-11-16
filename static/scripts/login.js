@@ -100,23 +100,27 @@ function signup() {
       switch (data.type) {
         case "error":
           errorDisplay.innerHTML = `Server responded with error <code>${JSON.stringify(
-            data.kind,
+            data.kind
           )}</code>`;
           break;
         case "created":
           document.cookie = `token=${data.token}; path=/; max-age=31536000; same-site=lax; Secure`;
           localStorage.setItem("userid", data.id);
           errorDisplay.innerText = "Account created. Redirecting...";
-          window.location.href = `/remindverify?${email.slice(
-            email.indexOf("@") + 1,
-          )}`;
+          if (data.verify) {
+            window.location.href = `/remindverify?${email.slice(
+              email.indexOf("@") + 1
+            )}`;
+          } else {
+            window.location.href = "/";
+          }
           return;
         default:
           errorDisplay.innerText = `Unexpected server response`;
           alert(
             `Expected server to respond with type "error" or "created", instead got ${JSON.stringify(
-              data.type,
-            )}`,
+              data.type
+            )}`
           );
       }
       button.removeAttribute("disabled");
@@ -169,7 +173,7 @@ function signin() {
       switch (data.type) {
         case "error":
           errorDisplay.innerHTML = `Server responded with error <code>${JSON.stringify(
-            data.kind,
+            data.kind
           )}</code>`;
           break;
         case "login":
@@ -182,8 +186,8 @@ function signin() {
           errorDisplay.innerText = `Unexpected server response`;
           alert(
             `Expected server to respond with type "error" or "success", instead got ${JSON.stringify(
-              data.type,
-            )}`,
+              data.type
+            )}`
           );
       }
       button.removeAttribute("disabled");

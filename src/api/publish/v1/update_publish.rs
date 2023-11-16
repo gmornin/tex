@@ -1,20 +1,21 @@
 use std::{error::Error, ffi::OsStr, path::PathBuf};
 
 use actix_web::{post, web::Json, HttpResponse};
-use goodmorning_services::bindings::services::v1::{V1Error, V1Publish, V1Response};
+use goodmorning_services::bindings::services::v1::{V1Error, V1Response, V1UpdatePublish};
 use goodmorning_services::{functions::*, structs::*, traits::CollectionItem, *};
 use tokio::fs;
 
+use crate::functions::get_tex_userpublishes;
 use crate::structs::TexPublish;
 
-#[post("/publish")]
-async fn publish(post: Json<V1Publish>) -> HttpResponse {
-    from_res(publish_task(post).await)
+#[post("/update-publish")]
+async fn update_publish(post: Json<V1UpdatePublish>) -> HttpResponse {
+    from_res(update_publish_task(post).await)
 }
 
-async fn publish_task(post: Json<V1Publish>) -> Result<V1Response, Box<dyn Error>> {
+async fn update_publish_task(post: Json<V1UpdatePublish>) -> Result<V1Response, Box<dyn Error>> {
     let post = post.into_inner();
-    let mut account = Account::v1_get_by_token(&post.token)
+    let account = Account::v1_get_by_token(&post.token)
         .await?
         .v1_restrict_verified()?
         .v1_contains(&GMServices::Tex)?;
@@ -24,6 +25,12 @@ async fn publish_task(post: Json<V1Publish>) -> Result<V1Response, Box<dyn Error
     if !editable(&user_path, &account.services) {
         return Err(V1Error::PermissionDenied.into());
     }
+
+    let publishes = get_tex_userpublishes(post.id);
+    let published = match TexPublish::find_by_id(post.id, &publishes).await? {
+        Some(p) => p,
+        None => return Err(V1Error::EntryNotFound.into()),
+    };
 
     let copy_from = get_user_dir(account.id, None).join(&user_path);
 
@@ -53,7 +60,7 @@ async fn publish_task(post: Json<V1Publish>) -> Result<V1Response, Box<dyn Error
 
     let copy_to = get_usersys_dir(account.id, Some(GMServices::Tex))
         .join("publishes")
-        .join(format!("{}.{ext}", account.counters.tex_publishes));
+        .join(format!("{}.{ext}", post.id));
 
     let parent = copy_to.parent().unwrap();
     if !fs::try_exists(parent).await? {
@@ -61,18 +68,7 @@ async fn publish_task(post: Json<V1Publish>) -> Result<V1Response, Box<dyn Error
     }
 
     fs::copy(copy_from, copy_to).await?;
+    published.save_replace(&publishes).await?;
 
-    let published = TexPublish::new(
-        account.id,
-        &mut account.counters.tex_publishes,
-        post.title,
-        post.desc,
-        ext,
-    )
-    .await?;
-    account.save_replace(ACCOUNTS.get().unwrap()).await?;
-
-    Ok(V1Response::TexPublished {
-        id: published.id as u64,
-    })
+    Ok(V1Response::TexPublishUpdated)
 }

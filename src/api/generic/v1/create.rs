@@ -21,7 +21,12 @@ async fn create_task(
         && CREATE_WHITELIST
             .get()
             .unwrap()
-            .binary_search(&req.connection_info().peer_addr().unwrap().to_string())
+            .binary_search(
+                &req.connection_info()
+                    .realip_remote_addr()
+                    .unwrap()
+                    .to_string(),
+            )
             .is_err()
     {
         return Err(V1Error::FeatureDisabled.into());

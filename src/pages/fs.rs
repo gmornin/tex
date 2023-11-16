@@ -71,7 +71,9 @@ async fn fs_task(
 
     let is_owner = account.as_ref().is_some_and(|account| account.id == id);
 
-    let account = if let Some(account) = account && account.id == id {
+    let account = if let Some(account) = account
+        && account.id == id
+    {
         account
     } else {
         match Account::find_by_id(id, ACCOUNTS.get().unwrap()).await? {

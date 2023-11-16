@@ -19,13 +19,17 @@ function resetPw() {
 }
 
 function verifiedDisplay() {
-  verified.style.display = "block";
-  unverified.style.display = "none";
+  if (verified !== null) {
+    verified.style.display = "block";
+    unverified.style.display = "none";
+  }
 }
 
 function unverifiedDisplay() {
-  unverified.style.display = "block";
-  verified.style.display = "none";
+  if (verified !== null) {
+    unverified.style.display = "block";
+    verified.style.display = "none";
+  }
 }
 
 function pwRun(f) {
@@ -122,46 +126,47 @@ regenBut.onclick = () => {
   });
 };
 
-resendBut.onclick = () => {
-  let body = {
-    token: getToken(),
-  };
-  let url = "/api/accounts/v1/resend-verify";
-  fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.type == "nothing changed") {
-        verifiedDisplay();
-        alert("Already verified");
-        return;
-      }
-
-      if (data.type == "error") {
-        alert(JSON.stringify(data.kind));
-        return;
-      }
-
-      resendBut.innerText = "Message sent";
-      resendBut.classList.add("not-allowed");
-      resendBut.setAttribute("disabled", true);
-
-      setTimeout(() => {
-        resendBut.innerText = "Resend verification";
-        resendBut.classList.remove("not-allowed");
-        resendBut.removeAttribute("disabled");
-      }, 1000);
+if (resendBut !== null) {
+  resendBut.onclick = () => {
+    let body = {
+      token: getToken(),
+    };
+    let url = "/api/accounts/v1/resend-verify";
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
     })
-    .catch((error) => console.error(error));
-};
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.type == "nothing changed") {
+          verifiedDisplay();
+          alert("Already verified");
+          return;
+        }
+
+        if (data.type == "error") {
+          alert(JSON.stringify(data.kind));
+          return;
+        }
+
+        resendBut.innerText = "Message sent";
+        resendBut.classList.add("not-allowed");
+        resendBut.setAttribute("disabled", true);
+
+        setTimeout(() => {
+          resendBut.innerText = "Resend verification";
+          resendBut.classList.remove("not-allowed");
+          resendBut.removeAttribute("disabled");
+        }, 1000);
+      })
+      .catch((error) => console.error(error));
+  };
+}
 
 function changeEmail(but) {
-  console.log(1);
   pwRun((pw) => {
     rusureRun((end) => {
       let body = {

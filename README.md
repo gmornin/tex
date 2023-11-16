@@ -15,7 +15,7 @@ As in early development, here are some of the features which GM Tex currently of
 - [x] Compiling LaTex, Markdown documents.
 - [x] Previewing plain text files, images and documents.
 - [x] Editing files in web editor.
-- [ ] Basic file operations. (missing moving/renaming files)
+- [x] Basic file operations. (missing moving/renaming files)
 - [x] Full profile customisations.
 
 ---
@@ -38,7 +38,6 @@ Requirements:
 - PDFLatex from TexLive
 - Firejail
 - Basic packages, such as `cargo`, `openssl`, etc. (Rust nightly is required).
-- Root privileges (sudo) - as a result **Linux is required** to run an instance (as if anyone would host it on Windows anyways)
 
 Run the following commands:
 
@@ -48,8 +47,6 @@ cd gmt-server &&
 cargo install --path . &&
 gmt-server
 ```
-
-This would prompt you to enter your sudo password, just do it.
 
 The server should immediately exit with some error messages, this is because the config files are not configured out of the box (to prevent your personal files from getting accessed).
 

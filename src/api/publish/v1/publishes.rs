@@ -31,7 +31,7 @@ async fn publishes_task(
         items: TexPublish::list(
             *path,
             query.page.unwrap_or(1) as u64,
-            query.page_size.unwrap_or(10) as u64,
+            std::cmp::min(query.page_size.unwrap_or(10) as u64, 50),
         )
         .await?
         .into_iter()
