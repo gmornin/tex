@@ -3,7 +3,7 @@ use actix_web::{middleware::Logger, App, HttpServer};
 use gmt_server::{api, pages, LOGOPTIONS, OUTBOUND};
 use goodmorning_services::functions::parse_path;
 use goodmorning_services::structs::Jobs;
-use goodmorning_services::{init, load_rustls_config, logs_init};
+use goodmorning_services::{init, load_rustls_config, logs_init, FORWARDED};
 
 #[tokio::main]
 async fn main() {
@@ -23,7 +23,11 @@ async fn main() {
         App::new()
             .service(api::scope())
             .service(pages::scope())
-            .wrap(Logger::default())
+            .wrap(if *FORWARDED.get().unwrap() {
+                Logger::new(r#"%{Forwarded}i "%r" %s %b "%{Referer}i" "%{User-Agent}i" %T"#)
+            } else {
+                Logger::default()
+            })
             .app_data(jobs.clone())
         // .app_data(Data::new(EMAIL_VERIFICATION_DURATION))
         // .app_data(Data::new(storage_limits))
