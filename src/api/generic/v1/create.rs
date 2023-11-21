@@ -18,16 +18,17 @@ async fn create_task(
     req: HttpRequest,
 ) -> Result<V1Response, Box<dyn Error>> {
     if !ALLOW_CREATE.get().unwrap()
-        && CREATE_WHITELIST
+        && !CREATE_WHITELIST
             .get()
             .unwrap()
-            .binary_search(
-                &req.connection_info()
+            .contains(&if *FORWARDED.get().unwrap() {
+                req.connection_info()
                     .realip_remote_addr()
                     .unwrap()
-                    .to_string(),
-            )
-            .is_err()
+                    .to_string()
+            } else {
+                req.connection_info().peer_addr().unwrap().to_string()
+            })
     {
         return Err(V1Error::FeatureDisabled.into());
     }
