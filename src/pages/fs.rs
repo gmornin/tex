@@ -3,7 +3,7 @@ use std::{borrow::Cow, error::Error, ffi::OsStr, path::PathBuf};
 use actix_files::NamedFile;
 use actix_web::{
     get,
-    http::header::{ContentDisposition, ContentType, HeaderValue},
+    http::header::{ContentType, HeaderValue},
     web::Path,
     HttpRequest, HttpResponse,
 };
@@ -98,16 +98,7 @@ async fn fs_task(
     if metadata.is_dir() {
         dir(account, path, topbar, is_owner).await
     } else {
-        file(
-            account,
-            pathbuf,
-            path,
-            topbar,
-            is_owner,
-            metadata.len(),
-            req,
-        )
-        .await
+        file(account, pathbuf, path, topbar, is_owner, metadata.len()).await
     }
 }
 
@@ -249,10 +240,10 @@ async fn file(
     topbar: Cow<'_, str>,
     is_owner: bool,
     size: u64,
-    req: &HttpRequest,
 ) -> Result<HttpResponse, Box<dyn Error>> {
     let visibility = Visibilities::visibility(&pathbuf).await?;
 
+    let mut csp_heaher = Cow::from(CSP_BASE.get().unwrap());
     if visibility.visibility == ItemVisibility::Private && !is_owner {
         return Err(V1Error::FileNotFound.into());
     }
@@ -276,34 +267,54 @@ async fn file(
     let mime_str = html_friendly_mime(mime.essence_str());
     let mut is_text = false;
 
-    let (display, css) = match pathbuf
+    let (display, css, source) = match pathbuf
         .extension()
         .unwrap_or(OsStr::new(""))
         .to_str()
         .unwrap()
     {
-        "html" => components::html(&pathbuf).await?,
+        "html" => components::html(&pathbuf, &path).await?,
         _ => match (mime.type_(), mime.subtype()) {
             (mime::IMAGE, _) => (
                 components::img(&url),
                 "<link rel=\"stylesheet\" href=\"/static/css/img.css\" />",
+                None,
             ),
             (mime::AUDIO, _) => (
                 components::audio(&url),
                 "<link rel=\"stylesheet\" href=\"/static/css/audio.css\" />",
+                None,
             ),
             (mime::VIDEO, _) => (
                 components::video(&url),
                 "<link rel=\"stylesheet\" href=\"/static/css/video.css\" />",
+                None,
             ),
+            // (_, mime::PDF) => {
+            //     return Ok(NamedFile::open_async(&pathbuf)
+            //         .await?
+            //         .set_content_disposition(ContentDisposition {
+            //             disposition: actix_web::http::header::DispositionType::Inline,
+            //             parameters: Vec::new(),
+            //         })
+            //         .into_response(req))
+            // }
             (_, mime::PDF) => {
-                return Ok(NamedFile::open_async(&pathbuf)
-                    .await?
-                    .set_content_disposition(ContentDisposition {
-                        disposition: actix_web::http::header::DispositionType::Inline,
-                        parameters: Vec::new(),
-                    })
-                    .into_response(req))
+                let nonce = gen_nonce();
+                csp_heaher = format!("{} 'nonce-{nonce}'", CSP_BASE.get().unwrap()).into();
+                (
+                    components::pdf(&url, &nonce),
+                    r#"<link rel="stylesheet" href="/static/scripts/pdfjs/web/viewer.css" />
+                <link rel="stylesheet" href="/static/css/pdf.css" />"#,
+                    fs::try_exists(pathbuf.with_extension("tex"))
+                        .await?
+                        .then(|| {
+                            PathBuf::from(&path)
+                                .with_extension("tex")
+                                .to_string_lossy()
+                                .to_string()
+                        }),
+                )
             }
             (mime::TEXT, _) | (mime::APPLICATION, _) => {
                 is_text = true;
@@ -315,7 +326,7 @@ async fn file(
 
     let id = account.id;
     let path_escaped = html_escape::encode_safe(&path).to_string();
-    let footurls = format!(
+    let mut footurls = format!(
         r#"{}{}<a class="linklike" href="{url}" download>Download</a>"#,
         if is_owner {
             format!(r#"<a class="linklike" id="footurls" href="/edit/{path_escaped}">Edit</a>"#)
@@ -328,6 +339,13 @@ async fn file(
             String::new()
         },
     );
+
+    if let Some(source) = source {
+        footurls.push_str(&format!(
+            r#"<a class="linklike" href="/fs/{id}/{}?display=text">Source</a>"#,
+            html_escape::encode_text(&source)
+        ));
+    }
 
     let path_display = yew::ServerRenderer::<components::Path>::with_props(move || PathProp {
         id: account.id,
@@ -344,6 +362,7 @@ async fn file(
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    {css}
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/static/css/main.css" />
     <link rel="stylesheet" href="/static/css/topbar.css" />
@@ -355,7 +374,6 @@ async fn file(
     <link rel="stylesheet" href="/static/css/dark/topbar.css" />
     <link rel="stylesheet" href="/static/css/dark/path.css" />
     <link rel="stylesheet" href="/static/css/dark/topbar-signedout.css" />
-    {css}
     {}
     <script src="/static/scripts/file.js" defer></script>
     <link
@@ -386,6 +404,6 @@ async fn file(
 
     Ok(HttpResponse::Ok()
         .content_type(ContentType::html())
-        .insert_header(("Content-Security-Policy", CSP_BASE.get().unwrap().as_str()))
+        .insert_header(("Content-Security-Policy", csp_heaher.as_ref()))
         .body(html))
 }

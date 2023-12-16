@@ -1,0 +1,13 @@
+#publist a:hover * {
+  filter: brightness(80%) saturate(100%) invert(0%) sepia(90%) saturate(1);
+}
+
+#publist li:not(:last-child) {
+  padding-bottom: 10px;
+  border-bottom: 1px solid white;
+}
+
+.page-flipper *:hover {
+  transition: 0.2s;
+  color: #008899;
+}

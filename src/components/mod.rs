@@ -10,3 +10,5 @@ mod editor;
 pub use editor::*;
 mod settings;
 pub use settings::*;
+mod publishes;
+pub use publishes::*;

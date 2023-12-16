@@ -49,8 +49,8 @@ pub fn editor(
     <link rel="stylesheet" href="/static/css/dark/topbar.css" />
     <link rel="stylesheet" href="/static/css/dark/topbar-signedout.css" />
     <link rel="stylesheet" href="/static/css/dark/editor.css" />
-    <script src="/static/scripts/src-min-noconflict/ace.js"></script>
-    <script src="/static/scripts/src-min-noconflict/ext-language_tools.js"></script>
+    <script src="/static/scripts/ace/ace.js"></script>
+    <script src="/static/scripts/ace/ext-language_tools.js"></script>
     <link href="/static/css/textpreview.css" rel="stylesheet" /><link href="/static/css/html.css" rel="stylesheet" /><link href="/static/css/prism.css" rel="stylesheet" /><script src="/static/scripts/prism.js"></script>
     <link
       rel="shortcut icon"

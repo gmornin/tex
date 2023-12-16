@@ -92,6 +92,7 @@ async fn profile_task(id: Path<i64>, req: HttpRequest) -> Result<HttpResponse, B
       <h2>Places</h2>
       <ul>
         <li><a class="linklike" href="/fs/{id}">User file system</a></li>
+        <li><a class="linklike" href="/publish/{id}">User publishes</a></li>
       </ul>
     </div>
   </body>

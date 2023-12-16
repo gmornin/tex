@@ -27,16 +27,16 @@ async fn publishes_task(
     path: Path<i64>,
     query: Query<PageQuery>,
 ) -> Result<V1Response, Box<dyn Error>> {
+    let (items, continuation) = TexPublish::list(
+        *path,
+        query.page.unwrap_or(1) as u64,
+        std::cmp::min(query.page_size.unwrap_or(10) as u64, 50),
+    )
+    .await?;
     Ok(V1Response::TexUserPublishes {
-        items: TexPublish::list(
-            *path,
-            query.page.unwrap_or(1) as u64,
-            std::cmp::min(query.page_size.unwrap_or(10) as u64, 50),
-        )
-        .await?
-        .into_iter()
-        .map(TexPublish::into)
-        .collect(),
+        items: items.into_iter().map(TexPublish::into).collect(),
+        continuation,
+        total: TexPublish::total(*path).await?,
     })
 }
 
@@ -50,15 +50,15 @@ async fn publishes_username_task(
     query: Query<PageQuery>,
 ) -> Result<V1Response, Box<dyn Error>> {
     let account = Account::v1_get_by_username(path.into_inner()).await?;
+    let (items, continuation) = TexPublish::list(
+        account.id,
+        query.page.unwrap_or(1) as u64,
+        std::cmp::min(query.page_size.unwrap_or(10) as u64, 50),
+    )
+    .await?;
     Ok(V1Response::TexUserPublishes {
-        items: TexPublish::list(
-            account.id,
-            query.page.unwrap_or(1) as u64,
-            query.page_size.unwrap_or(10) as u64,
-        )
-        .await?
-        .into_iter()
-        .map(TexPublish::into)
-        .collect(),
+        items: items.into_iter().map(TexPublish::into).collect(),
+        continuation,
+        total: TexPublish::total(account.id).await?,
     })
 }

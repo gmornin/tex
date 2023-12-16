@@ -15,7 +15,7 @@ async fn update_publish(post: Json<V1UpdatePublish>) -> HttpResponse {
 
 async fn update_publish_task(post: Json<V1UpdatePublish>) -> Result<V1Response, Box<dyn Error>> {
     let post = post.into_inner();
-    let account = Account::v1_get_by_token(&post.token)
+    let mut account = Account::v1_get_by_token(&post.token)
         .await?
         .v1_restrict_verified()?
         .v1_contains(&GMServices::Tex)?;
@@ -44,23 +44,28 @@ async fn update_publish_task(post: Json<V1UpdatePublish>) -> Result<V1Response, 
         return Err(V1Error::TypeMismatch.into());
     }
 
-    if account
-        .exceeds_limit(STORAGE_LIMITS.get().unwrap(), Some(metadata.len()), None)
-        .await?
-    {
-        return Err(V1Error::FileTooLarge.into());
-    }
-
     let ext = user_path
         .extension()
         .unwrap_or(OsStr::new(""))
         .to_str()
         .unwrap()
         .to_string();
-
     let copy_to = get_usersys_dir(account.id, Some(GMServices::Tex))
         .join("publishes")
         .join(format!("{}.{ext}", post.id));
+
+    let to_meta = fs::metadata(&copy_to).await?;
+
+    if account
+        .exceeds_limit_nosave(
+            STORAGE_LIMITS.get().unwrap(),
+            Some(metadata.len()),
+            Some(to_meta.len()),
+        )
+        .await?
+    {
+        return Err(V1Error::StorageFull.into());
+    }
 
     let parent = copy_to.parent().unwrap();
     if !fs::try_exists(parent).await? {
@@ -69,6 +74,11 @@ async fn update_publish_task(post: Json<V1UpdatePublish>) -> Result<V1Response, 
 
     fs::copy(copy_from, copy_to).await?;
     published.save_replace(&publishes).await?;
+
+    let stored = account.stored.as_mut().unwrap();
+    stored.value += metadata.len();
+    stored.value = stored.value.saturating_sub(to_meta.len());
+    account.save_replace(ACCOUNTS.get().unwrap()).await?;
 
     Ok(V1Response::TexPublishUpdated)
 }

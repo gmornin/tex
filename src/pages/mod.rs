@@ -3,6 +3,7 @@ mod fs;
 mod hard_links;
 mod home;
 mod login;
+mod publish;
 mod settings;
 mod user;
 use actix_web::Scope;
@@ -22,6 +23,7 @@ pub fn scope() -> Scope {
         .service(fs::fspath)
         .service(edit::edit)
         .service(settings::scope())
+        .service(publish::publish)
         .service(goodmorning_services::pages::scope())
 }
 

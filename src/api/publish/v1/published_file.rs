@@ -1,7 +1,7 @@
 use std::error::Error;
 
 use actix_files::NamedFile;
-use actix_web::http::header::{self, HeaderValue};
+use actix_web::http::header::{self, ContentDisposition, HeaderValue};
 use actix_web::web::Path;
 use actix_web::HttpRequest;
 use actix_web::{get, HttpResponse};
@@ -34,9 +34,13 @@ async fn published_file_task(
     let mut file = NamedFile::open_async(
         get_usersys_dir(userid, Some(GMServices::Tex))
             .join("publishes")
-            .join(format!("{publish_id}{}", publish.ext)),
+            .join(format!("{publish_id}.{}", publish.ext)),
     )
     .await?
+    .set_content_disposition(ContentDisposition {
+        disposition: actix_web::http::header::DispositionType::Inline,
+        parameters: Vec::new(),
+    })
     .into_response(&req);
     file.headers_mut().insert(
         header::CONTENT_SECURITY_POLICY,

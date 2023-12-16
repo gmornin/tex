@@ -70,6 +70,7 @@ async fn publish_task(post: Json<V1Publish>) -> Result<V1Response, Box<dyn Error
         ext,
     )
     .await?;
+    account.stored.as_mut().unwrap().value += metadata.len();
     account.save_replace(ACCOUNTS.get().unwrap()).await?;
 
     Ok(V1Response::TexPublished {

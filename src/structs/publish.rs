@@ -9,7 +9,7 @@ use goodmorning_services::traits::CollectionItem;
 
 use crate::functions::get_tex_userpublishes;
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct TexPublish {
     #[serde(rename = "_id")]
     pub id: i64,
@@ -51,18 +51,19 @@ impl TexPublish {
         Ok(s)
     }
 
+    // (items, continued)
     pub async fn list(
         userid: i64,
         mut page: u64,
         page_size: u64,
-    ) -> Result<Vec<TexPublish>, Box<dyn Error>> {
+    ) -> Result<(Vec<TexPublish>, bool), Box<dyn Error>> {
         let collection = get_tex_userpublishes(userid);
 
         page = page.saturating_sub(1);
 
         let mut find_options = FindOptions::default();
         find_options.skip = Some(page * page_size); // Skip the first 9 documents
-        find_options.limit = Some(page_size as i64); // Retrieve 11 documents (10th to 20th)
+        find_options.limit = Some(page_size as i64 + 1); // Retrieve 11 documents (10th to 20th)
         find_options.batch_size = Some(page_size as u32);
         find_options.sort = Some(doc! {"_id": -1});
 
@@ -71,12 +72,19 @@ impl TexPublish {
         let mut items = Vec::with_capacity(page_size as usize);
 
         while let Some(document) = cursor.next().await {
-            items.push(document?)
+            items.push(document?);
+            if items.len() == page_size as usize {
+                break;
+            }
         }
 
-        dbg!(&items);
+        Ok((items, cursor.next().await.is_some()))
+    }
 
-        Ok(items)
+    pub async fn total(userid: i64) -> Result<u64, Box<dyn Error>> {
+        Ok(get_tex_userpublishes(userid)
+            .estimated_document_count(None)
+            .await?)
     }
 }
 
