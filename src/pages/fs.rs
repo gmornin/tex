@@ -342,7 +342,7 @@ async fn file(
 
     if let Some(source) = source {
         footurls.push_str(&format!(
-            r#"<a class="linklike" href="/fs/{id}/{}?display=text">Source</a>"#,
+            r#"<a class="linklike" href="/fs/{id}/{}">Source</a>"#,
             html_escape::encode_text(&source)
         ));
     }

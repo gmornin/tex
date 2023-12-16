@@ -1,7 +1,7 @@
 #outerContainer {
   margin-left: auto;
   margin-right: auto;
-  width: 90% !important;
+  max-width: min(60em, 90vw);
   margin-top: 10px !important;
   height: 80% !important;
 }
@@ -10,7 +10,7 @@
     display: inline;
 }
 
-#toolbarContainer, #scaleSelect, #scaleSelectContainer, #pageNumber, input {
+#toolbarContainer, #scaleSelect, #scaleSelectContainer, #pageNumber, input, #toolbarSidebar {
     background: transparent !important;
     border: none;
 }
