@@ -76,7 +76,14 @@ pub async fn html(
     let content = fs::read_to_string(path).await?;
     Ok((
         content,
-        "<link href=\"/static/css/textpreview.css\" rel=\"stylesheet\" /><link href=\"/static/css/html.css\" rel=\"stylesheet\" /><link href=\"/static/css/prism.css\" rel=\"stylesheet\" /><script src=\"/static/scripts/prism.js\"></script>",
+        r#"<link href="/static/css/textpreview.css" rel="stylesheet" />
+    <link href="/static/css/html.css" rel="stylesheet" />
+    <link href="/static/css/prism.css" rel="stylesheet" />
+    <script src="/static/scripts/prism.js"></script>
+    <link rel="stylesheet" href="/static/scripts/katex/katex.min.css">
+    <script defer src="/static/scripts/katex/katex.min.js"></script>
+    <script defer src="/static/scripts/katex/contrib/auto-render.min.js"></script>
+        "#,
         fs::try_exists(path.with_extension("md")).await?.then(|| PathBuf::from(userpath).with_extension("md").to_string_lossy().to_string())
     ))
 }
