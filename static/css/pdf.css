@@ -14,3 +14,7 @@
     background: transparent !important;
     border: none;
 }
+
+#viewer {
+    filter: invert(64%) contrast(300%) brightness(123%) hue-rotate(180deg)
+}

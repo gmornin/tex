@@ -127,7 +127,13 @@ function preview_url(path) {
                 });
             break;
         case "pdf":
-            pdfPreview.setAttribute("src", `${url}&display=inline`);
+            if(fullyLoaded) {
+                PDFViewerApplication.open({url});
+            } else {
+                document.addEventListener("DOMContentLoaded", function () {
+                    PDFViewerApplication.open({url});
+                });
+            }
             previewsHideExcept(pdfPreview);
             previewOutdated = false;
             break;

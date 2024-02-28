@@ -4076,22 +4076,22 @@ function webViewerKeyDown(evt) {
     }
   }
   if (cmd === 1 || cmd === 8) {
-    switch (evt.keyCode) {
-      case 83:
-        eventBus.dispatch("download", {
-          source: window
-        });
-        handled = true;
-        break;
-      case 79:
-        {
-          eventBus.dispatch("openfile", {
-            source: window
-          });
-          handled = true;
-        }
-        break;
-    }
+    // switch (evt.keyCode) {
+    //   case 83:
+    //     eventBus.dispatch("download", {
+    //       source: window
+    //     });
+    //     handled = true;
+    //     break;
+    //   case 79:
+    //     {
+    //       eventBus.dispatch("openfile", {
+    //         source: window
+    //       });
+    //       handled = true;
+    //     }
+    //     break;
+    // }
   }
   if (cmd === 3 || cmd === 10) {
     switch (evt.keyCode) {

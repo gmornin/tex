@@ -141,3 +141,16 @@ div[role="group"] {
 .ace_optionsMenuEntry:hover {
   background: none;
 }
+
+#toolbarContainer, #scaleSelect, #scaleSelectContainer, #pageNumber, input, #toolbarSidebar {
+    background: transparent !important;
+    border: none;
+}
+
+#viewer {
+    filter: invert(64%) contrast(300%) brightness(123%) hue-rotate(180deg)
+}
+
+#ace_settingsmenu:parent {
+    z-index: 9999;
+}
