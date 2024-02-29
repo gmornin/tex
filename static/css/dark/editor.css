@@ -41,3 +41,13 @@ div[role="group"] {
 .running {
   color: #88ff88 !important;
 }
+
+.x:hover {
+  color: #ff6666;
+}
+
+dialog {
+  background-color: #222222;
+  border: rgba(255, 255, 255, 0.2) solid 1px;
+  color: white;
+}

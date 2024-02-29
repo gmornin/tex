@@ -154,3 +154,39 @@ div[role="group"] {
 #ace_settingsmenu:parent {
     z-index: 9999;
 }
+
+.x {
+  font-size: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+}
+
+.x:hover {
+  cursor: pointer;
+}
+
+#coutd * {
+  font-weight: 350;
+  font-family: Inter, sans-serif;
+}
+
+#coutd {
+  z-index: 10000000;
+  width: calc(min(60%, 50em));
+  position: absolute;
+  top: 50%;
+  padding: 20px;
+  transform: translateY(-50%);
+  border-radius: 8px;
+  text-align: center;
+  height: calc(max(50%, 30em));
+  overflow: scroll;
+}
+
+#coutd pre {
+    align-self: center;
+    text-align: left;
+}

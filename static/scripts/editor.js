@@ -114,12 +114,17 @@ function preview_url(path) {
                     previewsHideExcept(htmlPreview);
                     Prism.highlightAll();
                     previewOutdated = false;
-                    if(fullyLoaded) {
-                        renderMathInElement(document.getElementById('display'));
+                    if (fullyLoaded) {
+                        renderMathInElement(document.getElementById("display"));
                     } else {
-                        document.addEventListener("DOMContentLoaded", function () {
-                            renderMathInElement(document.getElementById('display'));
-                        });
+                        document.addEventListener(
+                            "DOMContentLoaded",
+                            function () {
+                                renderMathInElement(
+                                    document.getElementById("display"),
+                                );
+                            },
+                        );
                     }
                 })
                 .catch(function (err) {
@@ -127,11 +132,11 @@ function preview_url(path) {
                 });
             break;
         case "pdf":
-            if(fullyLoaded) {
-                PDFViewerApplication.open({url});
+            if (fullyLoaded) {
+                PDFViewerApplication.open({ url });
             } else {
                 document.addEventListener("DOMContentLoaded", function () {
-                    PDFViewerApplication.open({url});
+                    PDFViewerApplication.open({ url });
                 });
             }
             previewsHideExcept(pdfPreview);
@@ -248,6 +253,40 @@ function removeRunning(element) {
     element.parentNode.parentNode.classList.remove("running");
 }
 
+let coutd = document.getElementById("coutd");
+let backdrop = document.getElementById("backdrop");
+
+function closeCoutd() {
+    backdrop.classList.add("hide");
+    coutd.open = false;
+}
+
+coutd.addEventListener("close", closeCoutd);
+
+function openCoutd() {
+    backdrop.classList.remove("hide");
+    coutd.open = true;
+}
+
+function setCoutd(msg) {
+    document.getElementById("ccontent").innerText = msg;
+}
+
+function closeAllDialogs() {
+    closeCoutd();
+}
+
+document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
+        closeAllDialogs();
+    }
+});
+
+coutd.getElementsByClassName("x")[0].onclick = closeCoutd;
+document.getElementById("coutToggle").onclick = openCoutd;
+
+backdrop.onclick = closeAllDialogs;
+
 function save(f) {
     if (saveBtn.classList.contains("running")) {
         return;
@@ -318,7 +357,12 @@ function compileFile(target, btn) {
         .then((data) => {
             removeRunning(btn);
             if (data.type == "error") {
-                alert(`Error compiling: ${JSON.stringify(data.kind)}`);
+                if (data.kind.type == "compile error") {
+                    setCoutd(data.kind.content);
+                    openCoutd();
+                } else {
+                    alert(`Error compiling: ${JSON.stringify(data.kind)}`);
+                }
                 return;
             }
             previewOutdated = true;

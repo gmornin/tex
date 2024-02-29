@@ -86,6 +86,7 @@ pub fn editor(
           <span class="dropdown-item" id="toggleEditor">Toggle editor</span
           ><span class="dropdown-item" id="togglePreview">Toggle preview</span>
           <span class="dropdown-item" id="openOptions">Editor options</span>
+          <span class="dropdown-item" id="coutToggle">Compiler output</span>
         </div>
       </div>
       {compile}
@@ -1354,6 +1355,12 @@ See https://github.com/adobe-type-tools/cmap-resources
 </div>
        </div>
     </div>
+    <div id="backdrop" class="hide"></div>
+    <dialog id="coutd">
+      <div class="x">&#x2715;</div>
+      <h2>Compiler output</h2>
+      <center><pre id="ccontent">All good</pre></center>
+    </dialog>
   </body>
 </html>
             "#,
