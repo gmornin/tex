@@ -147,10 +147,8 @@ function preview_url(path) {
     }
 }
 
-switch (previews.length) {
-    case 1:
-        preview_url(previews[0]);
-        break;
+if (previews.length !== 0) {
+    preview_url(previews[0]);
 }
 
 let file = document.getElementById("file-menu");
