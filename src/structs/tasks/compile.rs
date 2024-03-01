@@ -3,7 +3,6 @@ use std::path::{Path, PathBuf};
 
 use goodmorning_services::bindings::services::v1::*;
 use goodmorning_services::bindings::structs::*;
-use goodmorning_services::bindings::structs::{ApiVer, CommonRes};
 use goodmorning_services::bindings::*;
 use goodmorning_services::traits::*;
 use pulldown_cmark::*;
@@ -12,7 +11,7 @@ use tokio::io::AsyncWriteExt;
 use tokio::process::Command;
 
 use crate::structs::FirejailBehavior;
-use crate::{FIREJAIL_BEHAVIOR, PDFLATEX};
+use crate::{FIREJAIL_BEHAVIOR, LUALATEX, PDFLATEX, XELATEX};
 
 #[derive(Clone, Debug)]
 pub struct CompileTask {
@@ -69,8 +68,37 @@ impl TaskItem for CompileTask {
                 "md",
             ) => pulldown_cmark_md2html(&self.source, &self.user_path, ver, id).await,
             (FromFormat::Latex, ToFormat::Pdf, Compiler::Default | Compiler::Pdflatex, "tex") => {
-                pdflatex_latex2pdf(id, &self.user_path, &self.source, &self.restrict_path, ver)
-                    .await
+                texlive_latex2pdf(
+                    PDFLATEX.get().unwrap(),
+                    id,
+                    &self.user_path,
+                    &self.source,
+                    &self.restrict_path,
+                    ver,
+                )
+                .await
+            }
+            (FromFormat::Latex, ToFormat::Pdf, Compiler::Xelatex, "tex") => {
+                texlive_latex2pdf(
+                    XELATEX.get().unwrap(),
+                    id,
+                    &self.user_path,
+                    &self.source,
+                    &self.restrict_path,
+                    ver,
+                )
+                .await
+            }
+            (FromFormat::Latex, ToFormat::Pdf, Compiler::Lualatex, "tex") => {
+                texlive_latex2pdf(
+                    LUALATEX.get().unwrap(),
+                    id,
+                    &self.user_path,
+                    &self.source,
+                    &self.restrict_path,
+                    ver,
+                )
+                .await
             }
             _ => CommonRes::any_err(Box::new(TexCompileError::InvalidCompileRequest), ver),
         }
@@ -151,8 +179,9 @@ pub async fn pulldown_cmark_md2html(
     }
 }
 
-pub async fn pdflatex_latex2pdf(
+pub async fn texlive_latex2pdf(
     // source: &Path,
+    bin: &str,
     taskid: u64,
     user_path: &Path,
     source: &Path,
@@ -165,7 +194,7 @@ pub async fn pdflatex_latex2pdf(
                 Command::new("firejail")
                     .arg(format!("--private={}", restrict_path.to_str().unwrap()))
                     .arg("--noprofile")
-                    .arg(PDFLATEX.get().unwrap())
+                    .arg(bin)
                     .arg("-interaction")
                     .arg("nonstopmode")
                     .arg("-halt-on-error")
@@ -186,7 +215,7 @@ pub async fn pdflatex_latex2pdf(
                 Command::new("firejail")
                     .arg(format!("--private={}", restrict_path.to_str().unwrap()))
                     .arg("--noprofile")
-                    .arg(PDFLATEX.get().unwrap())
+                    .arg(bin)
                     .arg("-interaction")
                     .arg("nonstopmode")
                     .arg("-halt-on-error")

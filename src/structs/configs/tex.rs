@@ -144,16 +144,30 @@ impl Default for FirejailBehavior {
 pub struct TexLocations {
     #[serde(default = "pdflatex_default")]
     pub pdflatex: String,
+    #[serde(default = "lualatex_default")]
+    pub lualatex: String,
+    #[serde(default = "xelatex_default")]
+    pub xelatex: String,
 }
 
 fn pdflatex_default() -> String {
     "pdflatex".to_string()
 }
 
+fn xelatex_default() -> String {
+    "xelatex".to_string()
+}
+
+fn lualatex_default() -> String {
+    "lualatex".to_string()
+}
+
 impl Default for TexLocations {
     fn default() -> Self {
         Self {
             pdflatex: pdflatex_default(),
+            xelatex: xelatex_default(),
+            lualatex: lualatex_default(),
         }
     }
 }

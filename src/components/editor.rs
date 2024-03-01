@@ -8,7 +8,7 @@ pub fn editor(
     path: &str,
     nonce: &str,
     preview_sources: &[String],
-    target_exts: &[&str],
+    target_exts: &[(&str, &str, &str)],
     source_fmt: &str,
 ) -> String {
     let compile = if target_exts.is_empty() {
@@ -23,10 +23,10 @@ pub fn editor(
         </div>
       </div>
                 "#,
-            target_exts.iter().fold(String::new(), |mut s, ext| {
+            target_exts.iter().fold(String::new(), |mut s, (ext, compiler, compiler_display)| {
                 let _ = write!(
                     s,
-                    r#"<span class="dropdown-item" target="{ext}">To {ext}</span>"#
+                    r#"<span class="dropdown-item" target="{ext}" compiler="{compiler}">To {ext} ({compiler_display})</span>"#
                 );
                 s
             })
@@ -1557,10 +1557,11 @@ pub fn ext_to_mode(ext: &str) -> &'static str {
     }
 }
 
-pub fn available_targets(name: &str) -> &'static [&'static str] {
+// (target, compiler, compiler display)
+pub fn available_targets(name: &str) -> &'static [(&'static str, &'static str, &'static str)] {
     match name {
-        "markdown" => &["html"],
-        "latex" => &["pdf"],
+        "markdown" => &[("html", "pulldown_cmark", "PulldownCmark")],
+        "latex" => &[("pdf", "pdflatex", "PDFLatex"), ("pdf", "xelatex", "XeLatex"), ("pdf", "lualatex", "LuaLatex")],
         _ => &[],
     }
 }

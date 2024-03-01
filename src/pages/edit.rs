@@ -56,11 +56,12 @@ async fn edit_task(path: Path<String>, req: &HttpRequest) -> Result<HttpResponse
     let available_targets = available_targets(source_fmt);
     for ext in available_targets {
         target_exts.push(*ext);
-        preview_path.set_extension(ext);
+        preview_path.set_extension(ext.0);
         if fs::try_exists(usr_dir.join(&preview_path)).await? {
             previews.push(preview_path.to_string_lossy().to_string());
         }
     }
+
     if !fs::try_exists(&pathbuf).await? {
         return Err(V1Error::FileNotFound.into());
     }

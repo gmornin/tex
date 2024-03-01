@@ -84,7 +84,12 @@ pub async fn html(
     <script defer src="/static/scripts/katex/katex.min.js"></script>
     <script defer src="/static/scripts/katex/contrib/auto-render.min.js"></script>
         "#,
-        fs::try_exists(path.with_extension("md")).await?.then(|| PathBuf::from(userpath).with_extension("md").to_string_lossy().to_string())
+        fs::try_exists(path.with_extension("md")).await?.then(|| {
+            PathBuf::from(userpath)
+                .with_extension("md")
+                .to_string_lossy()
+                .to_string()
+        }),
     ))
 }
 

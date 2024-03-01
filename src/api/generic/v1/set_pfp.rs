@@ -36,6 +36,7 @@ async fn set_pfp_task(
 
     let mut file = OpenOptions::new()
         .create(true)
+        .truncate(true)
         .write(true)
         .open(&path)
         .await?;
