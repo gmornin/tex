@@ -10,8 +10,7 @@ use tokio::fs;
 use tokio::io::AsyncWriteExt;
 use tokio::process::Command;
 
-use crate::structs::FirejailBehavior;
-use crate::{FIREJAIL_BEHAVIOR, LUALATEX, PDFLATEX, XELATEX};
+use crate::{LUALATEX, PDFLATEX, TEXDIR, XELATEX};
 
 #[derive(Clone, Debug)]
 pub struct CompileTask {
@@ -188,46 +187,57 @@ pub async fn texlive_latex2pdf(
     restrict_path: &Path,
     ver: &ApiVer,
 ) -> CommonRes {
+    let parent = source.parent().unwrap().to_string_lossy();
+
+    // println!(
+    //     "{}",
+    //     shlex::try_join(
+    //         [
+    //             "firejail",
+    //             &format!(
+    //                 "--whitelist={}",
+    //                 shlex::try_quote(restrict_path.to_string_lossy().as_ref()).unwrap()
+    //             ),
+    //             &format!(
+    //                 "--whitelist={}",
+    //                 shlex::try_quote(TEXDIR.get().unwrap()).unwrap()
+    //             ),
+    //             "--noprofile",
+    //             "sh",
+    //             "-c",
+    //             &format!(
+    //                 "cd {} && {} -interaction nonstopmode -halt-on-error -file-line-error {}",
+    //                 shlex::try_quote(parent.as_ref()).unwrap(),
+    //                 shlex::try_quote(bin).unwrap(),
+    //                 shlex::try_quote(source.to_string_lossy().as_ref()).unwrap()
+    //             ),
+    //         ]
+    //         .into_iter()
+    //     )
+    //     .unwrap()
+    // );
+
     let output = catch!(
-        match FIREJAIL_BEHAVIOR.get().unwrap() {
-            FirejailBehavior::Arch =>
-                Command::new("firejail")
-                    .arg(format!("--private={}", restrict_path.to_str().unwrap()))
-                    .arg("--noprofile")
-                    .arg(bin)
-                    .arg("-interaction")
-                    .arg("nonstopmode")
-                    .arg("-halt-on-error")
-                    .arg("-file-line-error")
-                    .arg(format!(
-                        "-output-directory=./{}",
-                        user_path
-                            .parent()
-                            .unwrap_or(Path::new(""))
-                            .to_str()
-                            .unwrap()
-                            .trim_start_matches('/')
-                    ))
-                    .arg(user_path.to_str().unwrap())
-                    .output()
-                    .await,
-            FirejailBehavior::Debian =>
-                Command::new("firejail")
-                    .arg(format!("--private={}", restrict_path.to_str().unwrap()))
-                    .arg("--noprofile")
-                    .arg(bin)
-                    .arg("-interaction")
-                    .arg("nonstopmode")
-                    .arg("-halt-on-error")
-                    .arg("-file-line-error")
-                    .arg(format!(
-                        "-output-directory={}",
-                        source.parent().unwrap_or(Path::new("")).to_str().unwrap()
-                    ))
-                    .arg(source.to_str().unwrap())
-                    .output()
-                    .await,
-        },
+        Command::new("firejail")
+            .arg(format!(
+                "--whitelist={}",
+                shlex::try_quote(restrict_path.to_string_lossy().as_ref()).unwrap()
+            ))
+            .arg(format!(
+                "--whitelist={}",
+                shlex::try_quote(TEXDIR.get().unwrap()).unwrap()
+            ))
+            .arg("--noprofile")
+            .arg("sh")
+            .arg("-c")
+            .arg(&format!(
+                "cd {} && {} -interaction nonstopmode -halt-on-error -file-line-error {}",
+                shlex::try_quote(parent.as_ref()).unwrap(),
+                shlex::try_quote(bin).unwrap(),
+                shlex::try_quote(source.to_string_lossy().as_ref()).unwrap()
+            ),)
+            .output()
+            .await,
         ver
     );
 

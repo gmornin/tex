@@ -12,8 +12,8 @@ pub struct TexConfig {
     pub publishes_db: String,
     #[serde(default = "static_path_default")]
     pub static_path: String,
-    #[serde(default)]
-    pub firejail_behavior: FirejailBehavior,
+    // #[serde(default)]
+    // pub firejail_behavior: FirejailBehavior,
     #[serde(default)]
     pub locations: TexLocations,
     #[serde(default = "log_default")]
@@ -96,7 +96,7 @@ impl Default for TexConfig {
             generic_db: generic_db_default(),
             static_path: static_path_default(),
             pfp_default: pfp_default_default(),
-            firejail_behavior: Default::default(),
+            // firejail_behavior: Default::default(),
             locations: Default::default(),
             log: log_default(),
             outbound: OutboundOptions::default(),
@@ -126,19 +126,19 @@ fn pfp_default_default() -> String {
     "assets/pfp-default.svg".to_string()
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
-pub enum FirejailBehavior {
-    #[serde(rename = "arch")]
-    Arch,
-    #[serde(rename = "debian")]
-    Debian,
-}
-
-impl Default for FirejailBehavior {
-    fn default() -> Self {
-        Self::Arch
-    }
-}
+// #[derive(Serialize, Deserialize, Clone, Debug)]
+// pub enum FirejailBehavior {
+//     #[serde(rename = "arch")]
+//     Arch,
+//     #[serde(rename = "debian")]
+//     Debian,
+// }
+//
+// impl Default for FirejailBehavior {
+//     fn default() -> Self {
+//         Self::Arch
+//     }
+// }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct TexLocations {
@@ -148,6 +148,8 @@ pub struct TexLocations {
     pub lualatex: String,
     #[serde(default = "xelatex_default")]
     pub xelatex: String,
+    #[serde(default = "texdir_default")]
+    pub texdir: String,
 }
 
 fn pdflatex_default() -> String {
@@ -162,12 +164,17 @@ fn lualatex_default() -> String {
     "lualatex".to_string()
 }
 
+fn texdir_default() -> String {
+    "~/.texlive2023".to_string()
+}
+
 impl Default for TexLocations {
     fn default() -> Self {
         Self {
             pdflatex: pdflatex_default(),
             xelatex: xelatex_default(),
             lualatex: lualatex_default(),
+            texdir: texdir_default(),
         }
     }
 }

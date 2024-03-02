@@ -9,7 +9,7 @@ use mongodb::{Collection, Database};
 
 use crate::{
     functions::get_tex_profiles,
-    structs::{FirejailBehavior, OutboundOptions, TexConfig, TexProfile},
+    structs::{OutboundOptions, TexConfig, TexProfile},
 };
 
 pub static CSP_BASE: OnceLock<String> = OnceLock::new();
@@ -20,10 +20,11 @@ pub static TEX_DB: OnceLock<Database> = OnceLock::new();
 pub static STATIC_PATH: OnceLock<PathBuf> = OnceLock::new();
 pub static STATIC_PATH_STR: OnceLock<String> = OnceLock::new();
 pub static PFP_DEFAULT: OnceLock<PathBuf> = OnceLock::new();
-pub static FIREJAIL_BEHAVIOR: OnceLock<FirejailBehavior> = OnceLock::new();
+// pub static FIREJAIL_BEHAVIOR: OnceLock<FirejailBehavior> = OnceLock::new();
 pub static PDFLATEX: OnceLock<String> = OnceLock::new();
 pub static XELATEX: OnceLock<String> = OnceLock::new();
 pub static LUALATEX: OnceLock<String> = OnceLock::new();
+pub static TEXDIR: OnceLock<String> = OnceLock::new();
 pub static LOGOPTIONS: OnceLock<LogOptions> = OnceLock::new();
 pub static OUTBOUND: OnceLock<OutboundOptions> = OnceLock::new();
 pub static ALLOW_CREATE: OnceLock<bool> = OnceLock::new();
@@ -68,10 +69,11 @@ pub async fn gmtvalinit() {
         .set(STATIC_PATH.get().unwrap().to_str().unwrap().to_string())
         .unwrap();
     PFP_DEFAULT.set(parse_path(tex_config.pfp_default)).unwrap();
-    FIREJAIL_BEHAVIOR.set(tex_config.firejail_behavior).unwrap();
+    // FIREJAIL_BEHAVIOR.set(tex_config.firejail_behavior).unwrap();
     PDFLATEX.set(tex_config.locations.pdflatex).unwrap();
     XELATEX.set(tex_config.locations.xelatex).unwrap();
     LUALATEX.set(tex_config.locations.lualatex).unwrap();
+    TEXDIR.set(tex_config.locations.texdir).unwrap();
     LOGOPTIONS.set(tex_config.log).unwrap();
     OUTBOUND.set(tex_config.outbound).unwrap();
     ALLOW_CREATE.set(tex_config.allow_create).unwrap();
