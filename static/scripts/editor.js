@@ -336,13 +336,14 @@ document.addEventListener("keydown", (e) => {
     // }
 });
 
-function compileFile(target, btn) {
+function compileFile(target, compiler, btn) {
     let url = "/api/compile/v1/simple";
     let data = {
         token,
         path: compilePath,
         from: thisFormat,
         to: target,
+        compiler,
     };
     fetch(url, {
         method: "POST",
@@ -379,6 +380,7 @@ for (let i = 0; i < compiles.length; i++) {
             addRunning(compiles[i]);
             compileFile(
                 compiles[i].getAttribute("target", compiles[i]),
+                compiles[i].getAttribute("compiler", compiles[i]),
                 compiles[i],
             );
         });
