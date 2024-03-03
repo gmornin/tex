@@ -10,7 +10,7 @@ use tokio::fs;
 use tokio::io::AsyncWriteExt;
 use tokio::process::Command;
 
-use crate::{LUALATEX, PDFLATEX, TEXDIR, XELATEX};
+use crate::{DISTDIR, LUALATEX, PDFLATEX, TEXDIR, XELATEX};
 
 #[derive(Clone, Debug)]
 pub struct CompileTask {
@@ -226,6 +226,10 @@ pub async fn texlive_latex2pdf(
             .arg(format!(
                 "--whitelist={}",
                 shlex::try_quote(TEXDIR.get().unwrap()).unwrap()
+            ))
+            .arg(format!(
+                "--whitelist={}",
+                shlex::try_quote(DISTDIR.get().unwrap()).unwrap()
             ))
             .arg("--noprofile")
             .arg("sh")

@@ -150,6 +150,8 @@ pub struct TexLocations {
     pub xelatex: String,
     #[serde(default = "texdir_default")]
     pub texdir: String,
+    #[serde(default = "distdir_default")]
+    pub distdir: String,
 }
 
 fn pdflatex_default() -> String {
@@ -168,6 +170,10 @@ fn texdir_default() -> String {
     "~/.texlive2023".to_string()
 }
 
+fn distdir_default() -> String {
+    "/usr/local/texlive".to_string()
+}
+
 impl Default for TexLocations {
     fn default() -> Self {
         Self {
@@ -175,6 +181,7 @@ impl Default for TexLocations {
             xelatex: xelatex_default(),
             lualatex: lualatex_default(),
             texdir: texdir_default(),
+            distdir: distdir_default(),
         }
     }
 }

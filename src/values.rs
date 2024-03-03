@@ -25,6 +25,7 @@ pub static PDFLATEX: OnceLock<String> = OnceLock::new();
 pub static XELATEX: OnceLock<String> = OnceLock::new();
 pub static LUALATEX: OnceLock<String> = OnceLock::new();
 pub static TEXDIR: OnceLock<String> = OnceLock::new();
+pub static DISTDIR: OnceLock<String> = OnceLock::new();
 pub static LOGOPTIONS: OnceLock<LogOptions> = OnceLock::new();
 pub static OUTBOUND: OnceLock<OutboundOptions> = OnceLock::new();
 pub static ALLOW_CREATE: OnceLock<bool> = OnceLock::new();
@@ -74,6 +75,7 @@ pub async fn gmtvalinit() {
     XELATEX.set(tex_config.locations.xelatex).unwrap();
     LUALATEX.set(tex_config.locations.lualatex).unwrap();
     TEXDIR.set(tex_config.locations.texdir).unwrap();
+    DISTDIR.set(tex_config.locations.distdir).unwrap();
     LOGOPTIONS.set(tex_config.log).unwrap();
     OUTBOUND.set(tex_config.outbound).unwrap();
     ALLOW_CREATE.set(tex_config.allow_create).unwrap();
