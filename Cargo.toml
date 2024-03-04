@@ -7,27 +7,25 @@ edition = "2021"
 
 [dependencies]
 # goodmorning-services = { path = "../services" }
-goodmorning-services = { git = "https://github.com/gmornin/services", rev = "bcdf0b7" }
-actix-web = {version = "4.3", features = ["rustls"]}
-rustls = "0.20"
-rustls-pemfile = "1"
-tokio = {version = "1.26", features = ["fs"]}
-serde = { version = "1.0", features = ["derive"] }
+goodmorning-services = { git = "https://github.com/gmornin/services", rev = "8fd74b8" , default-features = false }
+actix-web = { version = "4.3", default-features = false }
+tokio = "1.26"
+serde = { version = "1.0", default-features = false }
 actix-files = "0.6"
-simplelog = "0.12"
+simplelog = { version = "0.12", default-features = false }
 log = "0.4"
-chrono = "0.4"
-yew = { version = "0.20", features = ["ssr"] }
-serde_json = "1.0"
-fastrand = "1.9"
-hex = "0.4"
-html-escape = "0.2"
+chrono = { version = "0.4", default-features = false }
+yew = { version = "0.21", features = ["ssr"] }
+serde_json = { version = "1.0", default-features = false }
+fastrand = "2.0"
+hex = { version = "0.4", default-features = false }
+html-escape = { version = "0.2", default-features = false }
 mime = "0.3"
-mongodb = "2.6"
-actix-multipart = "0.6.0"
-futures-util = "0.3.28"
+mongodb = { version = "2.6", default-features = false }
+actix-multipart = { version = "0.6.0", default-features = false }
+futures-util = { version = "0.3.28", default-features = false }
 async-trait = "0.1"
 typetag = "0.2"
-pulldown-cmark = "0.9"
-implicit-clone = "0.3"
-shlex = "1.3.0"
+pulldown-cmark = { version = "0.10", features = ["html"], default-features = false}
+implicit-clone = "0.4"
+shlex = { version = "1.3.0", default-features = false }

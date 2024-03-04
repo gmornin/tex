@@ -34,16 +34,6 @@ fn allow_create_default() -> bool {
 pub struct OutboundOptions {
     #[serde(default = "http_port_default")]
     pub http_port: u16,
-    #[serde(default = "https_port_default")]
-    pub https_port: u16,
-    #[serde(default = "enable_http_default")]
-    pub enable_http: bool,
-    #[serde(default = "enable_https_default")]
-    pub enable_https: bool,
-    #[serde(default = "chain_default")]
-    pub ssl_chain_path: String,
-    #[serde(default = "key_default")]
-    pub ssl_key_path: String,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -56,37 +46,12 @@ impl Default for OutboundOptions {
     fn default() -> Self {
         Self {
             http_port: http_port_default(),
-            https_port: https_port_default(),
-            enable_http: enable_http_default(),
-            enable_https: enable_https_default(),
-            ssl_chain_path: chain_default(),
-            ssl_key_path: key_default(),
         }
     }
 }
 
-fn https_port_default() -> u16 {
-    443
-}
-
 fn http_port_default() -> u16 {
-    80
-}
-
-fn enable_http_default() -> bool {
-    false
-}
-
-fn enable_https_default() -> bool {
-    true
-}
-
-fn chain_default() -> String {
-    "change me path to chain file /etc/letsencrypt/live/yourdomain.com/fullchain.pem".to_string()
-}
-
-fn key_default() -> String {
-    "change me path to private key /etc/letsencrypt/live/yourdomain.com/privkey.pem".to_string()
+    8080
 }
 
 impl Default for TexConfig {
