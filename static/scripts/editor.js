@@ -93,6 +93,20 @@ function previewsHideExcept(except) {
     }
 }
 
+function previewHtml(content) {
+    htmlPreview.innerHTML = content;
+    previewsHideExcept(htmlPreview);
+    Prism.highlightAll();
+    previewOutdated = false;
+    if (fullyLoaded) {
+        renderMathInElement(document.getElementById("display"));
+    } else {
+        document.addEventListener("DOMContentLoaded", function () {
+            renderMathInElement(document.getElementById("display"));
+        });
+    }
+}
+
 function preview_url(path) {
     previewPath = path;
     if (path == undefined) {
@@ -109,24 +123,7 @@ function preview_url(path) {
                 .then(function (response) {
                     return response.text();
                 })
-                .then(function (response) {
-                    htmlPreview.innerHTML = response;
-                    previewsHideExcept(htmlPreview);
-                    Prism.highlightAll();
-                    previewOutdated = false;
-                    if (fullyLoaded) {
-                        renderMathInElement(document.getElementById("display"));
-                    } else {
-                        document.addEventListener(
-                            "DOMContentLoaded",
-                            function () {
-                                renderMathInElement(
-                                    document.getElementById("display"),
-                                );
-                            },
-                        );
-                    }
-                })
+                .then(previewHtml)
                 .catch(function (err) {
                     alert("Fetch Error :-S", err);
                 });
@@ -149,6 +146,8 @@ function preview_url(path) {
 
 if (previews.length !== 0) {
     preview_url(previews[0]);
+} else if (window.location.pathname.split(".").pop() === "html") {
+    previewHtml(editor.getValue());
 }
 
 let file = document.getElementById("file-menu");
@@ -288,6 +287,9 @@ backdrop.onclick = closeAllDialogs;
 function save(f) {
     if (saveBtn.classList.contains("running")) {
         return;
+    }
+    if (window.location.pathname.split(".").pop() === "html") {
+        previewHtml(editor.getValue());
     }
     addRunning(saveBtn);
     const data = new FormData();

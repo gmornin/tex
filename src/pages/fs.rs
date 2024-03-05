@@ -273,7 +273,10 @@ async fn file(
         .to_str()
         .unwrap()
     {
-        "html" => components::html(&pathbuf, &path).await?,
+        "html" => {
+            is_text = true;
+            components::html(&pathbuf, &path).await?
+        }
         _ => match (mime.type_(), mime.subtype()) {
             (mime::IMAGE, _) => (
                 components::img(&url),
