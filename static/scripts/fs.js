@@ -235,6 +235,7 @@ function addListeners() {
     Array.from(document.getElementsByClassName("fragment")).forEach(
         (fragment) => {
             let path = fragment.getAttribute("path");
+            if(path === null) return;
             fragment.addEventListener("click", (_ev) => go(path));
             fragment.addEventListener("auxclick", (_event) =>
                 window.open(`/fs/${path}`, "_blank").focus(),
