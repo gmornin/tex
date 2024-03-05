@@ -328,7 +328,7 @@ async fn file(
     let path_escaped = html_escape::encode_safe(&path).to_string();
     let mut footurls = format!(
         r#"{}{}<a class="linklike" href="{url}" download>Download</a>"#,
-        if is_owner {
+        if is_owner && is_text {
             format!(r#"<a class="linklike" id="footurls" href="/edit/{path_escaped}">Edit</a>"#)
         } else {
             String::new()
@@ -341,10 +341,18 @@ async fn file(
     );
 
     if let Some(source) = source {
-        footurls.push_str(&format!(
-            r#"<a class="linklike" href="/fs/{id}/{}">Source</a>"#,
-            html_escape::encode_text(&source)
-        ));
+        println!("path buf: {pathbuf:?}");
+        println!("source: {source:?}");
+        if is_owner
+            || Visibilities::visibility(&get_user_dir(id, Some(GMServices::Tex)).join(&source))
+                .await
+                .is_ok_and(|res| res.visibility != ItemVisibility::Private)
+        {
+            footurls.push_str(&format!(
+                r#"<a class="linklike" href="/fs/{id}/{}">Source</a>"#,
+                html_escape::encode_text(&source)
+            ));
+        }
     }
 
     let path_display = yew::ServerRenderer::<components::Path>::with_props(move || PathProp {

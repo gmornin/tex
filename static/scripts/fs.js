@@ -27,25 +27,8 @@ let createbut = document.getElementById("createbut");
 let folderadd = document.getElementById("create-folder");
 let fileadd = document.getElementById("create-file");
 let create_target = document.getElementById("createtarget");
-let confirmd = document.getElementById("confirmd");
-let rusureBut = document.getElementById("confirm");
 
 let isFileAdd = true;
-
-function rusureRun(f) {
-    confirmd.setAttribute("open", true);
-    backdrop.style.display = "block";
-    rusureAction = f;
-}
-
-rusureBut.onclick = () => {
-    rusureBut.setAttribute("disabled", true);
-    rusureAction(() => {
-        rusureBut.removeAttribute("disabled");
-        backdrop.style.display = "none";
-        confirmd.removeAttribute("open");
-    });
-};
 
 function getCurrentTime() {
     const now = new Date();
@@ -600,7 +583,8 @@ if (fslist) {
                                 to: `/tex/.system/trash/${trashPath}`,
                             };
 
-                            let url = "/api/storage/v1/move-createdirs-overwrite";
+                            let url =
+                                "/api/storage/v1/move-createdirs-overwrite";
                             fetch(url, {
                                 method: "POST",
                                 headers: {
@@ -671,6 +655,33 @@ if (fslist) {
                     }
                 });
             }
+        }
+
+        for (const menu of Array.from(
+            document.getElementsByClassName("dropdown-content"),
+        )) {
+            menu.addEventListener("auxclick", function (event) {
+                event.stopPropagation();
+            });
+        }
+
+        for (const editBut of Array.from(
+            document.querySelectorAll('[action="edit"]'),
+        )) {
+
+        let path =
+            editBut.parentNode.parentNode.parentNode.parentNode.getAttribute(
+                "path",
+            );
+
+            editBut.addEventListener("auxclick", (event) =>
+                window
+                    .open(
+                        `/edit/${path.split("/").slice(1).join("/")}`,
+                        "_blank",
+                    )
+                    .focus(),
+            );
         }
     }
 
