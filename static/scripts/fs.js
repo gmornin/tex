@@ -1,14 +1,14 @@
 const isMobile = (() => {
-  var match = window.matchMedia || window.msMatchMedia;
-  if (match) {
-    var mq = match("(pointer:coarse)");
-    return mq.matches;
-  }
-  return false;
+    var match = window.matchMedia || window.msMatchMedia;
+    if (match) {
+        var mq = match("(pointer:coarse)");
+        return mq.matches;
+    }
+    return false;
 })();
 
 if (isMobile) {
-  document.body.id = "mobile";
+    document.body.id = "mobile";
 }
 
 let pathDisplay = document.getElementById("path-display");
@@ -27,788 +27,904 @@ let createbut = document.getElementById("createbut");
 let folderadd = document.getElementById("create-folder");
 let fileadd = document.getElementById("create-file");
 let create_target = document.getElementById("createtarget");
+let confirmd = document.getElementById("confirmd");
+let rusureBut = document.getElementById("confirm");
 
 let isFileAdd = true;
 
+function rusureRun(f) {
+    confirmd.setAttribute("open", true);
+    backdrop.style.display = "block";
+    rusureAction = f;
+}
+
+rusureBut.onclick = () => {
+    rusureBut.setAttribute("disabled", true);
+    rusureAction(() => {
+        rusureBut.removeAttribute("disabled");
+        backdrop.style.display = "none";
+        confirmd.removeAttribute("open");
+    });
+};
+
 function getCurrentTime() {
-  const now = new Date();
+    const now = new Date();
 
-  const currentTime = `${now.getFullYear()}${(now.getMonth() + 1)
-    .toString()
-    .padStart(2, "0")}${now.getDate().toString().padStart(2, "0")}-${now
-    .getHours()
-    .toString()
-    .padStart(2, "0")}${now.getMinutes().toString().padStart(2, "0")}${now
-    .getSeconds()
-    .toString()
-    .padStart(2, "0")}`;
+    const currentTime = `${now.getFullYear()}${(now.getMonth() + 1)
+        .toString()
+        .padStart(2, "0")}${now.getDate().toString().padStart(2, "0")}-${now
+        .getHours()
+        .toString()
+        .padStart(2, "0")}${now.getMinutes().toString().padStart(2, "0")}${now
+        .getSeconds()
+        .toString()
+        .padStart(2, "0")}`;
 
-  return currentTime;
+    return currentTime;
 }
 
 function getCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(";").shift();
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
 }
 
 function getToken() {
-  return getCookie("token");
+    return getCookie("token");
 }
 
 function go(path, skipCheck) {
-  if (!skipCheck && window.history.state.path === path) {
-    return;
-  }
-  let token = getToken();
+    if (!skipCheck && window.history.state.path === path) {
+        return;
+    }
+    let token = getToken();
 
-  if (cache[path]) {
-    window.history.pushState({ path: path }, "", `/fs/${path}`);
-    display(path, cache[path]);
-    conditionallyAddDots();
-    return;
-  }
-
-  let id = path.split("/")[0];
-
-  if (id === localStorage.getItem("userid") && token) {
-    fetch(
-      `/api/storage/v1/diritems/${token}/tex/${path
-        .split("/")
-        .slice(1)
-        .join("/")}`,
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.error) {
-          alert(data.error);
-        }
-
-        if (data.type !== "dir content") {
-          alert(
-            `Expected response type of "dir content", got ${data.type} instead`,
-          );
-          return;
-        }
+    if (cache[path]) {
         window.history.pushState({ path: path }, "", `/fs/${path}`);
-        cache[path] = data.content;
-        display(path, data.content);
+        display(path, cache[path]);
         conditionallyAddDots();
-      })
-      .catch((error) => console.error(error));
-  } else {
-    fetch(
-      `/api/usercontent/v1/diritems/id/${id}/tex/${path
-        .split("/")
-        .slice(1)
-        .join("/")}`,
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.error) {
-          alert(data.error);
-        }
+        return;
+    }
 
-        if (data.type !== "dir content") {
-          alert(
-            `Expected response type of "dir content", got ${data.type} instead`,
-          );
-          return;
-        }
-        window.history.pushState({ path: path }, "", `/fs/${path}`);
-        cache[path] = data.content;
-        display(path, data.content);
-        conditionallyAddDots();
-      })
-      .catch((error) => console.error(error));
-  }
+    let id = path.split("/")[0];
+
+    if (id === localStorage.getItem("userid") && token) {
+        fetch(
+            `/api/storage/v1/diritems/${token}/tex/${path
+                .split("/")
+                .slice(1)
+                .join("/")}`,
+        )
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.error) {
+                    alert(data.error);
+                }
+
+                if (data.type !== "dir content") {
+                    alert(
+                        `Expected response type of "dir content", got ${data.type} instead`,
+                    );
+                    return;
+                }
+                window.history.pushState({ path: path }, "", `/fs/${path}`);
+                cache[path] = data.content;
+                display(path, data.content);
+                conditionallyAddDots();
+            })
+            .catch((error) => console.error(error));
+    } else {
+        fetch(
+            `/api/usercontent/v1/diritems/id/${id}/tex/${path
+                .split("/")
+                .slice(1)
+                .join("/")}`,
+        )
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.error) {
+                    alert(data.error);
+                }
+
+                if (data.type !== "dir content") {
+                    alert(
+                        `Expected response type of "dir content", got ${data.type} instead`,
+                    );
+                    return;
+                }
+                window.history.pushState({ path: path }, "", `/fs/${path}`);
+                cache[path] = data.content;
+                display(path, data.content);
+                conditionallyAddDots();
+            })
+            .catch((error) => console.error(error));
+    }
 }
 
 function refresh(path) {
-  if (path === undefined) {
-    path = window.history.state.path;
-  }
-  delete cache[path];
-  go(path, true);
+    if (path === undefined) {
+        path = window.history.state.path;
+    }
+    delete cache[path];
+    go(path, true);
 }
 
 function display(path, content) {
-  if (!path) {
-    return;
-  }
-  document.title = path;
-  let currentPath = trimPath(path);
-  displayPath(currentPath);
-  displayItems(content, currentPath);
-  addListeners();
+    if (!path) {
+        return;
+    }
+    document.title = path;
+    let currentPath = trimPath(path);
+    displayPath(currentPath);
+    displayItems(content, currentPath);
+    addListeners();
 }
 
 function trimPath(path) {
-  return path.replace(/^\/|\/$/g, "");
+    return path.replace(/^\/|\/$/g, "");
 }
 
 function displayPath(path) {
-  let spans = pathDisplay.getElementsByTagName("span");
+    let spans = pathDisplay.getElementsByTagName("span");
 
-  let create = document.getElementById("create");
-  let uploadbut = document.getElementById("upload");
-  let splitted = path.split("/");
-  if (splitted.length > 2 || splitted[1] !== ".system") {
-    uploadbut.style.display = "inline";
-    create.style.display = "inline";
-  } else {
-    uploadbut.style.display = "none";
-    create.style.display = "none";
-  }
-
-  for (let i = spans.length - 1; i >= 0; i--) {
-    spans[i].parentNode.removeChild(spans[i]);
-  }
-
-  let fragments = path.split("/");
-
-  for (let i = fragments.length - 1; i >= 0; i--) {
-    addFragment(fragments[i], fragments.slice(0, i + 1).join("/"));
-
-    if (i === 0) {
-      break;
+    let create = document.getElementById("create");
+    let uploadbut = document.getElementById("upload");
+    let splitted = path.split("/");
+    if (splitted[1] !== ".system") {
+        uploadbut.style.display = "inline";
+        create.style.display = "inline";
+    } else {
+        uploadbut.style.display = "none";
+        create.style.display = "none";
     }
-    addConnect();
-  }
+
+    for (let i = spans.length - 1; i >= 0; i--) {
+        spans[i].parentNode.removeChild(spans[i]);
+    }
+
+    let fragments = path.split("/");
+
+    for (let i = fragments.length - 1; i >= 0; i--) {
+        addFragment(fragments[i], fragments.slice(0, i + 1).join("/"));
+
+        if (i === 0) {
+            break;
+        }
+        addConnect();
+    }
 }
 
 function addFragment(s, fullpath) {
-  let fragment = document.createElement("span");
-  fragment.classList.add("fragment");
-  fragment.innerText = s;
-  fragment.setAttribute("path", fullpath);
-  pathDisplay.insertBefore(fragment, pathDisplay.firstChild);
+    let fragment = document.createElement("span");
+    fragment.classList.add("fragment");
+    fragment.innerText = s;
+    fragment.setAttribute("path", fullpath);
+    pathDisplay.insertBefore(fragment, pathDisplay.firstChild);
 }
 
 function addConnect() {
-  let connect = document.createElement("span");
-  connect.classList.add("connect");
-  connect.innerText = ">";
-  pathDisplay.insertBefore(connect, pathDisplay.firstChild);
+    let connect = document.createElement("span");
+    connect.classList.add("connect");
+    connect.innerText = ">";
+    pathDisplay.insertBefore(connect, pathDisplay.firstChild);
 }
 
 function displayItems(items, currentPath) {
-  fslist.innerHTML = "";
-  items.forEach((item) => addItem(item, currentPath + "/" + item.name));
+    fslist.innerHTML = "";
+    items.forEach((item) => addItem(item, currentPath + "/" + item.name));
 }
 
 function addItem(item, fullpath) {
-  let node = document.createElement("li");
-  node.innerText = item.name;
-  node.setAttribute("path", fullpath);
-  if (item.is_file) {
-    node.setAttribute("isFile", "true");
-  }
+    let node = document.createElement("li");
+    node.innerText = item.name;
+    node.setAttribute("path", fullpath);
+    if (item.is_file) {
+        node.setAttribute("isFile", "true");
+    }
 
-  if (!item.is_file) {
-    node.innerText += "/";
-  }
+    if (!item.is_file) {
+        node.innerText += "/";
+    }
 
-  let classname = "";
-  if (item.name.startsWith(".")) {
-    classname += "hidden-";
-  }
+    let classname = "";
+    if (item.name.startsWith(".")) {
+        classname += "hidden-";
+    }
 
-  if (item.is_file) {
-    classname += "file";
-  } else {
-    classname += "dir";
-  }
+    if (item.is_file) {
+        classname += "file";
+    } else {
+        classname += "dir";
+    }
 
-  node.classList.add(classname);
+    node.classList.add(classname);
 
-  let icon = `<img src="/static/icons/${
-    item.visibility.visibility
-  }.svg" class="${
-    item.visibility.inherited ? "icon icon-inherit" : "icon"
-  }" />`;
-  node.innerHTML = `${icon}${node.innerHTML}`;
-  fslist.appendChild(node);
+    let icon = `<img src="/static/icons/${
+        item.visibility.visibility
+    }.svg" class="${
+        item.visibility.inherited ? "icon icon-inherit" : "icon"
+    }" />`;
+    node.innerHTML = `${icon}${node.innerHTML}`;
+    fslist.appendChild(node);
 }
 
 function addListeners() {
-  Array.from(document.getElementsByClassName("fragment")).forEach(
-    (fragment) => {
-      let path = fragment.getAttribute("path");
-      fragment.addEventListener("click", (_ev) => go(path));
-      fragment.addEventListener("auxclick", (_event) =>
-        window.open(`/fs/${path}`, "_blank").focus(),
-      );
-    },
-  );
-  if (!fslist) return;
-  Array.from(fslist.children).forEach((fragment) => {
-    let path = fragment.getAttribute("path");
-    fragment.addEventListener("auxclick", (_event) =>
-      window.open(`/fs/${path}`, "_blank").focus(),
+    Array.from(document.getElementsByClassName("fragment")).forEach(
+        (fragment) => {
+            let path = fragment.getAttribute("path");
+            fragment.addEventListener("click", (_ev) => go(path));
+            fragment.addEventListener("auxclick", (_event) =>
+                window.open(`/fs/${path}`, "_blank").focus(),
+            );
+        },
     );
-    if (fragment.getAttribute("isFile")) {
-      fragment.addEventListener("click", (event) => {
-        if (
-          event.target.classList.contains("dots") ||
-          event.target.classList.contains("dropdown-item")
-        )
-          return;
-        window.location.pathname = `/fs/${fragment.getAttribute("path")}`;
-      });
-    } else {
-      fragment.addEventListener("click", (event) => {
-        if (
-          event.target.classList.contains("dots") ||
-          event.target.classList.contains("dropdown-item")
-        )
-          return;
-        go(fragment.getAttribute("path"));
-      });
-    }
-  });
+    if (!fslist) return;
+    Array.from(fslist.children).forEach((fragment) => {
+        let path = fragment.getAttribute("path");
+        fragment.addEventListener("auxclick", (_event) =>
+            window.open(`/fs/${path}`, "_blank").focus(),
+        );
+        if (fragment.getAttribute("isFile")) {
+            fragment.addEventListener("click", (event) => {
+                if (
+                    event.target.classList.contains("dots") ||
+                    event.target.classList.contains("dropdown-item")
+                )
+                    return;
+                window.location.pathname = `/fs/${fragment.getAttribute("path")}`;
+            });
+        } else {
+            fragment.addEventListener("click", (event) => {
+                if (
+                    event.target.classList.contains("dots") ||
+                    event.target.classList.contains("dropdown-item")
+                )
+                    return;
+                go(fragment.getAttribute("path"));
+            });
+        }
+    });
 }
 
 addListeners();
 
 window.addEventListener("popstate", function (_event) {
-  let path = window.history.state.path;
-  go(path, true);
+    let path = window.history.state.path;
+    go(path, true);
 });
 
 if (fslist) {
-  touchd.onclose =
-    copyd.onclose =
-    moved.onclose =
-      () => {
-        backdrop.style.display = "none";
-        create_reset();
-      };
-  document.querySelector("#moved .x").onclick = () => moved.close();
-  document.querySelector("#copyd .x").onclick = () => copyd.close();
+    touchd.onclose =
+        copyd.onclose =
+        moved.onclose =
+            () => {
+                backdrop.style.display = "none";
+                create_reset();
+            };
+    document.querySelector("#moved .x").onclick = () => moved.close();
+    document.querySelector("#copyd .x").onclick = () => copyd.close();
 
-  function addDots() {
-    let items = fslist.children;
-    for (const item of items) {
-      let path = item.getAttribute("path").split("/");
-      let id = window.history.state.path.split("/")[0];
-      if (id === localStorage.getItem("userid") && path[1] !== ".system") {
-        if (
-          item.classList.contains("file") ||
-          item.classList.contains("hidden-file")
-        ) {
-          item.innerHTML += `<div class="ellipsis"><img src="/static/icons/ellipsis.svg" class="dots"/><div class="dropdown hide"><div class="dropdown-content"><span class="dropdown-item" action="edit">Edit</span><span class="dropdown-item" action="move">Move</span><span class="dropdown-item" action="copy">Copy</span><span class="dropdown-item" action="download">Download</span><span class="dropdown-item" action="delete">Delete</span><span class="dropdown-item" action="visibility">Change visibility<div class="dropdown dropdown-fold"><div class="dropdown-content"><div class="dropdown-item" action="public">Public</div><div class="dropdown-item" action="hidden">Hidden</div><div class="dropdown-item" action="private">Private</div><div class="dropdown-item" action="inherit">Inherit</div></div></div></span></div></div></div>`;
-        } else {
-          item.innerHTML += `<div class="ellipsis"><img src="/static/icons/ellipsis.svg" class="dots"/><div class="dropdown hide"><div class="dropdown-content"><span class="dropdown-item" action="move">Move</span><span class="dropdown-item" action="copy">Copy</span><span class="dropdown-item" action="delete">Delete</span><span class="dropdown-item" action="visibility">Change visibility<div class="dropdown dropdown-fold"><div class="dropdown-content"><div class="dropdown-item" action="public">Public</div><div class="dropdown-item" action="hidden">Hidden</div><div class="dropdown-item" action="private">Private</div><div class="dropdown-item" action="inherit">Inherit</div></div></div></span></div></div></div>`;
-        }
-      } else {
-        item.innerHTML += `<div class="ellipsis"><img src="/static/icons/ellipsis.svg" class="dots"/><div class="dropdown hide"><div class="dropdown-content"><span class="dropdown-item" action="copy">Copy</span></div></div>`;
-      }
-      item
-        .getElementsByClassName("dots")[0]
-        .addEventListener("click", () =>
-          clickDots(item.getElementsByClassName("ellipsis")[0]),
-        );
-
-      let options = item.getElementsByClassName("dropdown-item");
-      for (const option of options) {
-        option.addEventListener("click", (event) => {
-          if (event.target != option) {
-            return;
-          }
-          let action = option.getAttribute("action");
-          let path =
-            option.parentNode.parentNode.parentNode.parentNode.getAttribute(
-              "path",
+    function addDots() {
+        let items = fslist.children;
+        for (const item of items) {
+            let path = item.getAttribute("path").split("/");
+            let id = window.history.state.path.split("/")[0];
+            if (
+                path[1] === ".system" &&
+                id === localStorage.getItem("userid") &&
+                path[2] === "trash"
+            ) {
+                if (path.length > 3) {
+                    item.innerHTML += `<div class="ellipsis"><img src="/static/icons/ellipsis.svg" class="dots"/><div class="dropdown hide"><div class="dropdown-content"><span class="dropdown-item" action="restore">Restore</span><span class="dropdown-item" action="delete">Delete</span></div></span></div></div></div>`;
+                } else {
+                    item.innerHTML += `<div class="ellipsis"><img src="/static/icons/ellipsis.svg" class="dots"/><div class="dropdown hide"><div class="dropdown-content"><span class="dropdown-item" action="delete">Delete</span></div></div>`;
+                }
+            } else if (
+                id === localStorage.getItem("userid") &&
+                path[1] !== ".system"
+            ) {
+                if (
+                    item.classList.contains("file") ||
+                    item.classList.contains("hidden-file")
+                ) {
+                    item.innerHTML += `<div class="ellipsis"><img src="/static/icons/ellipsis.svg" class="dots"/><div class="dropdown hide"><div class="dropdown-content"><span class="dropdown-item" action="edit">Edit</span><span class="dropdown-item" action="move">Move</span><span class="dropdown-item" action="copy">Copy</span><span class="dropdown-item" action="download">Download</span><span class="dropdown-item" action="trash">Trash</span><span class="dropdown-item" action="visibility">Visibility<div class="dropdown dropdown-fold"><div class="dropdown-content"><div class="dropdown-item" action="public">Public</div><div class="dropdown-item" action="hidden">Hidden</div><div class="dropdown-item" action="private">Private</div><div class="dropdown-item" action="inherit">Inherit</div></div></div></span></div></div></div>`;
+                } else {
+                    item.innerHTML += `<div class="ellipsis"><img src="/static/icons/ellipsis.svg" class="dots"/><div class="dropdown hide"><div class="dropdown-content"><span class="dropdown-item" action="move">Move</span><span class="dropdown-item" action="copy">Copy</span><span class="dropdown-item" action="trash">Trash</span><span class="dropdown-item" action="visibility">Visibility<div class="dropdown dropdown-fold"><div class="dropdown-content"><div class="dropdown-item" action="public">Public</div><div class="dropdown-item" action="hidden">Hidden</div><div class="dropdown-item" action="private">Private</div><div class="dropdown-item" action="inherit">Inherit</div></div></div></span></div></div></div>`;
+                }
+            } else {
+                item.innerHTML += `<div class="ellipsis"><img src="/static/icons/ellipsis.svg" class="dots"/><div class="dropdown hide"><div class="dropdown-content"><span class="dropdown-item" action="copy">Copy</span></div></div>`;
+            }
+            item.getElementsByClassName("dots")[0].addEventListener(
+                "click",
+                () => clickDots(item.getElementsByClassName("ellipsis")[0]),
             );
 
-          switch (action) {
-            case "edit":
-              window.location.pathname = `/edit/${path
-                .split("/")
-                .slice(1)
-                .join("/")}`;
-              break;
-            case "download":
-              path = path.split("/");
-              let id = parseInt(path.shift());
-              let url;
-              path = path.join("/");
-
-              console.log(id);
-              console.log(path);
-              if (id == localStorage.getItem("userid")) {
-                url = `/api/storage/v1/file/${getToken()}/tex/${path}`;
-              } else {
-                url = `/api/usercontent/v1/file/id/${id}/tex/${path}`;
-              }
-              var link = document.createElement("a");
-              link.download = path.split("/").pop();
-              link.href = url;
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
-              delete link;
-              break;
-            case "delete": {
-              let delPath = path.split("/").slice(1).join("/");
-              let token = getToken();
-              let body = {
-                path: `tex/${delPath}`,
-                token,
-              };
-
-              fetch("/api/storage/v1/delete", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify(body),
-              })
-                .then((response) => response.json())
-                .then((data) => {
-                  if (data.type == "error") {
-                    alert(`Error deleting file: ${JSON.stringify(data.kind)}`);
-                    return;
-                  }
-                  refresh();
-                })
-                .catch((error) => console.error(error));
-              break;
-            }
-            case "visibility":
-              option
-                .getElementsByClassName("dropdown-fold")[0]
-                .classList.remove("hide");
-              break;
-            case "public":
-            case "private":
-            case "hidden": {
-              let vispath =
-                option.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode
-                  .getAttribute("path")
-                  .split("/")
-                  .slice(1)
-                  .join("/");
-              let token = getToken();
-              let body = {
-                path: `tex/${vispath}`,
-                token,
-                visibility: action,
-              };
-
-              fetch("/api/storage/v1/set-visibility", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify(body),
-              })
-                .then((response) => response.json())
-                .then((data) => {
-                  if (data.type == "error") {
-                    alert(
-                      `Error changing visibility: ${JSON.stringify(data.kind)}`,
-                    );
-                    return;
-                  }
-                  for (const path in cache) {
-                    if (
-                      path.startsWith(
-                        `${window.history.state.path.split("/")[0]}/${vispath}`,
-                      )
-                    ) {
-                      delete cache[path];
+            let options = item.getElementsByClassName("dropdown-item");
+            for (const option of options) {
+                option.addEventListener("click", (event) => {
+                    if (event.target != option) {
+                        return;
                     }
-                  }
-                  refresh();
-                })
-                .catch((error) => console.error(error));
-              break;
-            }
-            case "inherit": {
-              let vispath =
-                option.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode
-                  .getAttribute("path")
-                  .split("/")
-                  .slice(1)
-                  .join("/");
-              let token = getToken();
-              let body = {
-                path: `tex/${vispath}`,
-                token,
-              };
+                    let action = option.getAttribute("action");
+                    let path =
+                        option.parentNode.parentNode.parentNode.parentNode.getAttribute(
+                            "path",
+                        );
 
-              fetch("/api/storage/v1/remove-visibility", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify(body),
-              })
-                .then((response) => response.json())
-                .then((data) => {
-                  if (data.type == "error") {
-                    alert(
-                      `Error changing visibility: ${JSON.stringify(data.kind)}`,
-                    );
-                    return;
-                  }
-                  for (const path in cache) {
-                    if (
-                      path.startsWith(
-                        `${window.history.state.path.split("/")[0]}/${vispath}`,
-                      )
-                    ) {
-                      delete cache[path];
+                    switch (action) {
+                        case "edit":
+                            window.location.pathname = `/edit/${path
+                                .split("/")
+                                .slice(1)
+                                .join("/")}`;
+                            break;
+                        case "download":
+                            path = path.split("/");
+                            let id = parseInt(path.shift());
+                            let url;
+                            path = path.join("/");
+
+                            console.log(id);
+                            console.log(path);
+                            if (id == localStorage.getItem("userid")) {
+                                url = `/api/storage/v1/file/${getToken()}/tex/${path}`;
+                            } else {
+                                url = `/api/usercontent/v1/file/id/${id}/tex/${path}`;
+                            }
+                            var link = document.createElement("a");
+                            link.download = path.split("/").pop();
+                            link.href = url;
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                            delete link;
+                            break;
+                        case "delete": {
+                            let delPath = path.split("/").slice(1).join("/");
+                            let token = getToken();
+                            let body = {
+                                path: `tex/${delPath}`,
+                                token,
+                            };
+
+                            fetch("/api/storage/v1/delete", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify(body),
+                            })
+                                .then((response) => response.json())
+                                .then((data) => {
+                                    if (data.type == "error") {
+                                        alert(
+                                            `Error deleting file: ${JSON.stringify(data.kind)}`,
+                                        );
+                                        return;
+                                    }
+                                    refresh();
+                                })
+                                .catch((error) => console.error(error));
+                            break;
+                        }
+                        case "visibility":
+                            option
+                                .getElementsByClassName("dropdown-fold")[0]
+                                .classList.remove("hide");
+                            break;
+                        case "public":
+                        case "private":
+                        case "hidden": {
+                            let vispath =
+                                option.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode
+                                    .getAttribute("path")
+                                    .split("/")
+                                    .slice(1)
+                                    .join("/");
+                            let token = getToken();
+                            let body = {
+                                path: `tex/${vispath}`,
+                                token,
+                                visibility: action,
+                            };
+
+                            fetch("/api/storage/v1/set-visibility", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify(body),
+                            })
+                                .then((response) => response.json())
+                                .then((data) => {
+                                    if (data.type == "error") {
+                                        alert(
+                                            `Error changing visibility: ${JSON.stringify(data.kind)}`,
+                                        );
+                                        return;
+                                    }
+                                    for (const path in cache) {
+                                        if (
+                                            path.startsWith(
+                                                `${window.history.state.path.split("/")[0]}/${vispath}`,
+                                            )
+                                        ) {
+                                            delete cache[path];
+                                        }
+                                    }
+                                    refresh();
+                                })
+                                .catch((error) => console.error(error));
+                            break;
+                        }
+                        case "inherit": {
+                            let vispath =
+                                option.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode
+                                    .getAttribute("path")
+                                    .split("/")
+                                    .slice(1)
+                                    .join("/");
+                            let token = getToken();
+                            let body = {
+                                path: `tex/${vispath}`,
+                                token,
+                            };
+
+                            fetch("/api/storage/v1/remove-visibility", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify(body),
+                            })
+                                .then((response) => response.json())
+                                .then((data) => {
+                                    if (data.type == "error") {
+                                        alert(
+                                            `Error changing visibility: ${JSON.stringify(data.kind)}`,
+                                        );
+                                        return;
+                                    }
+                                    for (const path in cache) {
+                                        if (
+                                            path.startsWith(
+                                                `${window.history.state.path.split("/")[0]}/${vispath}`,
+                                            )
+                                        ) {
+                                            delete cache[path];
+                                        }
+                                    }
+                                    refresh();
+                                })
+                                .catch((error) => console.error(error));
+                            break;
+                        }
+                        case "copy": {
+                            let slash_i = path.lastIndexOf("/") + 1;
+                            let file_name = path.substring(slash_i);
+                            let dot_i = file_name.lastIndexOf(".");
+                            let file = cache[window.history.state.path].find(
+                                (item) => item.name === file_name,
+                            );
+                            copybut.setAttribute("path", path);
+                            copy_from.innerText = `${path} (${formatBytes(file.size)})`;
+
+                            if (file.is_file) {
+                                if (dot_i === 0) {
+                                    copy_target.value = `/${path
+                                        .substring(0, slash_i)
+                                        .split("/")
+                                        .slice(1)
+                                        .join(
+                                            "/",
+                                        )}${file_name}-${getCurrentTime()}`;
+                                } else {
+                                    copy_target.value = `/${path
+                                        .substring(0, slash_i)
+                                        .split("/")
+                                        .slice(1)
+                                        .join("/")}${file_name.substring(
+                                        0,
+                                        dot_i,
+                                    )}-${getCurrentTime()}${file_name.substring(dot_i)}`;
+                                }
+                            } else {
+                                copy_target.value = `/${path
+                                    .substring(0, slash_i)
+                                    .split("/")
+                                    .slice(1)
+                                    .join(
+                                        "/",
+                                    )}${file.name}-${getCurrentTime()}/`;
+                            }
+
+                            backdrop.style.display = "block";
+                            copyd.showModal();
+                            copybut.innerText = "Copy";
+                            copybut.classList.remove("not-allowed");
+                            copybut.removeAttribute("disabled");
+                            break;
+                        }
+                        case "move": {
+                            let slash_i = path.lastIndexOf("/") + 1;
+                            let file_name = path.substring(slash_i);
+                            let dot_i = file_name.lastIndexOf(".");
+                            let file = cache[window.history.state.path].find(
+                                (item) => item.name === file_name,
+                            );
+                            movebut.setAttribute("path", path);
+                            move_from.innerText = `${path} (${formatBytes(file.size)})`;
+
+                            if (file.is_file) {
+                                if (dot_i === 0) {
+                                    move_target.value = `/${path
+                                        .substring(0, slash_i)
+                                        .split("/")
+                                        .slice(1)
+                                        .join(
+                                            "/",
+                                        )}${file_name}-${getCurrentTime()}`;
+                                } else {
+                                    move_target.value = `/${path
+                                        .substring(0, slash_i)
+                                        .split("/")
+                                        .slice(1)
+                                        .join("/")}${file_name.substring(
+                                        0,
+                                        dot_i,
+                                    )}-${getCurrentTime()}${file_name.substring(dot_i)}`;
+                                }
+                            } else {
+                                move_target.value = `/${path
+                                    .substring(0, slash_i)
+                                    .split("/")
+                                    .slice(1)
+                                    .join(
+                                        "/",
+                                    )}${file.name}-${getCurrentTime()}/`;
+                            }
+
+                            backdrop.style.display = "block";
+                            moved.showModal();
+                            movebut.innerText = "Move";
+                            movebut.classList.remove("not-allowed");
+                            movebut.removeAttribute("disabled");
+                            break;
+                        }
+                        case "trash": {
+                            let trashPath = path.split("/").slice(1).join("/");
+                            let body = {
+                                token: getToken(),
+                                // "from-userid": localStorage.getItem("userid"),
+                                from: `/tex/${trashPath}`,
+                                to: `/tex/.system/trash/${trashPath}`,
+                            };
+
+                            let url = "/api/storage/v1/move-createdirs-overwrite";
+                            fetch(url, {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify(body),
+                            })
+                                .then((response) => response.json())
+                                .then((data) => {
+                                    if (data.type == "error") {
+                                        alert(
+                                            `Error moving to trash: ${JSON.stringify(data.kind)}\nConsider deleting the file at /.system/trash`,
+                                        );
+                                        return;
+                                    }
+                                    if (
+                                        localStorage.getItem("trashNotif") ===
+                                        null
+                                    ) {
+                                        alert(
+                                            "File has been moved to /.system/trash\nMake sure to empty trash once in a while.",
+                                        );
+                                        localStorage.setItem(
+                                            "trashNotif",
+                                            true,
+                                        );
+                                    }
+                                    refresh();
+                                })
+                                .catch((error) => console.error(error));
+
+                            break;
+                        }
+                        case "restore": {
+                            let trashPath = path.split("/").slice(3).join("/");
+
+                            let body = {
+                                token: getToken(),
+                                // "from-userid": localStorage.getItem("userid"),
+                                from: `/tex/.system/trash/${trashPath}`,
+                                to: `/tex/${trashPath}`,
+                            };
+
+                            let url = "/api/storage/v1/move-createdirs";
+                            fetch(url, {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify(body),
+                            })
+                                .then((response) => response.json())
+                                .then((data) => {
+                                    if (data.type == "error") {
+                                        alert(
+                                            `Error restoring file: ${JSON.stringify(data.kind)}\nThere might be a file at target path.`,
+                                        );
+                                        return;
+                                    }
+                                    refresh();
+                                })
+                                .catch((error) => console.error(error));
+
+                            break;
+                        }
+                        default:
+                            console.error(`Unknown action "${action}"`);
                     }
-                  }
-                  refresh();
-                })
-                .catch((error) => console.error(error));
-              break;
+                });
             }
-            case "copy": {
-              let slash_i = path.lastIndexOf("/") + 1;
-              let file_name = path.substring(slash_i);
-              let dot_i = file_name.lastIndexOf(".");
-              let file = cache[window.history.state.path].find(
-                (item) => item.name === file_name,
-              );
-              copybut.setAttribute("path", path);
-              copy_from.innerText = `${path} (${formatBytes(file.size)})`;
+        }
+    }
 
-              if (file.is_file) {
-                if (dot_i === 0) {
-                  copy_target.value = `/${path
-                    .substring(0, slash_i)
-                    .split("/")
-                    .slice(1)
-                    .join("/")}${file_name}-${getCurrentTime()}`;
-                } else {
-                  copy_target.value = `/${path
-                    .substring(0, slash_i)
-                    .split("/")
-                    .slice(1)
-                    .join("/")}${file_name.substring(
-                    0,
-                    dot_i,
-                  )}-${getCurrentTime()}${file_name.substring(dot_i)}`;
+    function clickDots(parent) {
+        let dropdown = parent.getElementsByClassName("dropdown")[0];
+        if (!dropdown.classList.contains("hide")) {
+            return;
+        }
+        dropdown.classList.remove("hide");
+        dropdownsHideExcept(dropdown);
+    }
+
+    function dropdownsHideExcept(except) {
+        let dropdowns = document.getElementsByClassName("dropdown");
+        for (const dropdown of dropdowns) {
+            if (dropdown != except) {
+                dropdown.classList.add("hide");
+            }
+        }
+
+        let folds = document.getElementsByClassName("dropdown-fold");
+        for (const fold of folds) {
+            fold.classList.add("hide");
+        }
+    }
+
+    window.addEventListener("click", (event) => {
+        if (
+            !event.target.classList.contains("dots") &&
+            event.target.getAttribute("action") !== "visibility"
+        )
+            dropdownsHideExcept();
+    });
+
+    copybut.onclick = () => {
+        if (copybut.disabled) {
+            return;
+        }
+
+        copybut.disabled = true;
+        copybut.innerText = "Copying...";
+        if (!copy_target.value.startsWith("/")) {
+            copy_target.value = "/" + copy_target.value;
+        }
+
+        let from = copybut.getAttribute("path").split(/\/(.*)/s);
+        let body = {
+            token: getToken(),
+            "from-userid": parseInt(from[0]),
+            from: `/tex/${from[1]}`,
+            to: `/tex${copy_target.value}`,
+        };
+
+        let url = "/api/storage/v1/copy-overwrite";
+        fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(body),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                copybut.classList.add("not-allowed");
+                if (data.type == "error") {
+                    copybut.innerText = "Copy failed";
+                    alert(`Error copying: ${JSON.stringify(data.kind)}`);
+                    return;
                 }
-              } else {
-                copy_target.value = `/${path
-                  .substring(0, slash_i)
-                  .split("/")
-                  .slice(1)
-                  .join("/")}${file.name}-${getCurrentTime()}/`;
-              }
+                copybut.innerText = "Copied!";
+                refresh(
+                    `${localStorage.getItem("userid")}/${copy_target.value
+                        .split("/")
+                        .slice(1, -1)
+                        .join("/")}`,
+                );
+            })
+            .catch((error) => console.error(error));
+    };
 
-              backdrop.style.display = "block";
-              copyd.showModal();
-              copybut.innerText = "Copy";
-              copybut.classList.remove("not-allowed");
-              copybut.removeAttribute("disabled");
-              break;
-            }
-            case "move": {
-              let slash_i = path.lastIndexOf("/") + 1;
-              let file_name = path.substring(slash_i);
-              let dot_i = file_name.lastIndexOf(".");
-              let file = cache[window.history.state.path].find(
-                (item) => item.name === file_name,
-              );
-              movebut.setAttribute("path", path);
-              move_from.innerText = `${path} (${formatBytes(file.size)})`;
+    movebut.onclick = () => {
+        if (movebut.disabled) {
+            return;
+        }
 
-              if (file.is_file) {
-                if (dot_i === 0) {
-                  move_target.value = `/${path
-                    .substring(0, slash_i)
-                    .split("/")
-                    .slice(1)
-                    .join("/")}${file_name}-${getCurrentTime()}`;
-                } else {
-                  move_target.value = `/${path
-                    .substring(0, slash_i)
-                    .split("/")
-                    .slice(1)
-                    .join("/")}${file_name.substring(
-                    0,
-                    dot_i,
-                  )}-${getCurrentTime()}${file_name.substring(dot_i)}`;
+        movebut.disabled = true;
+        movebut.innerText = "Moving...";
+        if (!move_target.value.startsWith("/")) {
+            move_target.value = "/" + move_target.value;
+        }
+
+        let from = movebut.getAttribute("path").split(/\/(.*)/s);
+        let body = {
+            token: getToken(),
+            "from-userid": parseInt(from[0]),
+            from: `/tex/${from[1]}`,
+            to: `/tex${move_target.value}`,
+        };
+
+        let url = "/api/storage/v1/move-overwrite";
+        fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(body),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                movebut.classList.add("not-allowed");
+                if (data.type == "error") {
+                    movebut.innerText = "Move failed";
+                    alert(`Error moving: ${JSON.stringify(data.kind)}`);
+                    return;
                 }
-              } else {
-                move_target.value = `/${path
-                  .substring(0, slash_i)
-                  .split("/")
-                  .slice(1)
-                  .join("/")}${file.name}-${getCurrentTime()}/`;
-              }
-
-              backdrop.style.display = "block";
-              moved.showModal();
-              movebut.innerText = "Move";
-              movebut.classList.remove("not-allowed");
-              movebut.removeAttribute("disabled");
-              break;
-            }
-            default:
-              console.error(`Unknown action "${action}"`);
-          }
-        });
-      }
-    }
-  }
-
-  function clickDots(parent) {
-    let dropdown = parent.getElementsByClassName("dropdown")[0];
-    if (!dropdown.classList.contains("hide")) {
-      return;
-    }
-    dropdown.classList.remove("hide");
-    dropdownsHideExcept(dropdown);
-  }
-
-  function dropdownsHideExcept(except) {
-    let dropdowns = document.getElementsByClassName("dropdown");
-    for (const dropdown of dropdowns) {
-      if (dropdown != except) {
-        dropdown.classList.add("hide");
-      }
-    }
-
-    let folds = document.getElementsByClassName("dropdown-fold");
-    for (const fold of folds) {
-      fold.classList.add("hide");
-    }
-  }
-
-  window.addEventListener("click", (event) => {
-    if (
-      !event.target.classList.contains("dots") &&
-      event.target.getAttribute("action") !== "visibility"
-    )
-      dropdownsHideExcept();
-  });
-
-  copybut.onclick = () => {
-    if (copybut.disabled) {
-      return;
-    }
-
-    copybut.disabled = true;
-    copybut.innerText = "Copying...";
-    if (!copy_target.value.startsWith("/")) {
-      copy_target.value = "/" + copy_target.value;
-    }
-
-    let from = copybut.getAttribute("path").split(/\/(.*)/s);
-    let body = {
-      token: getToken(),
-      "from-userid": parseInt(from[0]),
-      from: `/tex/${from[1]}`,
-      to: `/tex${copy_target.value}`,
+                movebut.innerText = "Moved!";
+                refresh(
+                    `${localStorage.getItem("userid")}/${move_target.value
+                        .split("/")
+                        .slice(1, -1)
+                        .join("/")}`,
+                );
+            })
+            .catch((error) => console.error(error));
     };
 
-    let url = "/api/storage/v1/copy-overwrite";
-    fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        copybut.classList.add("not-allowed");
-        if (data.type == "error") {
-          copybut.innerText = "Copy failed";
-          alert(`Error copying: ${JSON.stringify(data.kind)}`);
-          return;
+    function conditionallyAddDots() {
+        let token = getToken();
+        if (token) {
+            addDots();
         }
-        copybut.innerText = "Copied!";
-        refresh(
-          `${localStorage.getItem("userid")}/${copy_target.value
-            .split("/")
-            .slice(1, -1)
-            .join("/")}`,
-        );
-      })
-      .catch((error) => console.error(error));
-  };
-
-  movebut.onclick = () => {
-    if (movebut.disabled) {
-      return;
     }
 
-    movebut.disabled = true;
-    movebut.innerText = "Moving...";
-    if (!move_target.value.startsWith("/")) {
-      move_target.value = "/" + move_target.value;
-    }
-
-    let from = movebut.getAttribute("path").split(/\/(.*)/s);
-    let body = {
-      token: getToken(),
-      "from-userid": parseInt(from[0]),
-      from: `/tex/${from[1]}`,
-      to: `/tex${move_target.value}`,
+    copy_target.oninput = () => {
+        if (!copy_target.value.startsWith("/")) {
+            copy_target.value = "/" + copy_target.value;
+        }
     };
 
-    let url = "/api/storage/v1/move-overwrite";
-    fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        movebut.classList.add("not-allowed");
-        if (data.type == "error") {
-          movebut.innerText = "Move failed";
-          alert(`Error moving: ${JSON.stringify(data.kind)}`);
-          return;
-        }
-        movebut.innerText = "Moved!";
-        refresh(
-          `${localStorage.getItem("userid")}/${move_target.value
-            .split("/")
-            .slice(1, -1)
-            .join("/")}`,
-        );
-      })
-      .catch((error) => console.error(error));
-  };
-
-  function conditionallyAddDots() {
-    let token = getToken();
-    if (token) {
-      addDots();
-    }
-  }
-
-  copy_target.oninput = () => {
-    if (!copy_target.value.startsWith("/")) {
-      copy_target.value = "/" + copy_target.value;
-    }
-  };
-
-  create_target.oninput = () => {
-    check_path();
-  };
-
-  conditionallyAddDots();
-
-  create.onclick = () => {
-    touchd.showModal();
-    backdrop.style.display = "block";
-  };
-
-  document.querySelector("#touchd .x").onclick = () => {
-    touchd.close();
-  };
-
-  function create_highlight() {
-    if (isFileAdd) {
-      folderadd.style.opacity = 0.5;
-      fileadd.style.opacity = 1;
-    } else {
-      fileadd.style.opacity = 0.5;
-      folderadd.style.opacity = 1;
-    }
-  }
-
-  function create_reset() {
-    createbut.disabled = true;
-    createbut.classList.add("not-allowed");
-    isFileAdd = true;
-    create_highlight();
-    create_target.value = "";
-    createbut.innerText = "Create";
-  }
-
-  fileadd.onclick = () => {
-    isFileAdd = true;
-    create_highlight();
-    if (create_target.value.endsWith("/")) {
-      create_target.value = create_target.value.replace(/\/+$/, "");
-    }
-  };
-
-  folderadd.onclick = () => {
-    if (isFileAdd) {
-      isFileAdd = false;
-      create_highlight();
-      if (
-        !create_target.value.endsWith("/") &&
-        create_target.value.length !== 0
-      )
-        create_target.value += "/";
-    }
-  };
-
-  function check_path() {
-    isFileAdd = !create_target.value.endsWith("/");
-    create_highlight();
-    if (create_target.value.length === 0) {
-      createbut.disabled = true;
-      createbut.classList.add("not-allowed");
-    } else {
-      createbut.disabled = false;
-      createbut.classList.remove("not-allowed");
-    }
-  }
-
-  create_reset();
-
-  createbut.onclick = () => {
-    createbut.disabled = true;
-    let splitted = window.history.state.path.trim().split("/");
-    let path;
-
-    if (splitted.length > 1) {
-      path = `/tex/${splitted.slice(1).join("/")}/${create_target.value}`;
-    } else {
-      path = `/tex/${create_target.value}`;
-    }
-    let body = {
-      token: getToken(),
-      path,
+    create_target.oninput = () => {
+        check_path();
     };
 
-    let url;
-    if (isFileAdd) {
-      url = "/api/storage/v1/touch";
-    } else {
-      url = "/api/storage/v1/mkdir";
+    conditionallyAddDots();
+
+    create.onclick = () => {
+        touchd.showModal();
+        backdrop.style.display = "block";
+    };
+
+    document.querySelector("#touchd .x").onclick = () => {
+        touchd.close();
+    };
+
+    function create_highlight() {
+        if (isFileAdd) {
+            folderadd.style.opacity = 0.5;
+            fileadd.style.opacity = 1;
+        } else {
+            fileadd.style.opacity = 0.5;
+            folderadd.style.opacity = 1;
+        }
     }
 
-    fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.type == "error") {
-          alert(`Error creating file item: ${JSON.stringify(data.kind)}`);
-          return;
-        }
+    function create_reset() {
+        createbut.disabled = true;
         createbut.classList.add("not-allowed");
-        createbut.innerText = "Created!";
-        refresh(
-          `${localStorage.getItem("userid")}/${path
-            .replace(/^\/+|\/+$/g, "")
-            .split("/")
-            .slice(1, -1)
-            .join("/")}`,
-        );
-      })
-      .catch((error) => console.error(error));
-  };
+        isFileAdd = true;
+        create_highlight();
+        create_target.value = "";
+        createbut.innerText = "Create";
+    }
+
+    fileadd.onclick = () => {
+        isFileAdd = true;
+        create_highlight();
+        if (create_target.value.endsWith("/")) {
+            create_target.value = create_target.value.replace(/\/+$/, "");
+        }
+    };
+
+    folderadd.onclick = () => {
+        if (isFileAdd) {
+            isFileAdd = false;
+            create_highlight();
+            if (
+                !create_target.value.endsWith("/") &&
+                create_target.value.length !== 0
+            )
+                create_target.value += "/";
+        }
+    };
+
+    function check_path() {
+        isFileAdd = !create_target.value.endsWith("/");
+        create_highlight();
+        if (create_target.value.length === 0) {
+            createbut.disabled = true;
+            createbut.classList.add("not-allowed");
+        } else {
+            createbut.disabled = false;
+            createbut.classList.remove("not-allowed");
+        }
+    }
+
+    create_reset();
+
+    createbut.onclick = () => {
+        createbut.disabled = true;
+        let splitted = window.history.state.path.trim().split("/");
+        let path;
+
+        if (splitted.length > 1) {
+            path = `/tex/${splitted.slice(1).join("/")}/${create_target.value}`;
+        } else {
+            path = `/tex/${create_target.value}`;
+        }
+        let body = {
+            token: getToken(),
+            path,
+        };
+
+        let url;
+        if (isFileAdd) {
+            url = "/api/storage/v1/touch";
+        } else {
+            url = "/api/storage/v1/mkdir";
+        }
+
+        fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(body),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.type == "error") {
+                    alert(
+                        `Error creating file item: ${JSON.stringify(data.kind)}`,
+                    );
+                    return;
+                }
+                createbut.classList.add("not-allowed");
+                createbut.innerText = "Created!";
+                refresh(
+                    `${localStorage.getItem("userid")}/${path
+                        .replace(/^\/+|\/+$/g, "")
+                        .split("/")
+                        .slice(1, -1)
+                        .join("/")}`,
+                );
+            })
+            .catch((error) => console.error(error));
+    };
 }
