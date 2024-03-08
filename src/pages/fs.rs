@@ -214,6 +214,13 @@ async fn dir(
       <input type="text" id="movetarget" placeholder="Move to" />
       <button id="movebut" class="submitbut">Move</button>
     </dialog>
+    <dialog id="restored">
+      <div class="x">&#x2715;</div>
+      <h2>Head up!</h2>
+      <center><img src="/static/icons/warn.svg" height="50px" /></center>
+      <center><p>There is a file at restore location</p></center>
+      <button id="restorebut" class="dangerbut">Overwrite file</button>
+    </dialog>
   {topbar}
 <div id="path-display">
   {path_display}

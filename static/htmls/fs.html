@@ -60,6 +60,13 @@
       <input type="text" id="createtarget" placeholder="Create path" />
       <button id="createbut" disabled class="submitbut">Create</button>
     </dialog>
+    <dialog id="restored" open>
+      <div class="x">&#x2715;</div>
+      <h2>Head up!</h2>
+      <center><img src="/static/icons/warn.svg" height="50px" /></center>
+      <center><p>There is a file at restore location</p></center>
+      <button id="restorebut" class="dangerbut">Overwrite file</button>
+    </dialog>
     <dialog id="copyd">
       <div class="x">&#x2715;</div>
       <h2>Copy item</h2>
@@ -67,7 +74,7 @@
       <input type="text" id="copytarget" placeholder="Copy target" />
       <button id="copybut" class="submitbut">Copy</button>
     </dialog>
-    <dialog id="moved" open>
+    <dialog id="moved">
       <div class="x">&#x2715;</div>
       <h2>Move item</h2>
       <center><img src="/static/icons/folder-tree.svg" height="50px" /></center>

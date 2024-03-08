@@ -79,7 +79,7 @@ dialog h2 {
   font-size: 0.7em;
 }
 
-.submitbut {
+.submitbut, .dangerbut {
   transition: 100ms;
   width: calc(20em - 10px);
   display: block;
@@ -93,15 +93,15 @@ dialog h2 {
   margin-top: 18px;
 }
 
-.submitbut:hover {
+.submitbut:hover, .dangerbut:hover {
   cursor: pointer;
 }
 
-.submitbut:disabled:hover {
+.submitbut:disabled:hover, .dangerbut:disabled:hover {
   cursor: wait;
 }
 
-.submitbut:disabled.not-allowed:hover {
+.submitbut:disabled.not-allowed:hover, .dangerbut:disabled.not-allowed:hover {
   cursor: not-allowed;
 }
 

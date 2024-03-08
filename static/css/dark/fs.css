@@ -41,6 +41,16 @@ dialog {
   background-color: #4488ff;
 }
 
+.dangerbut {
+  background-color: #bb1111;
+  color: white;
+}
+
+.dangerbut:hover,
+.dangerbut:disabled {
+  background-color: #ff0000;
+}
+
 .x:hover {
   color: #ff6666;
 }

@@ -26,6 +26,8 @@ let create = document.getElementById("create");
 let createbut = document.getElementById("createbut");
 let folderadd = document.getElementById("create-folder");
 let fileadd = document.getElementById("create-file");
+let restored = document.getElementById("restored");
+let restorebut = document.getElementById("restorebut");
 let create_target = document.getElementById("createtarget");
 
 let isFileAdd = true;
@@ -235,7 +237,7 @@ function addListeners() {
     Array.from(document.getElementsByClassName("fragment")).forEach(
         (fragment) => {
             let path = fragment.getAttribute("path");
-            if(path === null) return;
+            if (path === null) return;
             fragment.addEventListener("click", (_ev) => go(path));
             fragment.addEventListener("auxclick", (_event) =>
                 window.open(`/fs/${path}`, "_blank").focus(),
@@ -281,12 +283,14 @@ if (fslist) {
     touchd.onclose =
         copyd.onclose =
         moved.onclose =
+        restored.onclose =
             () => {
                 backdrop.style.display = "none";
                 create_reset();
             };
     document.querySelector("#moved .x").onclick = () => moved.close();
     document.querySelector("#copyd .x").onclick = () => copyd.close();
+    document.querySelector("#restored .x").onclick = () => restored.close();
 
     function addDots() {
         let items = fslist.children;
@@ -640,9 +644,43 @@ if (fslist) {
                                 .then((response) => response.json())
                                 .then((data) => {
                                     if (data.type == "error") {
-                                        alert(
-                                            `Error restoring file: ${JSON.stringify(data.kind)}\nThere might be a file at target path.`,
-                                        );
+                                        if (data.kind.type == "path occupied") {
+                                            backdrop.style.display = "block";
+                                            restored.showModal();
+
+                                            restorebut.onclick = () => {
+                                                backdrop.style.display = "none";
+                                                restored.close();
+                                                url =
+                                                    "/api/storage/v1/move-createdirs-overwrite";
+
+                                                fetch(url, {
+                                                    method: "POST",
+                                                    headers: {
+                                                        "Content-Type":
+                                                            "application/json",
+                                                    },
+                                                    body: JSON.stringify(body),
+                                                })
+                                                    .then((response) =>
+                                                        response.json(),
+                                                    )
+                                                    .then((data) => {
+                                                        if (
+                                                            data.type == "error"
+                                                        ) {
+                                                            alert(
+                                                                `Error restoring file: ${JSON.stringify(data.kind)}`,
+                                                            );
+                                                            return;
+                                                        }
+                                                        refresh();
+                                                    })
+                                                    .catch((error) =>
+                                                        console.error(error),
+                                                    );
+                                            };
+                                        }
                                         return;
                                     }
                                     refresh();
@@ -669,11 +707,10 @@ if (fslist) {
         for (const editBut of Array.from(
             document.querySelectorAll('[action="edit"]'),
         )) {
-
-        let path =
-            editBut.parentNode.parentNode.parentNode.parentNode.getAttribute(
-                "path",
-            );
+            let path =
+                editBut.parentNode.parentNode.parentNode.parentNode.getAttribute(
+                    "path",
+                );
 
             editBut.addEventListener("auxclick", (event) =>
                 window
