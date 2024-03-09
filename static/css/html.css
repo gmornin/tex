@@ -1,6 +1,6 @@
 #display {
   margin: auto;
-  max-width: 65em;
+  width: calc(min(60em, 100vw) - 4em);
   padding: 5px;
 }
 
@@ -12,3 +12,8 @@
 #display img {
   border-radius: 5px;
 }
+
+#display pre {
+    overflow: scroll !important;
+}
+

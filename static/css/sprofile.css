@@ -190,3 +190,9 @@ li:hover .plus {
 #add {
   transform: translateY(3px);
 }
+
+@media only screen and (max-width: 470px) {
+    #profile-top img {
+        margin-right: 0 !important;
+    }
+}

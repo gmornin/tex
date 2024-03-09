@@ -1,11 +1,11 @@
 #fslist {
   list-style-type: none;
   padding: 0;
-  margin-bottom: 5em;
+  margin-bottom: 12em;
 }
 
 #fslist li {
-  width: min(60em, 90vw);
+  width: min(58em, 88vw);
   margin-left: auto;
   margin-right: auto;
   padding: 10px;
@@ -79,7 +79,8 @@ dialog h2 {
   font-size: 0.7em;
 }
 
-.submitbut, .dangerbut {
+.submitbut,
+.dangerbut {
   transition: 100ms;
   width: calc(20em - 10px);
   display: block;
@@ -93,15 +94,18 @@ dialog h2 {
   margin-top: 18px;
 }
 
-.submitbut:hover, .dangerbut:hover {
+.submitbut:hover,
+.dangerbut:hover {
   cursor: pointer;
 }
 
-.submitbut:disabled:hover, .dangerbut:disabled:hover {
+.submitbut:disabled:hover,
+.dangerbut:disabled:hover {
   cursor: wait;
 }
 
-.submitbut:disabled.not-allowed:hover, .dangerbut:disabled.not-allowed:hover {
+.submitbut:disabled.not-allowed:hover,
+.dangerbut:disabled.not-allowed:hover {
   cursor: not-allowed;
 }
 
@@ -206,6 +210,12 @@ li:hover .dropdown {
   position: absolute;
   transform: translateX(-9px);
   z-index: 999;
+}
+
+@media only screen and (max-width: 1170px) {
+  .dropdown-content {
+    transform: translateX(-100px);
+  }
 }
 
 #mobile .dropdown-content {

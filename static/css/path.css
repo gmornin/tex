@@ -6,7 +6,7 @@
 #path-display {
   font-family: "Courier New", monospace;
   background: black;
-  max-width: min(60em, 90vw);
+  max-width: calc(min(60em, 90vw) - 2em);
   margin-left: auto;
   margin-right: auto;
   padding-left: 20px;

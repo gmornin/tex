@@ -1560,7 +1560,7 @@ pub fn ext_to_mode(ext: &str) -> &'static str {
 // (target, compiler, compiler display)
 pub fn available_targets(name: &str) -> &'static [(&'static str, &'static str, &'static str)] {
     match name {
-        "markdown" => &[("html", "pulldown_cmark", "PulldownCmark")],
+        "markdown" => &[("html", "pulldown cmark", "PulldownCmark")],
         "latex" => &[
             ("pdf", "pdflatex", "PDFLatex"),
             ("pdf", "xelatex", "XeLatex"),
