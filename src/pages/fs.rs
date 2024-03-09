@@ -218,7 +218,7 @@ async fn dir(
       <div class="x">&#x2715;</div>
       <h2>Head up!</h2>
       <center><img src="/static/icons/warn.svg" height="50px" /></center>
-      <center><p>There is a file at restore location</p></center>
+      <center><p>There is a file at target location</p></center>
       <button id="restorebut" class="dangerbut">Overwrite file</button>
     </dialog>
   {topbar}

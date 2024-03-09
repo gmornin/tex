@@ -11,6 +11,7 @@ if (isMobile) {
     document.body.id = "mobile";
 }
 
+let closeBackdrop = true;
 let pathDisplay = document.getElementById("path-display");
 let fslist = document.getElementById("fslist");
 let moved = document.getElementById("moved");
@@ -31,6 +32,10 @@ let restorebut = document.getElementById("restorebut");
 let create_target = document.getElementById("createtarget");
 
 let isFileAdd = true;
+
+function getFsPath() {
+    return window.location.pathname.split("/").slice(2).join("/");
+}
 
 function getCurrentTime() {
     const now = new Date();
@@ -272,6 +277,280 @@ function addListeners() {
     });
 }
 
+function trashTask(path) {
+    let trashPath = path.split("/").slice(1).join("/");
+    let body = {
+        token: getToken(),
+        // "from-userid": localStorage.getItem("userid"),
+        from: `/tex/${trashPath}`,
+        to: `/tex/.system/trash/${trashPath}`,
+    };
+
+    let url = "/api/storage/v1/move-createdirs-overwrite";
+    fetch(url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.type == "error") {
+                alert(
+                    `Error moving to trash: ${JSON.stringify(data.kind)}\nConsider deleting the file at /.system/trash`,
+                );
+                return;
+            }
+            if (localStorage.getItem("trashNotif") === null) {
+                alert(
+                    "File has been moved to /.system/trash\nMake sure to empty trash once in a while.",
+                );
+                localStorage.setItem("trashNotif", true);
+            }
+            delete cache[
+                `${getFsPath().split("/").shift()}/.system/trash/${trashPath.split("/").slice(0, -1).join("/")}`.replace(
+                    /\/+$/,
+                    "",
+                )
+            ];
+            refresh();
+        })
+        .catch((error) => console.error(error));
+}
+
+function restoreTask(path) {
+    let trashPath = path.split("/").slice(3).join("/");
+
+    let body = {
+        token: getToken(),
+        // "from-userid": localStorage.getItem("userid"),
+        from: `/tex/.system/trash/${trashPath}`,
+        to: `/tex/${trashPath}`,
+    };
+
+    let url = "/api/storage/v1/move-createdirs";
+    fetch(url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            let cCache = () => {
+                delete cache[
+                    `${getFsPath().split("/").shift()}/${trashPath.split("/").slice(0, -1).join("/")}`.replace(
+                        /\/+$/,
+                        "",
+                    )
+                ];
+            };
+            if (data.type == "error") {
+                if (data.kind.type == "path occupied") {
+                    backdrop.style.display = "block";
+                    restored.showModal();
+
+                    restorebut.onclick = () => {
+                        restored.close();
+                        url = "/api/storage/v1/move-createdirs-overwrite";
+
+                        fetch(url, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(body),
+                        })
+                            .then((response) => response.json())
+                            .then((data) => {
+                                if (data.type == "error") {
+                                    alert(
+                                        `Error restoring file: ${JSON.stringify(data.kind)}`,
+                                    );
+                                    return;
+                                }
+                                cCache();
+                                refresh();
+                            })
+                            .catch((error) => console.error(error));
+                    };
+                }
+                return;
+            }
+            cCache();
+            refresh();
+        })
+        .catch((error) => console.error(error));
+}
+
+function moveTask() {
+    if (movebut.disabled) {
+        return;
+    }
+
+    movebut.disabled = true;
+    movebut.innerText = "Moving...";
+    if (!move_target.value.startsWith("/")) {
+        move_target.value = "/" + move_target.value;
+    }
+
+    let from = movebut.getAttribute("path").split(/\/(.*)/s);
+    let body = {
+        token: getToken(),
+        "from-userid": parseInt(from[0]),
+        from: `/tex/${from[1]}`,
+        to: `/tex${move_target.value}`,
+    };
+
+    let url = "/api/storage/v1/move";
+    fetch(url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.type == "error") {
+                if (data.kind.type == "path occupied") {
+                    closeBackdrop = false;
+                    moved.close();
+                    restored.showModal();
+
+                    restorebut.onclick = () => {
+                        restored.close();
+                        url = "/api/storage/v1/move-overwrite";
+
+                        fetch(url, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(body),
+                        })
+                            .then((response) => response.json())
+                            .then((data) => {
+                                if (data.type == "error") {
+                                    alert(
+                                        `Error moving: ${JSON.stringify(data.kind)}`,
+                                    );
+                                    return;
+                                }
+                                delete cache[
+                                    `${localStorage.getItem("userid")}/${copy_target.value
+                                        .split("/")
+                                        .slice(1, -1)
+                                        .join("/")}`.replace(/\/+$/, "")
+                                ];
+                                refresh();
+                            })
+                            .catch((error) => console.error(error));
+                    };
+                    return;
+                }
+                movebut.removeAttribute("disabled");
+                movebut.innerText = "Move failed";
+                alert(`Error moving: ${JSON.stringify(data.kind)}`);
+                return;
+            }
+            movebut.classList.add("not-allowed");
+            movebut.innerText = "Moved!";
+            delete cache[
+                `${localStorage.getItem("userid")}/${move_target.value
+                    .split("/")
+                    .slice(1, -1)
+                    .join("/")}`.replace(/\/+$/, "")
+            ];
+            refresh();
+        })
+        .catch((error) => console.error(error));
+}
+
+function copyTask() {
+    if (copybut.disabled) {
+        return;
+    }
+
+    copybut.disabled = true;
+    copybut.innerText = "Copying...";
+    if (!copy_target.value.startsWith("/")) {
+        copy_target.value = "/" + copy_target.value;
+    }
+
+    let from = copybut.getAttribute("path").split(/\/(.*)/s);
+    let body = {
+        token: getToken(),
+        "from-userid": parseInt(from[0]),
+        from: `/tex/${from[1]}`,
+        to: `/tex${copy_target.value}`,
+    };
+
+    let url = "/api/storage/v1/copy";
+    fetch(url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.type == "error") {
+                if (data.kind.type == "path occupied") {
+                    closeBackdrop = false;
+                    copyd.close();
+                    restored.showModal();
+
+                    restorebut.onclick = () => {
+                        restored.close();
+                        url = "/api/storage/v1/copy-overwrite";
+
+                        fetch(url, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(body),
+                        })
+                            .then((response) => response.json())
+                            .then((data) => {
+                                if (data.type == "error") {
+                                    alert(
+                                        `Error copying: ${JSON.stringify(data.kind)}`,
+                                    );
+                                    return;
+                                }
+                                delete cache[
+                                    `${localStorage.getItem("userid")}/${copy_target.value
+                                        .split("/")
+                                        .slice(1, -1)
+                                        .join("/")}`.replace(/\/+$/, "")
+                                ];
+                            })
+                            .catch((error) => console.error(error));
+                    };
+                    return;
+                }
+                copybut.removeAttribute("disabled");
+                copybut.innerText = "Copy failed";
+                alert(`Error copying: ${JSON.stringify(data.kind)}`);
+                return;
+            }
+            copybut.classList.add("not-allowed");
+            copybut.innerText = "Copied!";
+            delete cache[
+                `${localStorage.getItem("userid")}/${copy_target.value
+                    .split("/")
+                    .slice(1, -1)
+                    .join("/")}`.replace(/\/+$/, "")
+            ];
+        })
+        .catch((error) => console.error(error));
+}
+
 addListeners();
 
 window.addEventListener("popstate", function (_event) {
@@ -285,7 +564,11 @@ if (fslist) {
         moved.onclose =
         restored.onclose =
             () => {
-                backdrop.style.display = "none";
+                if (closeBackdrop) {
+                    backdrop.style.display = "none";
+                } else {
+                    closeBackdrop = true;
+                }
                 create_reset();
             };
     document.querySelector("#moved .x").onclick = () => moved.close();
@@ -490,42 +773,16 @@ if (fslist) {
                         case "copy": {
                             let slash_i = path.lastIndexOf("/") + 1;
                             let file_name = path.substring(slash_i);
-                            let dot_i = file_name.lastIndexOf(".");
                             let file = cache[window.history.state.path].find(
                                 (item) => item.name === file_name,
                             );
                             copybut.setAttribute("path", path);
                             copy_from.innerText = `${path} (${formatBytes(file.size)})`;
 
-                            if (file.is_file) {
-                                if (dot_i === 0) {
-                                    copy_target.value = `/${path
-                                        .substring(0, slash_i)
-                                        .split("/")
-                                        .slice(1)
-                                        .join(
-                                            "/",
-                                        )}${file_name}-${getCurrentTime()}`;
-                                } else {
-                                    copy_target.value = `/${path
-                                        .substring(0, slash_i)
-                                        .split("/")
-                                        .slice(1)
-                                        .join("/")}${file_name.substring(
-                                        0,
-                                        dot_i,
-                                    )}-${getCurrentTime()}${file_name.substring(dot_i)}`;
-                                }
-                            } else {
-                                copy_target.value = `/${path
-                                    .substring(0, slash_i)
-                                    .split("/")
-                                    .slice(1)
-                                    .join(
-                                        "/",
-                                    )}${file.name}-${getCurrentTime()}/`;
-                            }
-
+                            copy_target.value = `/${path
+                                .split("/")
+                                .slice(1)
+                                .join("/")}`;
                             backdrop.style.display = "block";
                             copyd.showModal();
                             copybut.innerText = "Copy";
@@ -536,42 +793,15 @@ if (fslist) {
                         case "move": {
                             let slash_i = path.lastIndexOf("/") + 1;
                             let file_name = path.substring(slash_i);
-                            let dot_i = file_name.lastIndexOf(".");
                             let file = cache[window.history.state.path].find(
                                 (item) => item.name === file_name,
                             );
                             movebut.setAttribute("path", path);
                             move_from.innerText = `${path} (${formatBytes(file.size)})`;
-
-                            if (file.is_file) {
-                                if (dot_i === 0) {
-                                    move_target.value = `/${path
-                                        .substring(0, slash_i)
-                                        .split("/")
-                                        .slice(1)
-                                        .join(
-                                            "/",
-                                        )}${file_name}-${getCurrentTime()}`;
-                                } else {
-                                    move_target.value = `/${path
-                                        .substring(0, slash_i)
-                                        .split("/")
-                                        .slice(1)
-                                        .join("/")}${file_name.substring(
-                                        0,
-                                        dot_i,
-                                    )}-${getCurrentTime()}${file_name.substring(dot_i)}`;
-                                }
-                            } else {
-                                move_target.value = `/${path
-                                    .substring(0, slash_i)
-                                    .split("/")
-                                    .slice(1)
-                                    .join(
-                                        "/",
-                                    )}${file.name}-${getCurrentTime()}/`;
-                            }
-
+                            move_target.value = `/${path
+                                .split("/")
+                                .slice(1)
+                                .join("/")}`;
                             backdrop.style.display = "block";
                             moved.showModal();
                             movebut.innerText = "Move";
@@ -580,113 +810,11 @@ if (fslist) {
                             break;
                         }
                         case "trash": {
-                            let trashPath = path.split("/").slice(1).join("/");
-                            let body = {
-                                token: getToken(),
-                                // "from-userid": localStorage.getItem("userid"),
-                                from: `/tex/${trashPath}`,
-                                to: `/tex/.system/trash/${trashPath}`,
-                            };
-
-                            let url =
-                                "/api/storage/v1/move-createdirs-overwrite";
-                            fetch(url, {
-                                method: "POST",
-                                headers: {
-                                    "Content-Type": "application/json",
-                                },
-                                body: JSON.stringify(body),
-                            })
-                                .then((response) => response.json())
-                                .then((data) => {
-                                    if (data.type == "error") {
-                                        alert(
-                                            `Error moving to trash: ${JSON.stringify(data.kind)}\nConsider deleting the file at /.system/trash`,
-                                        );
-                                        return;
-                                    }
-                                    if (
-                                        localStorage.getItem("trashNotif") ===
-                                        null
-                                    ) {
-                                        alert(
-                                            "File has been moved to /.system/trash\nMake sure to empty trash once in a while.",
-                                        );
-                                        localStorage.setItem(
-                                            "trashNotif",
-                                            true,
-                                        );
-                                    }
-                                    refresh();
-                                })
-                                .catch((error) => console.error(error));
-
+                            trashTask(path);
                             break;
                         }
                         case "restore": {
-                            let trashPath = path.split("/").slice(3).join("/");
-
-                            let body = {
-                                token: getToken(),
-                                // "from-userid": localStorage.getItem("userid"),
-                                from: `/tex/.system/trash/${trashPath}`,
-                                to: `/tex/${trashPath}`,
-                            };
-
-                            let url = "/api/storage/v1/move-createdirs";
-                            fetch(url, {
-                                method: "POST",
-                                headers: {
-                                    "Content-Type": "application/json",
-                                },
-                                body: JSON.stringify(body),
-                            })
-                                .then((response) => response.json())
-                                .then((data) => {
-                                    if (data.type == "error") {
-                                        if (data.kind.type == "path occupied") {
-                                            backdrop.style.display = "block";
-                                            restored.showModal();
-
-                                            restorebut.onclick = () => {
-                                                backdrop.style.display = "none";
-                                                restored.close();
-                                                url =
-                                                    "/api/storage/v1/move-createdirs-overwrite";
-
-                                                fetch(url, {
-                                                    method: "POST",
-                                                    headers: {
-                                                        "Content-Type":
-                                                            "application/json",
-                                                    },
-                                                    body: JSON.stringify(body),
-                                                })
-                                                    .then((response) =>
-                                                        response.json(),
-                                                    )
-                                                    .then((data) => {
-                                                        if (
-                                                            data.type == "error"
-                                                        ) {
-                                                            alert(
-                                                                `Error restoring file: ${JSON.stringify(data.kind)}`,
-                                                            );
-                                                            return;
-                                                        }
-                                                        refresh();
-                                                    })
-                                                    .catch((error) =>
-                                                        console.error(error),
-                                                    );
-                                            };
-                                        }
-                                        return;
-                                    }
-                                    refresh();
-                                })
-                                .catch((error) => console.error(error));
-
+                            restoreTask(path);
                             break;
                         }
                         default:
@@ -754,97 +882,9 @@ if (fslist) {
             dropdownsHideExcept();
     });
 
-    copybut.onclick = () => {
-        if (copybut.disabled) {
-            return;
-        }
+    copybut.onclick = copyTask;
 
-        copybut.disabled = true;
-        copybut.innerText = "Copying...";
-        if (!copy_target.value.startsWith("/")) {
-            copy_target.value = "/" + copy_target.value;
-        }
-
-        let from = copybut.getAttribute("path").split(/\/(.*)/s);
-        let body = {
-            token: getToken(),
-            "from-userid": parseInt(from[0]),
-            from: `/tex/${from[1]}`,
-            to: `/tex${copy_target.value}`,
-        };
-
-        let url = "/api/storage/v1/copy-overwrite";
-        fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(body),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                copybut.classList.add("not-allowed");
-                if (data.type == "error") {
-                    copybut.innerText = "Copy failed";
-                    alert(`Error copying: ${JSON.stringify(data.kind)}`);
-                    return;
-                }
-                copybut.innerText = "Copied!";
-                refresh(
-                    `${localStorage.getItem("userid")}/${copy_target.value
-                        .split("/")
-                        .slice(1, -1)
-                        .join("/")}`,
-                );
-            })
-            .catch((error) => console.error(error));
-    };
-
-    movebut.onclick = () => {
-        if (movebut.disabled) {
-            return;
-        }
-
-        movebut.disabled = true;
-        movebut.innerText = "Moving...";
-        if (!move_target.value.startsWith("/")) {
-            move_target.value = "/" + move_target.value;
-        }
-
-        let from = movebut.getAttribute("path").split(/\/(.*)/s);
-        let body = {
-            token: getToken(),
-            "from-userid": parseInt(from[0]),
-            from: `/tex/${from[1]}`,
-            to: `/tex${move_target.value}`,
-        };
-
-        let url = "/api/storage/v1/move-overwrite";
-        fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(body),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                movebut.classList.add("not-allowed");
-                if (data.type == "error") {
-                    movebut.innerText = "Move failed";
-                    alert(`Error moving: ${JSON.stringify(data.kind)}`);
-                    return;
-                }
-                movebut.innerText = "Moved!";
-                refresh(
-                    `${localStorage.getItem("userid")}/${move_target.value
-                        .split("/")
-                        .slice(1, -1)
-                        .join("/")}`,
-                );
-            })
-            .catch((error) => console.error(error));
-    };
+    movebut.onclick = moveTask;
 
     function conditionallyAddDots() {
         let token = getToken();
