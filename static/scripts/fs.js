@@ -12,6 +12,7 @@ if (isMobile) {
 }
 
 let closeBackdrop = true;
+let removeEnterBehaviour = true;
 let pathDisplay = document.getElementById("path-display");
 let fslist = document.getElementById("fslist");
 let moved = document.getElementById("moved");
@@ -32,6 +33,12 @@ let restorebut = document.getElementById("restorebut");
 let create_target = document.getElementById("createtarget");
 
 let isFileAdd = true;
+
+let enterBehaviour = () => {};
+
+document.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") enterBehaviour();
+});
 
 function getFsPath() {
     return window.location.pathname.split("/").slice(2).join("/");
@@ -385,6 +392,34 @@ function restoreTask(path) {
         .catch((error) => console.error(error));
 }
 
+function moveOverwriteTask(body) {
+    restored.close();
+    url = "/api/storage/v1/move-overwrite";
+
+    fetch(url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.type == "error") {
+                alert(`Error moving: ${JSON.stringify(data.kind)}`);
+                return;
+            }
+            delete cache[
+                `${localStorage.getItem("userid")}/${copy_target.value
+                    .split("/")
+                    .slice(1, -1)
+                    .join("/")}`.replace(/\/+$/, "")
+            ];
+            refresh();
+        })
+        .catch((error) => console.error(error));
+}
+
 function moveTask() {
     if (movebut.disabled) {
         return;
@@ -417,38 +452,11 @@ function moveTask() {
             if (data.type == "error") {
                 if (data.kind.type == "path occupied") {
                     closeBackdrop = false;
+                    removeEnterBehaviour = false;
                     moved.close();
                     restored.showModal();
-
-                    restorebut.onclick = () => {
-                        restored.close();
-                        url = "/api/storage/v1/move-overwrite";
-
-                        fetch(url, {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify(body),
-                        })
-                            .then((response) => response.json())
-                            .then((data) => {
-                                if (data.type == "error") {
-                                    alert(
-                                        `Error moving: ${JSON.stringify(data.kind)}`,
-                                    );
-                                    return;
-                                }
-                                delete cache[
-                                    `${localStorage.getItem("userid")}/${copy_target.value
-                                        .split("/")
-                                        .slice(1, -1)
-                                        .join("/")}`.replace(/\/+$/, "")
-                                ];
-                                refresh();
-                            })
-                            .catch((error) => console.error(error));
-                    };
+                    enterBehaviour = restorebut.onclick = () =>
+                        moveOverwriteTask(body);
                     return;
                 }
                 movebut.removeAttribute("disabled");
@@ -465,6 +473,33 @@ function moveTask() {
                     .join("/")}`.replace(/\/+$/, "")
             ];
             refresh();
+        })
+        .catch((error) => console.error(error));
+}
+
+function copyOverwriteTask(body) {
+    restored.close();
+    url = "/api/storage/v1/copy-overwrite";
+
+    fetch(url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.type == "error") {
+                alert(`Error copying: ${JSON.stringify(data.kind)}`);
+                return;
+            }
+            delete cache[
+                `${localStorage.getItem("userid")}/${copy_target.value
+                    .split("/")
+                    .slice(1, -1)
+                    .join("/")}`.replace(/\/+$/, "")
+            ];
         })
         .catch((error) => console.error(error));
 }
@@ -501,37 +536,12 @@ function copyTask() {
             if (data.type == "error") {
                 if (data.kind.type == "path occupied") {
                     closeBackdrop = false;
+                    removeEnterBehaviour = false;
                     copyd.close();
                     restored.showModal();
 
-                    restorebut.onclick = () => {
-                        restored.close();
-                        url = "/api/storage/v1/copy-overwrite";
-
-                        fetch(url, {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify(body),
-                        })
-                            .then((response) => response.json())
-                            .then((data) => {
-                                if (data.type == "error") {
-                                    alert(
-                                        `Error copying: ${JSON.stringify(data.kind)}`,
-                                    );
-                                    return;
-                                }
-                                delete cache[
-                                    `${localStorage.getItem("userid")}/${copy_target.value
-                                        .split("/")
-                                        .slice(1, -1)
-                                        .join("/")}`.replace(/\/+$/, "")
-                                ];
-                            })
-                            .catch((error) => console.error(error));
-                    };
+                    enterBehaviour = restorebut.onclick = () =>
+                        copyOverwriteTask(body);
                     return;
                 }
                 copybut.removeAttribute("disabled");
@@ -551,6 +561,55 @@ function copyTask() {
         .catch((error) => console.error(error));
 }
 
+function createTask() {
+    if (create_target.value.length == 0) return;
+    createbut.disabled = true;
+    let splitted = window.history.state.path.trim().split("/");
+    let path;
+
+    if (splitted.length > 1) {
+        path = `/tex/${splitted.slice(1).join("/")}/${create_target.value}`;
+    } else {
+        path = `/tex/${create_target.value}`;
+    }
+    let body = {
+        token: getToken(),
+        path,
+    };
+
+    let url;
+    if (isFileAdd) {
+        url = "/api/storage/v1/touch";
+    } else {
+        url = "/api/storage/v1/mkdir";
+    }
+
+    fetch(url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.type == "error") {
+                alert(`Error creating file item: ${JSON.stringify(data.kind)}`);
+                return;
+            }
+            createbut.classList.add("not-allowed");
+            createbut.innerText = "Created!";
+            refresh(
+                `${localStorage.getItem("userid")}/${path
+                    .replace(/^\/+|\/+$/g, "")
+                    .split("/")
+                    .slice(1, -1)
+                    .join("/")}`,
+            );
+        })
+        .catch((error) => console.error(error));
+}
+
 addListeners();
 
 window.addEventListener("popstate", function (_event) {
@@ -564,6 +623,11 @@ if (fslist) {
         moved.onclose =
         restored.onclose =
             () => {
+                if (removeEnterBehaviour) {
+                    enterBehaviour = () => {};
+                } else {
+                    removeEnterBehaviour = true;
+                }
                 if (closeBackdrop) {
                     backdrop.style.display = "none";
                 } else {
@@ -788,6 +852,7 @@ if (fslist) {
                             copybut.innerText = "Copy";
                             copybut.classList.remove("not-allowed");
                             copybut.removeAttribute("disabled");
+                            enterBehaviour = copyTask;
                             break;
                         }
                         case "move": {
@@ -807,6 +872,7 @@ if (fslist) {
                             movebut.innerText = "Move";
                             movebut.classList.remove("not-allowed");
                             movebut.removeAttribute("disabled");
+                            enterBehaviour = moveTask;
                             break;
                         }
                         case "trash": {
@@ -906,6 +972,7 @@ if (fslist) {
     conditionallyAddDots();
 
     create.onclick = () => {
+        enterBehaviour = createTask;
         touchd.showModal();
         backdrop.style.display = "block";
     };
@@ -967,53 +1034,5 @@ if (fslist) {
 
     create_reset();
 
-    createbut.onclick = () => {
-        createbut.disabled = true;
-        let splitted = window.history.state.path.trim().split("/");
-        let path;
-
-        if (splitted.length > 1) {
-            path = `/tex/${splitted.slice(1).join("/")}/${create_target.value}`;
-        } else {
-            path = `/tex/${create_target.value}`;
-        }
-        let body = {
-            token: getToken(),
-            path,
-        };
-
-        let url;
-        if (isFileAdd) {
-            url = "/api/storage/v1/touch";
-        } else {
-            url = "/api/storage/v1/mkdir";
-        }
-
-        fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(body),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.type == "error") {
-                    alert(
-                        `Error creating file item: ${JSON.stringify(data.kind)}`,
-                    );
-                    return;
-                }
-                createbut.classList.add("not-allowed");
-                createbut.innerText = "Created!";
-                refresh(
-                    `${localStorage.getItem("userid")}/${path
-                        .replace(/^\/+|\/+$/g, "")
-                        .split("/")
-                        .slice(1, -1)
-                        .join("/")}`,
-                );
-            })
-            .catch((error) => console.error(error));
-    };
+    createbut.onclick = createTask;
 }
