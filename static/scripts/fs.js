@@ -11,6 +11,17 @@ if (isMobile) {
     document.body.id = "mobile";
 }
 
+function newTab(url) {
+    const a = document.createElement("a");
+    a.href = url;
+    a.target = "_blank";
+    const e = new MouseEvent("click", {
+        ctrlKey: true,
+        metaKey: true,
+    });
+    a.dispatchEvent(e);
+}
+
 let closeBackdrop = true;
 let removeEnterBehaviour = true;
 let pathDisplay = document.getElementById("path-display");
@@ -252,7 +263,7 @@ function addListeners() {
             if (path === null) return;
             fragment.addEventListener("click", (_ev) => go(path));
             fragment.addEventListener("auxclick", (_event) =>
-                window.open(`/fs/${path}`, "_blank").focus(),
+                newTab(`/fs/${path}`),
             );
         },
     );
@@ -260,7 +271,7 @@ function addListeners() {
     Array.from(fslist.children).forEach((fragment) => {
         let path = fragment.getAttribute("path");
         fragment.addEventListener("auxclick", (_event) =>
-            window.open(`/fs/${path}`, "_blank").focus(),
+            newTab(`/fs/${path}`),
         );
         if (fragment.getAttribute("isFile")) {
             fragment.addEventListener("click", (event) => {
@@ -315,6 +326,7 @@ function trashTask(path) {
                 );
                 localStorage.setItem("trashNotif", true);
             }
+            if (cache[`${getFsPath().split("/").shift()}/.system`].trash === undefined) delete cache[`${getFsPath().split("/").shift()}/.system`];
             delete cache[
                 `${getFsPath().split("/").shift()}/.system/trash/${trashPath.split("/").slice(0, -1).join("/")}`.replace(
                     /\/+$/,
@@ -907,12 +919,7 @@ if (fslist) {
                 );
 
             editBut.addEventListener("auxclick", (event) =>
-                window
-                    .open(
-                        `/edit/${path.split("/").slice(1).join("/")}`,
-                        "_blank",
-                    )
-                    .focus(),
+                newTab(`/edit/${path.split("/").slice(1).join("/")}`),
             );
         }
     }

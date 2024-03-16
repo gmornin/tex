@@ -97,6 +97,8 @@ pub fn pdf(url: &str, nonce: &str) -> String {
     let url = html_escape::encode_text(url);
     format!(
         r#"<script nonce={nonce}>
+    let original = console.error;
+    console.error = e => {{  original(e); alert(e)}}
     var pdfFilePath =
       "{url}";
   </script>
