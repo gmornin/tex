@@ -41,7 +41,7 @@ async fn publish_task(post: Json<V1Publish>) -> Result<V1Response, Box<dyn Error
         .exceeds_limit(STORAGE_LIMITS.get().unwrap(), Some(metadata.len()), None)
         .await?
     {
-        return Err(V1Error::FileTooLarge.into());
+        return Err(V1Error::StorageFull.into());
     }
 
     let ext = user_path
