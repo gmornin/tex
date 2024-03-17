@@ -1,4 +1,4 @@
-use std::{path::PathBuf, sync::OnceLock};
+use std::{path::PathBuf, sync::OnceLock, time::Duration};
 
 use goodmorning_services::{
     functions::{get_client, get_database, parse_path},
@@ -29,6 +29,8 @@ pub static DISTDIR: OnceLock<String> = OnceLock::new();
 pub static LOGOPTIONS: OnceLock<LogOptions> = OnceLock::new();
 pub static OUTBOUND: OnceLock<OutboundOptions> = OnceLock::new();
 pub static ALLOW_CREATE: OnceLock<bool> = OnceLock::new();
+pub static COMPILE_MARKDOWN_LIMIT: OnceLock<Duration> = OnceLock::new();
+pub static COMPILE_LATEX_LIMIT: OnceLock<Duration> = OnceLock::new();
 
 // paths
 pub static BEEN_LOGGEDOUT: OnceLock<PathBuf> = OnceLock::new();
@@ -79,6 +81,17 @@ pub async fn gmtvalinit() {
     LOGOPTIONS.set(tex_config.log).unwrap();
     OUTBOUND.set(tex_config.outbound).unwrap();
     ALLOW_CREATE.set(tex_config.allow_create).unwrap();
+
+    COMPILE_LATEX_LIMIT
+        .set(Duration::from_millis(
+            tex_config.limits.compile_latex_timeout,
+        ))
+        .unwrap();
+    COMPILE_MARKDOWN_LIMIT
+        .set(Duration::from_millis(
+            tex_config.limits.compile_markdown_timeout,
+        ))
+        .unwrap();
 
     BEEN_LOGGEDOUT
         .set(STATIC_PATH.get().unwrap().join("htmls/been-loggedout.html"))

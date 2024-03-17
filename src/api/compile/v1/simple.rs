@@ -8,7 +8,7 @@ use actix_web::{
 use goodmorning_services::bindings::{services::v1::*, structs::ApiVer};
 use goodmorning_services::{functions::*, structs::*, *};
 
-use crate::structs::CompileTask;
+use crate::{structs::CompileTask, COMPILE_LATEX_LIMIT, COMPILE_MARKDOWN_LIMIT};
 
 #[post("/simple")]
 async fn simple(post: Json<V1Compile>, jobs: web::Data<Jobs>) -> HttpResponse {
@@ -45,6 +45,11 @@ async fn simple_task(
             }),
             *MAX_CONCURRENT.get().unwrap(),
             ApiVer::V1,
+            *if matches!(post.from, FromFormat::Markdown) {
+                COMPILE_MARKDOWN_LIMIT.get().unwrap()
+            } else {
+                COMPILE_LATEX_LIMIT.get().unwrap()
+            },
         )
         .await
         .as_v1()?)

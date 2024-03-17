@@ -24,6 +24,8 @@ pub struct TexConfig {
     pub allow_create: bool,
     #[serde(default = "topbar_urls_default")]
     pub topbar_urls: Vec<UrlItem>,
+    #[serde(default)]
+    pub limits: TexLimits,
 }
 
 fn allow_create_default() -> bool {
@@ -67,6 +69,7 @@ impl Default for TexConfig {
             outbound: OutboundOptions::default(),
             allow_create: allow_create_default(),
             topbar_urls: topbar_urls_default(),
+            limits: Default::default(),
         }
     }
 }
@@ -172,4 +175,29 @@ fn topbar_urls_default() -> Vec<UrlItem> {
             label: "Source code".to_string(),
         },
     ]
+}
+
+fn compile_latex_timeout_default() -> u64 {
+    20000
+}
+
+fn compile_markdown_timeout_default() -> u64 {
+    2000
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct TexLimits {
+    #[serde(default = "compile_markdown_timeout_default")]
+    pub compile_markdown_timeout: u64,
+    #[serde(default = "compile_latex_timeout_default")]
+    pub compile_latex_timeout: u64,
+}
+
+impl Default for TexLimits {
+    fn default() -> Self {
+        Self {
+            compile_markdown_timeout: compile_markdown_timeout_default(),
+            compile_latex_timeout: compile_latex_timeout_default(),
+        }
+    }
 }
