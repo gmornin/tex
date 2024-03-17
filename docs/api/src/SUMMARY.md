@@ -17,6 +17,7 @@
     - [v1](./publish/v1/index.md)
         - [createcoll]()
         - [published-file](./publish/v1/published-file.md)
+        - [published-info](./publish/v1/published-info.md)
         - [publish](./publish/v1/publish.md)
         - [publishes](./publish/v1/publishes.md)
         - [update-publish](./publish/v1/update-publish.md)

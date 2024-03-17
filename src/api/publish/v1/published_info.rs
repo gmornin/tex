@@ -8,7 +8,7 @@ use goodmorning_services::{functions::*, traits::CollectionItem};
 use crate::functions::get_tex_userpublishes;
 use crate::structs::TexPublish;
 
-#[get("/publish/id/{userid}/{publishid}")]
+#[get("/published-info/id/{userid}/{publishid}")]
 async fn publish_info(path: Path<(i64, i64)>) -> HttpResponse {
     from_res(publish_info_task(path).await)
 }
