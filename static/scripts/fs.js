@@ -326,7 +326,13 @@ function trashTask(path) {
                 );
                 localStorage.setItem("trashNotif", true);
             }
-            if (cache[`${getFsPath().split("/").shift()}/.system`].trash === undefined) delete cache[`${getFsPath().split("/").shift()}/.system`];
+            if (
+                cache[`${getFsPath().split("/").shift()}/.system`] !==
+                    undefined &&
+                cache[`${getFsPath().split("/").shift()}/.system`].trash ===
+                    undefined
+            )
+                delete cache[`${getFsPath().split("/").shift()}/.system`];
             delete cache[
                 `${getFsPath().split("/").shift()}/.system/trash/${trashPath.split("/").slice(0, -1).join("/")}`.replace(
                     /\/+$/,

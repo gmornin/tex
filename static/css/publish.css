@@ -34,23 +34,3 @@
 #desc {
   font-weight: 300;
 }
-
-#display {
-  margin: auto;
-  width: calc(min(60em, 100vw) - 4em);
-  padding: 5px;
-  margin-top: 1em;
-}
-
-#display * {
-  max-width: 100% !important;
-  overflow-wrap: break-word;
-}
-
-#display img {
-  border-radius: 5px;
-}
-
-#display pre {
-  overflow: scroll !important;
-}

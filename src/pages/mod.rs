@@ -4,6 +4,7 @@ mod hard_links;
 mod home;
 mod login;
 mod publish;
+mod publish_single;
 mod settings;
 mod user;
 use actix_web::Scope;
@@ -24,6 +25,7 @@ pub fn scope() -> Scope {
         .service(edit::edit)
         .service(settings::scope())
         .service(publish::publish)
+        .service(publish_single::publish_single)
         .service(goodmorning_services::pages::scope())
 }
 

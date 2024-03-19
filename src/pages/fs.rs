@@ -300,15 +300,6 @@ async fn file(
                 "<link rel=\"stylesheet\" href=\"/static/css/video.css\" />",
                 None,
             ),
-            // (_, mime::PDF) => {
-            //     return Ok(NamedFile::open_async(&pathbuf)
-            //         .await?
-            //         .set_content_disposition(ContentDisposition {
-            //             disposition: actix_web::http::header::DispositionType::Inline,
-            //             parameters: Vec::new(),
-            //         })
-            //         .into_response(req))
-            // }
             (_, mime::PDF) => {
                 let nonce = gen_nonce();
                 csp_heaher = format!("{} 'nonce-{nonce}'", CSP_BASE.get().unwrap()).into();

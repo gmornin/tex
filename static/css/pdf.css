@@ -7,14 +7,23 @@
 }
 
 #display {
-    display: inline;
+  display: block;
 }
 
-#toolbarContainer, #scaleSelect, #scaleSelectContainer, #pageNumber, input, #toolbarSidebar {
-    background: transparent !important;
-    border: none;
+#display:has(#outerContainer) {
+  height: calc(100vh - 10em);
+}
+
+#toolbarContainer,
+#scaleSelect,
+#scaleSelectContainer,
+#pageNumber,
+input,
+#toolbarSidebar {
+  background: transparent !important;
+  border: none;
 }
 
 #viewer {
-    filter: invert(64%) contrast(300%) brightness(123%) hue-rotate(180deg)
+  filter: invert(64%) contrast(300%) brightness(123%) hue-rotate(180deg);
 }
