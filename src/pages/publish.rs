@@ -116,7 +116,8 @@ async fn publish_task(
             .body(html));
     }
 
-    let (items, continuation) = TexPublish::list(account.id, page, std::cmp::min(size, 50)).await?;
+    let (items, continuation) =
+        TexPublish::list_prop(account.id, page, std::cmp::min(size, 50)).await?;
 
     if items.is_empty() {
         return Ok(HttpResponse::TemporaryRedirect()

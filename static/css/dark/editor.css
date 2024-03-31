@@ -38,8 +38,12 @@ div[role="group"] {
   background: #000000;
 }
 
-.running {
+.done {
   color: #88ff88 !important;
+}
+
+.running {
+  color: #ffff88 !important;
 }
 
 .x:hover {

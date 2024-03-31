@@ -241,6 +241,11 @@ function addRunning(element) {
     element.parentNode.parentNode.classList.add("running");
 }
 
+function addDone(element) {
+    element.classList.add("done");
+    element.parentNode.parentNode.classList.add("done");
+}
+
 function removeRunning(element) {
     element.classList.remove("running");
     if (element.parentNode.getElementsByClassName("running").length !== 0) {
@@ -248,6 +253,15 @@ function removeRunning(element) {
     }
 
     element.parentNode.parentNode.classList.remove("running");
+}
+
+function removeDone(element) {
+    element.classList.remove("done");
+    if (element.parentNode.getElementsByClassName("done").length !== 0) {
+        return;
+    }
+
+    element.parentNode.parentNode.classList.remove("done");
 }
 
 let coutd = document.getElementById("coutd");
@@ -313,6 +327,8 @@ function save(f) {
                 }
             } catch (_) {}
             removeRunning(saveBtn);
+            addDone(saveBtn);
+            setTimeout(() => removeDone(saveBtn), 500);
             saved = true;
             if (typeof f == "function") {
                 f();
@@ -325,9 +341,25 @@ function save(f) {
 saveBtn.onclick = save;
 
 document.addEventListener("keydown", (e) => {
-    if (e.ctrlKey && e.key === "s") {
+    if (e.ctrlKey && e.key.toLowerCase() === "s") {
         e.preventDefault();
         save();
+    }
+    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "c") {
+        let got = sessionStorage.getItem(`compiler-${compilePath}`);
+        if (got === null) {
+            alert("Compile the file once before using this shortcut.");
+        } else {
+            got = JSON.parse(got);
+            compileFile(
+                got.target,
+                got.compiler,
+                document.querySelector(
+                    `[compiler="${got.compiler}"][target="${got.target}"]`,
+                ),
+            );
+        }
+        e.preventDefault();
     }
     if (e.ctrlKey && e.key === ",") {
         e.preventDefault();
@@ -339,7 +371,15 @@ document.addEventListener("keydown", (e) => {
 });
 
 function compileFile(target, compiler, btn) {
+    if (btn.classList.contains("running")) {
+        return;
+    }
+    addRunning(btn);
     let url = "/api/compile/v1/simple";
+    sessionStorage.setItem(
+        `compiler-${compilePath}`,
+        JSON.stringify({ target, compiler }),
+    );
     let data = {
         token,
         path: compilePath,
@@ -357,6 +397,8 @@ function compileFile(target, compiler, btn) {
         .then((response) => response.json())
         .then((data) => {
             removeRunning(btn);
+            addDone(btn);
+            setTimeout(() => removeDone(btn), 500);
             if (data.type == "error") {
                 if (data.kind.type == "compile error") {
                     setCoutd(data.kind.content);
@@ -376,10 +418,6 @@ let compiles = document.querySelectorAll("#compile-menu .dropdown-item");
 for (let i = 0; i < compiles.length; i++) {
     compiles[i].onclick = () =>
         save(() => {
-            if (compiles[i].classList.contains("running")) {
-                return;
-            }
-            addRunning(compiles[i]);
             compileFile(
                 compiles[i].getAttribute("target", compiles[i]),
                 compiles[i].getAttribute("compiler", compiles[i]),

@@ -401,7 +401,7 @@ async fn file(
         {display}
         <br />
     </div>
-    <center><code id="info">{info}</code><br /><code id="footurls">{footurls}</code></center>
+    <center id="footurls"><code id="info">{info}</code><br /><code id="footurls">{footurls}</code></center>
   </body>
 </html>"#,
         if mime.type_() == mime::TEXT {

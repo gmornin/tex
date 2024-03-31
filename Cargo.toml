@@ -29,3 +29,9 @@ typetag = "0.2"
 pulldown-cmark = { version = "0.10", features = ["html"], default-features = false}
 implicit-clone = "0.4"
 shlex = { version = "1.3.0", default-features = false }
+
+[profile.release]
+strip = true
+# lto = true
+# opt-level = 3
+panic = "abort"

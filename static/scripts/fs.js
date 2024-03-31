@@ -81,14 +81,14 @@ function getToken() {
     return getCookie("token");
 }
 
-function go(path, skipCheck) {
+function go(path, skipCheck, dontpush) {
     if (!skipCheck && window.history.state.path === path) {
         return;
     }
     let token = getToken();
 
     if (cache[path]) {
-        window.history.pushState({ path: path }, "", `/fs/${path}`);
+        if(!dontpush) window.history.pushState({ path: path }, "", `/fs/${path}`);
         display(path, cache[path]);
         conditionallyAddDots();
         return;
@@ -115,7 +115,7 @@ function go(path, skipCheck) {
                     );
                     return;
                 }
-                window.history.pushState({ path: path }, "", `/fs/${path}`);
+                if(!dontpush) window.history.pushState({ path: path }, "", `/fs/${path}`);
                 cache[path] = data.content;
                 display(path, data.content);
                 conditionallyAddDots();
@@ -140,7 +140,7 @@ function go(path, skipCheck) {
                     );
                     return;
                 }
-                window.history.pushState({ path: path }, "", `/fs/${path}`);
+                if(!dontpush) window.history.pushState({ path: path }, "", `/fs/${path}`);
                 cache[path] = data.content;
                 display(path, data.content);
                 conditionallyAddDots();
@@ -632,7 +632,7 @@ addListeners();
 
 window.addEventListener("popstate", function (_event) {
     let path = window.history.state.path;
-    go(path, true);
+    go(path, true, true);
 });
 
 if (fslist) {

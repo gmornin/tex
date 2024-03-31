@@ -7,7 +7,7 @@ use std::error::Error;
 
 use goodmorning_services::traits::CollectionItem;
 
-use crate::functions::get_tex_userpublishes;
+use crate::{components::TexPublishProp, functions::get_tex_userpublishes};
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct TexPublish {
@@ -18,6 +18,12 @@ pub struct TexPublish {
     pub title: String,
     pub desc: String,
     pub ext: String,
+}
+
+impl TexPublish {
+    pub fn as_prop(self, userid: i64) -> TexPublishProp {
+        TexPublishProp { base: self, userid }
+    }
 }
 
 impl CollectionItem<i64> for TexPublish {
@@ -73,6 +79,38 @@ impl TexPublish {
 
         while let Some(document) = cursor.next().await {
             items.push(document?);
+            if items.len() == page_size as usize {
+                break;
+            }
+        }
+
+        Ok((items, cursor.next().await.is_some()))
+    }
+
+    pub async fn list_prop(
+        userid: i64,
+        mut page: u64,
+        page_size: u64,
+    ) -> Result<(Vec<TexPublishProp>, bool), Box<dyn Error>> {
+        let collection = get_tex_userpublishes(userid);
+
+        page = page.saturating_sub(1);
+
+        let mut find_options = FindOptions::default();
+        find_options.skip = Some(page * page_size); // Skip the first 9 documents
+        find_options.limit = Some(page_size as i64 + 1); // Retrieve 11 documents (10th to 20th)
+        find_options.batch_size = Some(page_size as u32);
+        find_options.sort = Some(doc! {"_id": -1});
+
+        let mut cursor = collection.find(None, find_options).await.unwrap();
+
+        let mut items = Vec::with_capacity(page_size as usize);
+
+        while let Some(document) = cursor.next().await {
+            items.push(TexPublishProp {
+                base: document?,
+                userid,
+            });
             if items.len() == page_size as usize {
                 break;
             }

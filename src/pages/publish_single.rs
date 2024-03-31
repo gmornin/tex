@@ -1,5 +1,6 @@
 use actix_files::NamedFile;
 use actix_web::{get, http::header::ContentType, web::Path, HttpRequest, HttpResponse};
+use chrono::Utc;
 use goodmorning_services::{
     functions::get_usersys_dir,
     structs::{Account, GMServices},
@@ -11,7 +12,7 @@ use tokio::fs;
 
 use crate::{
     components::{self, topbar_from_req},
-    functions::{gen_nonce, get_tex_userpublishes, internalserver_error},
+    functions::{gen_nonce, get_tex_userpublishes, humantime, internalserver_error},
     structs::TexPublish,
     CSP_BASE, NOT_FOUND,
 };
@@ -127,6 +128,15 @@ async fn publish_single_task(
         },
     };
 
+    let title = html_escape::encode_text(&publish.title);
+    let author = html_escape::encode_text(&account.username);
+    let desc = html_escape::encode_text(&publish.desc);
+    let published_time = format!(
+        "Published {}.",
+        humantime(Utc::now().timestamp() as u64 - publish.published)
+    );
+    let author_id = account.id;
+
     let html = format!(
         r#"<!doctype html>
 <html lang="en">
@@ -148,25 +158,25 @@ async fn publish_single_task(
       href="/static/images/favicon-dark.svg"
       type="image/x-icon"
     />
-    <title>Home - GM Tex</title>
+    <title>{title} by {author} - GM Tex</title>
   </head>
   <body>
     {topbar}
     <main>
       <div id="info">
-        <h1 id="title">Chemistry Openstax 1e</h1>
+        <h1 id="title">{title}</h1>
         <img
-          src="/api/generic/v1/pfp/id/15"
+          src="/api/generic/v1/pfp/id/{author_id}"
           width="50"
           height="50"
           id="author-pfp"
         />
         <div id="meta">
-          <a id="author-name" href="/user/15" class="linklike">Siriusmart</a>
-          <span id="time">Published 2 days ago</span>
+          <a id="author-name" href="/user/15" class="linklike">{author}</a>
+          <span id="time">{published_time}</span>
         </div>
         <p id="desc">
-          Concise notes for Openstax 1e textbook available on Libretexts
+            {desc}
         </p>
         <hr />
       </div>

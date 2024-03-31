@@ -11,7 +11,7 @@
 }
 
 #display:has(#outerContainer) {
-  height: calc(100vh - 10em);
+  height: max(calc(100vh - 5em));
 }
 
 #toolbarContainer,
@@ -26,4 +26,8 @@ input,
 
 #viewer {
   filter: invert(64%) contrast(300%) brightness(123%) hue-rotate(180deg);
+}
+
+#footurls {
+    margin-top: -150px;
 }
