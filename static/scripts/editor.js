@@ -299,7 +299,7 @@ document.getElementById("coutToggle").onclick = openCoutd;
 backdrop.onclick = closeAllDialogs;
 
 function save(f) {
-    if (saveBtn.classList.contains("running")) {
+    if (saveBtn.classList.contains("running") || saved) {
         return;
     }
     if (window.location.pathname.split(".").pop() === "html") {
@@ -351,13 +351,15 @@ document.addEventListener("keydown", (e) => {
             alert("Compile the file once before using this shortcut.");
         } else {
             got = JSON.parse(got);
-            compileFile(
-                got.target,
-                got.compiler,
-                document.querySelector(
-                    `[compiler="${got.compiler}"][target="${got.target}"]`,
-                ),
-            );
+            save(() => {
+                compileFile(
+                    got.target,
+                    got.compiler,
+                    document.querySelector(
+                        `[compiler="${got.compiler}"][target="${got.target}"]`,
+                    ),
+                );
+            });
         }
         e.preventDefault();
     }

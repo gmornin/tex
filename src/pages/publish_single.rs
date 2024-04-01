@@ -172,7 +172,7 @@ async fn publish_single_task(
           id="author-pfp"
         />
         <div id="meta">
-          <a id="author-name" href="/user/15" class="linklike">{author}</a>
+          <a id="author-name" href="/user/{author_id}" class="linklike">{author}</a>
           <span id="time">{published_time}</span>
         </div>
         <p id="desc">
