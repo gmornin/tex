@@ -270,9 +270,6 @@ function addListeners() {
     if (!fslist) return;
     Array.from(fslist.children).forEach((fragment) => {
         let path = fragment.getAttribute("path");
-        fragment.addEventListener("auxclick", (_event) =>
-            newTab(`/fs/${path}`),
-        );
         if (fragment.getAttribute("isFile")) {
             fragment.addEventListener("click", (event) => {
                 if (
@@ -292,6 +289,9 @@ function addListeners() {
                 go(fragment.getAttribute("path"));
             });
         }
+        fragment.addEventListener("auxclick", (_event) =>
+            newTab(`/fs/${path}`),
+        );
     });
 }
 

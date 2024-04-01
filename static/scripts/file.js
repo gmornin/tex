@@ -2,7 +2,6 @@ let fragments = document.getElementsByClassName("fragment");
 
 for (let i = 0; i < fragments.length - 1; i++) {
     let path = fragments[i].getAttribute("path");
-    console.log(path);
     let a = document.createElement("a");
     a.href = `/fs/${path}`;
     a.classList.add("fragment");

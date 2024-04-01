@@ -51,7 +51,10 @@ pub fn ext_lang(ext: &str) -> &str {
 pub async fn text(
     path: &std::path::Path,
 ) -> Result<(String, &'static str, Option<String>), Box<dyn Error>> {
-    let content = fs::read_to_string(path).await?;
+    let content = match String::from_utf8(fs::read(path).await?) {
+        Ok(content) => content,
+        Err(_) => return Ok(("<center id=\"unpreviewable\"><img src=\"/static/icons/unpreviewable.svg\" height=\"100\"><p>This file cannot be previewed.</p></center>".to_string(), "<link href=\"/static/css/unpreviewable.css\" rel=\"stylesheet\" />", None))
+    };
 
     let content_safe = html_escape::encode_safe(&content);
     let lang = ext_lang(
