@@ -19,7 +19,7 @@ let noPreview = document.getElementById("no-preview");
 let pdfPreview = document.getElementById("pdf-preview");
 let editorElem = document.getElementById("editor");
 let previewPath;
-let saved = true;
+let lastSave = editor.getValue();
 
 let fullyLoaded = false;
 
@@ -224,13 +224,9 @@ document.getElementById("toggleEditor").onclick = toggleEditor;
 document.getElementById("togglePreview").onclick = togglePreview;
 document.getElementById("openOptions").onclick = openOptions;
 
-editor.on("change", function () {
-    saved = false;
-});
-
 window.addEventListener("beforeunload", function (e) {
     localStorage.setItem("aceOptions", JSON.stringify(editor.getOptions()));
-    if (!saved) {
+    if (lastSave != editor.getValue()) {
         e.preventDefault();
         e.returnValue = "";
     }
@@ -299,7 +295,7 @@ document.getElementById("coutToggle").onclick = openCoutd;
 backdrop.onclick = closeAllDialogs;
 
 function save(f) {
-    if (saveBtn.classList.contains("running") || saved) {
+    if (saveBtn.classList.contains("running") || lastSave == editor.getValue()) {
         return;
     }
     if (window.location.pathname.split(".").pop() === "html") {
@@ -329,7 +325,7 @@ function save(f) {
             removeRunning(saveBtn);
             addDone(saveBtn);
             setTimeout(() => removeDone(saveBtn), 500);
-            saved = true;
+            lastSave = editor.getValue();
             if (typeof f == "function") {
                 f();
             }
