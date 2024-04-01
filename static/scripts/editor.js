@@ -20,6 +20,7 @@ let pdfPreview = document.getElementById("pdf-preview");
 let editorElem = document.getElementById("editor");
 let previewPath;
 let lastSave = editor.getValue();
+let lastCompile;
 
 let fullyLoaded = false;
 
@@ -295,8 +296,12 @@ document.getElementById("coutToggle").onclick = openCoutd;
 backdrop.onclick = closeAllDialogs;
 
 function save(f) {
-    if (saveBtn.classList.contains("running") || lastSave == editor.getValue()) {
+    if (saveBtn.classList.contains("running")) {
         return;
+    }
+    if (lastSave == editor.getValue()) {
+        addDone(saveBtn);
+        setTimeout(() => removeDone(saveBtn), 500);
     }
     if (window.location.pathname.split(".").pop() === "html") {
         previewHtml(editor.getValue());
@@ -347,15 +352,14 @@ document.addEventListener("keydown", (e) => {
             alert("Compile the file once before using this shortcut.");
         } else {
             got = JSON.parse(got);
-            save(() => {
-                compileFile(
-                    got.target,
-                    got.compiler,
-                    document.querySelector(
-                        `[compiler="${got.compiler}"][target="${got.target}"]`,
-                    ),
-                );
-            });
+
+            compileFile(
+                got.target,
+                got.compiler,
+                document.querySelector(
+                    `[compiler="${got.compiler}"][target="${got.target}"]`,
+                ),
+            );
         }
         e.preventDefault();
     }
@@ -373,53 +377,67 @@ function compileFile(target, compiler, btn) {
         return;
     }
     addRunning(btn);
-    let url = "/api/compile/v1/simple";
-    sessionStorage.setItem(
-        `compiler-${compilePath}`,
-        JSON.stringify({ target, compiler }),
-    );
-    let data = {
-        token,
-        path: compilePath,
-        from: thisFormat,
-        to: target,
-        compiler,
-    };
-    fetch(url, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-    })
-        .then((response) => response.json())
-        .then((data) => {
+    function reallyCompile() {
+        if (lastCompile == editor.getValue()) {
             removeRunning(btn);
             addDone(btn);
             setTimeout(() => removeDone(btn), 500);
-            if (data.type == "error") {
-                if (data.kind.type == "compile error") {
-                    setCoutd(data.kind.content);
-                    openCoutd();
-                } else {
-                    alert(`Error compiling: ${JSON.stringify(data.kind)}`);
-                }
-                return;
-            }
-            previewOutdated = true;
-            preview_url(data.newpath);
+            return;
+        }
+        let url = "/api/compile/v1/simple";
+        sessionStorage.setItem(
+            `compiler-${compilePath}`,
+            JSON.stringify({ target, compiler }),
+        );
+        let data = {
+            token,
+            path: compilePath,
+            from: thisFormat,
+            to: target,
+            compiler,
+        };
+        fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
         })
-        .catch((error) => console.error(error));
+            .then((response) => response.json())
+            .then((data) => {
+                removeRunning(btn);
+                addDone(btn);
+                setTimeout(() => removeDone(btn), 500);
+                if (data.type == "error") {
+                    if (data.kind.type == "compile error") {
+                        lastCompile = editor.getValue();
+                        setCoutd(data.kind.content);
+                        openCoutd();
+                    } else {
+                        alert(`Error compiling: ${JSON.stringify(data.kind)}`);
+                    }
+                    return;
+                }
+                previewOutdated = true;
+                lastCompile = editor.getValue();
+                preview_url(data.newpath);
+            })
+            .catch((error) => console.error(error));
+    }
+
+    if (lastSave != editor.getValue()) {
+        save(reallyCompile);
+    } else {
+        reallyCompile();
+    }
 }
 
 let compiles = document.querySelectorAll("#compile-menu .dropdown-item");
 for (let i = 0; i < compiles.length; i++) {
     compiles[i].onclick = () =>
-        save(() => {
-            compileFile(
-                compiles[i].getAttribute("target", compiles[i]),
-                compiles[i].getAttribute("compiler", compiles[i]),
-                compiles[i],
-            );
-        });
+        compileFile(
+            compiles[i].getAttribute("target", compiles[i]),
+            compiles[i].getAttribute("compiler", compiles[i]),
+            compiles[i],
+        );
 }
