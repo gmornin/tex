@@ -6,6 +6,7 @@ use goodmorning_services::bindings::structs::*;
 use goodmorning_services::bindings::*;
 use goodmorning_services::traits::*;
 use pulldown_cmark::*;
+use scraper::{Html, Selector};
 use tokio::fs;
 use tokio::io::AsyncWriteExt;
 use tokio::process::Command;
@@ -153,6 +154,36 @@ pub async fn pulldown_cmark_md2html(
     let md = catch!(fs::read_to_string(source).await, ver);
     let mut buf = String::new();
     html::push_html(&mut buf, Parser::new_ext(&md, Options::all()));
+    let html = buf.clone();
+
+    let modules =
+        tokio::task::spawn_blocking(move || {
+            let doc = Html::parse_fragment(&html);
+            doc.select(&Selector::parse(r#"script[type="modules"]"#).unwrap())
+                .flat_map(|elem| {
+                    let inner = elem.inner_html().replace([' ', '\n'], "");
+                    inner.split(',').map(|module| match module {
+                "prism" => r#"<link href="/static/css/prism.css" rel="stylesheet" defer />
+<script src="/static/scripts/prism.js" defer></script>"#,
+                "katex" => r#"<link rel="stylesheet" href="/static/scripts/katex/katex.min.css">
+<script defer src="/static/scripts/katex/katex.min.js"></script>
+<script defer src="/static/scripts/katex/contrib/auto-render.min.js"></script>"#,
+                "tikzjax" => r#"<script src="/static/scripts/tikzjax/tikzjax.js" defer></script>
+<script src="/static/scripts/tikzjax/script.js" defer></script>
+<link rel="stylesheet" href="/static/css/tikzjax/fonts.css" defer>
+<link rel="stylesheet" href="/static/css/tikzjax/style.css" defer>"#,
+                _ => ""
+            }).collect::<Vec<_>>()
+                })
+                .collect::<Vec<&str>>()
+        })
+        .await
+        .unwrap();
+
+    if !modules.is_empty() {
+        buf.push('\n');
+        buf.push_str(&modules.join("\n"));
+    }
 
     let newfile = source.with_extension("html");
     let mut file = catch!(

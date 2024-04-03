@@ -112,7 +112,7 @@ async fn dir(
     let items = dir_items(account.id, &pathbuf, is_owner, false).await?;
     let id = account.id;
     let nonce = gen_nonce();
-    let csp_heaher = format!("{} 'nonce-{nonce}'", CSP_BASE.get().unwrap());
+    let csp_header = format!("{} 'nonce-{nonce}'", CSP_BASE.get().unwrap());
     let items_props = FsItemProp {
         nonce,
         id: account.id,
@@ -236,7 +236,7 @@ async fn dir(
 
     Ok(HttpResponse::Ok()
         .content_type(ContentType::html())
-        .insert_header(("Content-Security-Policy", csp_heaher))
+        .insert_header(("Content-Security-Policy", csp_header))
         .body(html))
 }
 
@@ -250,7 +250,7 @@ async fn file(
 ) -> Result<HttpResponse, Box<dyn Error>> {
     let visibility = Visibilities::visibility(&pathbuf).await?;
 
-    let mut csp_heaher = Cow::from(CSP_BASE.get().unwrap());
+    let mut csp_header = Cow::from(CSP_BASE.get().unwrap());
     if visibility.visibility == ItemVisibility::Private && !is_owner {
         return Err(V1Error::FileNotFound.into());
     }
@@ -281,6 +281,8 @@ async fn file(
         .unwrap()
     {
         "html" => {
+            csp_header =
+                format!("{} blob: data: 'wasm-unsafe-eval'", CSP_BASE.get().unwrap()).into();
             is_text = true;
             components::html(&pathbuf, &path).await?
         }
@@ -302,7 +304,7 @@ async fn file(
             ),
             (_, mime::PDF) => {
                 let nonce = gen_nonce();
-                csp_heaher = format!("{} 'nonce-{nonce}'", CSP_BASE.get().unwrap()).into();
+                csp_header = format!("{} 'nonce-{nonce}'", CSP_BASE.get().unwrap()).into();
                 (
                     components::pdf(&url, &nonce),
                     r#"<link rel="stylesheet" href="/static/scripts/pdfjs/web/viewer.css" />
@@ -371,7 +373,6 @@ async fn file(
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    {css}
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/static/css/main.css" />
     <link rel="stylesheet" href="/static/css/topbar.css" />
@@ -403,6 +404,7 @@ async fn file(
     </div>
     <center id="footurls"><code id="info">{info}</code><br /><code id="footurls">{footurls}</code></center>
   </body>
+  {css}
 </html>"#,
         if mime.type_() == mime::TEXT {
             r#"<link rel="stylesheet" href="/static/css/textpreview.css" />"#
@@ -413,6 +415,6 @@ async fn file(
 
     Ok(HttpResponse::Ok()
         .content_type(ContentType::html())
-        .insert_header(("Content-Security-Policy", csp_heaher.as_ref()))
+        .insert_header(("Content-Security-Policy", csp_header.as_ref()))
         .body(html))
 }

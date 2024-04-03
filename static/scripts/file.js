@@ -12,6 +12,11 @@ for (let i = 0; i < fragments.length - 1; i++) {
 switch (window.location.pathname.split(".").pop()) {
     case "html":
         document.addEventListener("DOMContentLoaded", function () {
-            renderMathInElement(document.getElementById("display"));
+            try {
+                renderMathInElement(document.getElementById("display"));
+            } catch(_) {}
+            try {
+                renderTikzjax();
+            } catch (_) {}
         });
 }

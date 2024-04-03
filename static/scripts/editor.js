@@ -95,17 +95,66 @@ function previewsHideExcept(except) {
 }
 
 function previewHtml(content) {
-    htmlPreview.innerHTML = content;
-    previewsHideExcept(htmlPreview);
-    Prism.highlightAll();
-    previewOutdated = false;
-    if (fullyLoaded) {
-        renderMathInElement(document.getElementById("display"));
-    } else {
-        document.addEventListener("DOMContentLoaded", function () {
-            renderMathInElement(document.getElementById("display"));
-        });
+    let contentElem = document.createElement("div");
+    contentElem.id = "html-preview";
+    contentElem.innerHTML = content;
+    htmlPreview.remove();
+    document.getElementById("display").appendChild(contentElem);
+    htmlPreview = contentElem;
+
+    let scriptsToLoad = Array.from(
+        htmlPreview.getElementsByTagName("script"),
+    ).filter((script) => script.getAttribute("type") === null);
+    let cssToLoad = Array.from(htmlPreview.getElementsByTagName("link")).filter(
+        (css) => css.getAttribute("rel") == "stylesheet",
+    );
+
+    let loadedScriptsCount = 0;
+
+    function onload() {
+        loadedScriptsCount++;
+
+        if (loadedScriptsCount === scriptsToLoad.length + cssToLoad.length) {
+            try {
+                Prism.highlightAll();
+            } catch (_) {}
+            previewOutdated = false;
+
+            function renderStuff() {
+                try {
+                    renderMathInElement(document.getElementById("display"));
+                } catch (_) {}
+                try {
+                    renderTikzjax();
+                } catch (_) {}
+            }
+
+            if (fullyLoaded) {
+                renderStuff();
+            } else {
+                document.addEventListener("DOMContentLoaded", function () {
+                    renderStuff();
+                });
+            }
+        }
     }
+
+    for (const script of scriptsToLoad) {
+        let tag = document.createElement("script");
+        tag.src = script.src;
+        tag.onload = onload;
+        document.head.appendChild(tag);
+    }
+    for (const css of cssToLoad) {
+        let tag = document.createElement("link");
+        tag.setAttribute("rel", "stylesheet");
+        tag.href = css.href;
+        tag.onload = onload;
+        htmlPreview.appendChild(tag);
+    }
+
+    htmlPreview.onload = () => console.log(1);
+    previewsHideExcept(htmlPreview);
 }
 
 function preview_url(path) {

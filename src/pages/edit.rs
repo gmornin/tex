@@ -90,7 +90,10 @@ async fn edit_task(path: Path<String>, req: &HttpRequest) -> Result<HttpResponse
         source_fmt,
     );
 
-    let csp_heaher = format!("{} 'nonce-{nonce}'", CSP_BASE.get().unwrap());
+    let csp_heaher = format!(
+        "{} blob: data: 'wasm-unsafe-eval' 'nonce-{nonce}'",
+        CSP_BASE.get().unwrap()
+    );
     Ok(HttpResponse::Ok()
         .content_type(ContentType::html())
         .insert_header(("Content-Security-Policy", csp_heaher))
