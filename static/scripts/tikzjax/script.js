@@ -4,7 +4,7 @@ function renderTikzjax() {
     )) {
         if (script.getAttribute("type") != "tikzjax") continue;
         script.setAttribute("type", "text/tikz")
-        script.innerHTML = `\\begin{document}${script.innerHTML}\\end{document}`;
+        script.innerHTML = `${script.innerHTML}`;
         script.setAttribute("data-show-console", "true");
         script.outerHTML = `<div class="tikzpicture">${script.outerHTML}</div>`;
     }
