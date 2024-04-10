@@ -2383,7 +2383,7 @@ body{
 }
 
 body{
-  background-color:var(--body-bg-color);
+  /* background-color:var(--body-bg-color); */
   scrollbar-color:var(--scrollbar-color) var(--scrollbar-bg-color);
 }
 
