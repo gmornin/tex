@@ -17,3 +17,7 @@
     overflow: scroll !important;
 }
 
+.katex-display {
+    overflow: auto !important;
+    padding-bottom: 5px;
+}
