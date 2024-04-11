@@ -19,5 +19,5 @@
 
 .katex-display {
     overflow: auto !important;
-    padding-bottom: 5px;
+    padding: 10px;
 }
