@@ -71,7 +71,7 @@ async fn fs_task(
 
     let is_owner = account.as_ref().is_some_and(|account| account.id == id);
 
-    let account = if let Some(account) = account
+    let mut account = if let Some(account) = account
         && account.id == id
     {
         account
@@ -86,8 +86,28 @@ async fn fs_task(
         }
     };
 
+    let mut preview_path = PathBuf::from(&path);
+
+    if let ["Shared", user, ..] = preview_path
+        .iter()
+        .map(|s| s.to_str().unwrap())
+        .collect::<Vec<_>>()
+        .as_slice()
+    {
+        account = if let Some(account) = Account::find_by_username(user.to_string()).await? {
+            account.v1_restrict_verified()?
+        } else {
+            return Err(V1Error::FileNotFound.into());
+        };
+        preview_path = preview_path.iter().skip(2).collect();
+    }
+
     // get_user_dir(account.id, None).join(&path);
-    let pathbuf = get_user_dir(account.id, Some(GMServices::Tex)).join(&path);
+    let pathbuf = get_user_dir(account.id, Some(GMServices::Tex)).join(&preview_path);
+
+    if matches!(path.as_str(), "Shared" | "Shared/") {
+        return dir(id, path, topbar, is_owner).await
+    }
 
     if !fs::try_exists(&pathbuf).await? {
         return Err(V1Error::FileNotFound.into());
@@ -96,26 +116,26 @@ async fn fs_task(
     let metadata = fs::metadata(&pathbuf).await?;
 
     if metadata.is_dir() {
-        dir(account, path, topbar, is_owner).await
+        dir(id, path, topbar, is_owner).await
     } else {
-        file(account, pathbuf, path, topbar, is_owner, metadata.len()).await
+        file(account, id, pathbuf, path, topbar, is_owner, metadata.len()).await
     }
 }
 
 async fn dir(
-    account: Account,
+    id: i64,
     path: String,
     topbar: Cow<'_, str>,
     is_owner: bool,
 ) -> Result<HttpResponse, Box<dyn Error>> {
     let pathbuf = std::path::Path::new("tex").join(&path);
-    let items = dir_items(account.id, &pathbuf, is_owner, false).await?;
-    let id = account.id;
+    dbg!(&path);
+    let items = dir_items(id, &pathbuf, is_owner, false).await?;
     let nonce = gen_nonce();
     let csp_header = format!("{} 'nonce-{nonce}'", CSP_BASE.get().unwrap());
     let items_props = FsItemProp {
         nonce,
-        id: account.id,
+        id,
         items: items.into_iter().map(FsItem::from).collect(),
         path: path.clone(),
     };
@@ -123,8 +143,8 @@ async fn dir(
         .render()
         .await;
     let path_props = PathProp {
-        path: path.clone(),
-        id: account.id,
+        path: path.trim_end_matches('/').to_string(),
+        id,
     };
     let path_display = yew::ServerRenderer::<components::Path>::with_props(|| path_props)
         .render()
@@ -231,7 +251,7 @@ async fn dir(
   <script src="/static/scripts/upload.js" defer></script>
   </body>
 </html>"#,
-        html_escape::encode_safe(&format!("{}/{path}", account.id))
+        html_escape::encode_safe(&format!("{}/{path}", id))
     );
 
     Ok(HttpResponse::Ok()
@@ -242,6 +262,7 @@ async fn dir(
 
 async fn file(
     account: Account,
+    id: i64,
     pathbuf: PathBuf,
     path: String,
     topbar: Cow<'_, str>,
@@ -327,7 +348,6 @@ async fn file(
         },
     };
 
-    let id = account.id;
     let path_escaped = html_escape::encode_safe(&path).to_string();
     let mut footurls = format!(
         r#"{}{}<a class="linklike" href="{url}" download>Download</a>"#,
@@ -359,8 +379,8 @@ async fn file(
     }
 
     let path_display = yew::ServerRenderer::<components::Path>::with_props(move || PathProp {
-        id: account.id,
-        path,
+        id,
+        path: path.trim_end_matches('/').to_string(),
     })
     .render()
     .await;

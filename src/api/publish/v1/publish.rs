@@ -8,7 +8,7 @@ use tokio::fs;
 use crate::structs::TexPublish;
 
 #[post("/publish")]
-async fn publish(post: Json<V1Publish>) -> HttpResponse {
+pub async fn publish(post: Json<V1Publish>) -> HttpResponse {
     from_res(publish_task(post).await)
 }
 

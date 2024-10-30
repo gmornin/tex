@@ -1,5 +1,0 @@
-[target.aarch64-unknown-linux-gnu]
-pre-build = [
-    # "dpkg --add-architecture $CROSS_DEB_ARCH",
-    "apt update && apt install software-properties-common --assume-yes && add-apt-repository http://archive.raspberrypi.org/debian && add-apt-repository http://deb.debian.org/debian && apt install --assume-yes libssl-dev && apt install --assume-yes libssl1.1"
-]

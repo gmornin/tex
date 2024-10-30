@@ -4,6 +4,7 @@ use actix_files::NamedFile;
 use actix_web::http::header::HeaderValue;
 use actix_web::{get, http::header::ContentType, web::Path, HttpRequest, HttpResponse};
 use goodmorning_services::bindings::services::v1::V1Error;
+use goodmorning_services::structs::Account;
 use goodmorning_services::{functions::get_user_dir, structs::GMServices};
 use tokio::fs;
 
@@ -31,7 +32,7 @@ pub async fn edit(path: Path<String>, req: HttpRequest) -> HttpResponse {
 }
 
 async fn edit_task(path: Path<String>, req: &HttpRequest) -> Result<HttpResponse, Box<dyn Error>> {
-    let (topbar, account) = match topbar_option_from_req(req).await? {
+    let (topbar, mut account) = match topbar_option_from_req(req).await? {
         Ok(Some(stuff)) => stuff,
         Ok(None) => {
             return Ok(NamedFile::open_async(CREATE_ACC.get().unwrap())
@@ -41,12 +42,28 @@ async fn edit_task(path: Path<String>, req: &HttpRequest) -> Result<HttpResponse
         Err(res) => return Ok(res),
     };
 
+    let mut preview_path = PathBuf::from(path.as_ref());
+
+    if let ["Shared", user, ..] = preview_path
+        .iter()
+        .map(|s| s.to_str().unwrap())
+        .collect::<Vec<_>>()
+        .as_slice()
+    {
+        account = if let Some(account) = Account::find_by_username(user.to_string()).await? {
+            account.v1_restrict_verified()?
+        } else {
+            return Err(V1Error::FileNotFound.into());
+        };
+        preview_path = preview_path.iter().skip(2).collect();
+    }
+
     let usr_dir = get_user_dir(account.id, Some(GMServices::Tex));
     let mut previews = Vec::new();
     let mut target_exts = Vec::new();
-    let mut preview_path = PathBuf::from(path.as_ref());
+    // let mut preview_path = PathBuf::from(path.as_ref());
 
-    let pathbuf = usr_dir.join(path.as_ref());
+    let pathbuf = usr_dir.join(preview_path.as_path());
     let ext = pathbuf
         .extension()
         .unwrap_or(OsStr::new(""))
@@ -83,7 +100,7 @@ async fn edit_task(path: Path<String>, req: &HttpRequest) -> Result<HttpResponse
         &topbar,
         content,
         ext,
-        &path,
+        &preview_path.to_str().unwrap(),
         &nonce,
         &previews,
         &target_exts,

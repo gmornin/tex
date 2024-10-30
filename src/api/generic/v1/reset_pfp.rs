@@ -6,7 +6,7 @@ use goodmorning_services::{functions::*, structs::*};
 use tokio::fs;
 
 #[post("/reset-pfp")]
-async fn reset_pfp(post: Json<V1TokenOnly>) -> HttpResponse {
+pub async fn reset_pfp(post: Json<V1TokenOnly>) -> HttpResponse {
     from_res(reset_pfp_task(post).await)
 }
 

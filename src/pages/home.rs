@@ -10,7 +10,7 @@ use goodmorning_services::{
 };
 
 #[get("/")]
-async fn home(req: HttpRequest) -> HttpResponse {
+pub async fn home(req: HttpRequest) -> HttpResponse {
     let token_cookie = req.cookie("token");
     let token = cookie_to_str(&token_cookie);
 

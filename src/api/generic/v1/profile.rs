@@ -10,7 +10,7 @@ use goodmorning_services::{
 use crate::structs::TexProfile;
 
 #[get("/profile/id/{id}")]
-async fn profile(id: web::Path<i64>) -> HttpResponse {
+pub async fn profile(id: web::Path<i64>) -> HttpResponse {
     from_res(profile_task(id).await)
 }
 
@@ -27,7 +27,7 @@ async fn profile_task(id: web::Path<i64>) -> Result<V1Response, Box<dyn Error>> 
 }
 
 #[get("/profile/name/{name}")]
-async fn profile_by_name(name: web::Path<String>) -> HttpResponse {
+pub async fn profile_by_name(name: web::Path<String>) -> HttpResponse {
     from_res(profile_by_name_task(name).await)
 }
 
@@ -46,7 +46,7 @@ async fn profile_by_name_task(name: web::Path<String>) -> Result<V1Response, Box
 }
 
 #[get("/profile-only/id/{id}")]
-async fn profile_only(id: web::Path<i64>) -> HttpResponse {
+pub async fn profile_only(id: web::Path<i64>) -> HttpResponse {
     from_res(profile_only_task(id).await)
 }
 

@@ -7,7 +7,7 @@ use goodmorning_services::{functions::*, structs::*, traits::CollectionItem};
 use crate::{structs::TexProfile, PROFILES};
 
 #[post("/reset-profile")]
-async fn reset_pf(post: Json<V1TokenOnly>) -> HttpResponse {
+pub async fn reset_pf(post: Json<V1TokenOnly>) -> HttpResponse {
     from_res(reset_profile_task(post).await)
 }
 

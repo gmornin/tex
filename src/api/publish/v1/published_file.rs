@@ -13,7 +13,7 @@ use crate::structs::TexPublish;
 use crate::CSP_BASE;
 
 #[get("/published-file/id/{userid}/{publishid}")]
-async fn published_file(path: Path<(i64, i64)>, req: HttpRequest) -> HttpResponse {
+pub async fn published_file(path: Path<(i64, i64)>, req: HttpRequest) -> HttpResponse {
     match published_file_task(path, req).await {
         Ok(res) => res,
         Err(e) => from_res::<V1Response>(Err(e)),

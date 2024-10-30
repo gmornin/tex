@@ -19,7 +19,7 @@ struct PageQuery {
 }
 
 #[get("/publishes/id/{id}")]
-async fn publishes(path: Path<i64>, query: Query<PageQuery>) -> HttpResponse {
+pub async fn publishes(path: Path<i64>, query: Query<PageQuery>) -> HttpResponse {
     from_res(publishes_task(path, query).await)
 }
 
@@ -41,7 +41,7 @@ async fn publishes_task(
 }
 
 #[get("/publishes/name/{username}")]
-async fn publishes_username(path: Path<String>, query: Query<PageQuery>) -> HttpResponse {
+pub async fn publishes_username(path: Path<String>, query: Query<PageQuery>) -> HttpResponse {
     from_res(publishes_username_task(path, query).await)
 }
 

@@ -9,7 +9,7 @@ use crate::functions::get_tex_userpublishes;
 use crate::structs::TexPublish;
 
 #[post("/update-publish")]
-async fn update_publish(post: Json<V1UpdatePublish>) -> HttpResponse {
+pub async fn update_publish(post: Json<V1UpdatePublish>) -> HttpResponse {
     from_res(update_publish_task(post).await)
 }
 

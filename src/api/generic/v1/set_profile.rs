@@ -14,7 +14,7 @@ use mongodb::{
 use crate::{structs::TexProfile, PROFILES};
 
 #[post("/set-profile")]
-async fn set_profile(post: Json<V1ProfileOnly>) -> HttpResponse {
+pub async fn set_profile(post: Json<V1ProfileOnly>) -> HttpResponse {
     from_res(set_profile_task(post).await)
 }
 

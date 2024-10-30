@@ -1,7 +1,7 @@
 code[class*="language-"],
 pre[class*="language-"] {
   /* white-space: nowrap !important; */
-  white-space: pre-wrap;
+  white-space: pre-wrap !important;
   word-break: break-word !important;
   max-width: 70em;
 }

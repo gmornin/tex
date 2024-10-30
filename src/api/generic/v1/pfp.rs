@@ -13,7 +13,7 @@ use tokio::fs;
 use crate::PFP_DEFAULT;
 
 #[get("/pfp/id/{id}")]
-async fn pfp(id: web::Path<i64>, req: HttpRequest) -> HttpResponse {
+pub async fn pfp(id: web::Path<i64>, req: HttpRequest) -> HttpResponse {
     match pfp_task(id, req).await {
         Ok(res) => res,
         Err(e) => from_res::<V1Response>(Err(e)),
@@ -37,7 +37,7 @@ async fn pfp_task(id: web::Path<i64>, req: HttpRequest) -> Result<HttpResponse, 
 }
 
 #[get("/pfp/name/{name}")]
-async fn pfp_name(name: web::Path<String>, req: HttpRequest) -> HttpResponse {
+pub async fn pfp_name(name: web::Path<String>, req: HttpRequest) -> HttpResponse {
     match pfp_name_task(name, req).await {
         Ok(res) => res,
         Err(e) => from_res::<V1Response>(Err(e)),

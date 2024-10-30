@@ -9,7 +9,7 @@ use tokio::fs;
 use crate::ALLOW_CREATE;
 
 #[post("/create")]
-async fn create(post: Json<V1TokenOnly>, req: HttpRequest) -> HttpResponse {
+pub async fn create(post: Json<V1TokenOnly>, req: HttpRequest) -> HttpResponse {
     from_res(create_task(post, req).await)
 }
 

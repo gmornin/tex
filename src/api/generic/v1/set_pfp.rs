@@ -7,7 +7,7 @@ use goodmorning_services::{functions::*, structs::*, *};
 use tokio::{fs::OpenOptions, io::AsyncWriteExt};
 
 #[post("/set-pfp/{token}")]
-async fn set_pfp(token: Path<String>, payload: Multipart, req: HttpRequest) -> HttpResponse {
+pub async fn set_pfp(token: Path<String>, payload: Multipart, req: HttpRequest) -> HttpResponse {
     from_res(set_pfp_task(token, payload, req).await)
 }
 
