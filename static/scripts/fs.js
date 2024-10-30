@@ -88,7 +88,8 @@ function go(path, skipCheck, dontpush) {
     let token = getToken();
 
     if (cache[path]) {
-        if(!dontpush) window.history.pushState({ path: path }, "", `/fs/${path}`);
+        if (!dontpush)
+            window.history.pushState({ path: path }, "", `/fs/${path}`);
         display(path, cache[path]);
         conditionallyAddDots();
         return;
@@ -115,7 +116,8 @@ function go(path, skipCheck, dontpush) {
                     );
                     return;
                 }
-                if(!dontpush) window.history.pushState({ path: path }, "", `/fs/${path}`);
+                if (!dontpush)
+                    window.history.pushState({ path: path }, "", `/fs/${path}`);
                 cache[path] = data.content;
                 display(path, data.content);
                 conditionallyAddDots();
@@ -140,7 +142,8 @@ function go(path, skipCheck, dontpush) {
                     );
                     return;
                 }
-                if(!dontpush) window.history.pushState({ path: path }, "", `/fs/${path}`);
+                if (!dontpush)
+                    window.history.pushState({ path: path }, "", `/fs/${path}`);
                 cache[path] = data.content;
                 display(path, data.content);
                 conditionallyAddDots();
@@ -178,7 +181,11 @@ function displayPath(path) {
     let create = document.getElementById("create");
     let uploadbut = document.getElementById("upload");
     let splitted = path.split("/");
-    if (splitted[1] !== ".system") {
+    if (
+        splitted[1] !== ".system" &&
+        (splitted[1] !== "Shared" || splitted.length !== 2) &&
+        (splitted[1] !== "Shared" || splitted[3] !== ".system")
+    ) {
         uploadbut.style.display = "inline";
         create.style.display = "inline";
     } else {
@@ -304,6 +311,12 @@ function trashTask(path) {
         to: `/tex/.system/trash/${trashPath}`,
     };
 
+    let splitted = trashPath.split("/");
+
+    if (splitted[0] === "Shared") {
+        body.to = `/tex/Shared/${splitted[1]}/.system/trash/${splitted.slice(2).join("/")}`;
+    }
+
     let url = "/api/storage/v1/move-createdirs-overwrite";
     fetch(url, {
         method: "POST",
@@ -345,14 +358,19 @@ function trashTask(path) {
 }
 
 function restoreTask(path) {
-    let trashPath = path.split("/").slice(3).join("/");
+    let trashPath = path.split("/").slice(1).join("/");
+    let splitted = trashPath.split("/");
 
     let body = {
         token: getToken(),
         // "from-userid": localStorage.getItem("userid"),
-        from: `/tex/.system/trash/${trashPath}`,
-        to: `/tex/${trashPath}`,
+        from: `/tex/${trashPath}`,
+        to: `/tex/${splitted.slice(2)}`,
     };
+
+    if (splitted[0] === "Shared") {
+        body.to = `/tex/Shared/${splitted[1]}/${splitted.slice(4).join("/")}`;
+    }
 
     let url = "/api/storage/v1/move-createdirs";
     fetch(url, {
@@ -661,11 +679,16 @@ if (fslist) {
         let items = fslist.children;
         for (const item of items) {
             let path = item.getAttribute("path").split("/");
+
+            if (path.length <= 3 && path[1] === "Shared") continue;
             let id = window.history.state.path.split("/")[0];
             if (
-                path[1] === ".system" &&
-                id === localStorage.getItem("userid") &&
-                path[2] === "trash"
+                (path[1] === ".system" &&
+                    id === localStorage.getItem("userid") &&
+                    path[2] === "trash") ||
+                (path[1] === "Shared" &&
+                    path[3] === ".system" &&
+                    path[4] === "trash")
             ) {
                 if (path.length > 3) {
                     item.innerHTML += `<div class="ellipsis"><img src="/static/icons/ellipsis.svg" class="dots"/><div class="dropdown hide"><div class="dropdown-content"><span class="dropdown-item" action="restore">Restore</span><span class="dropdown-item" action="delete">Delete</span></div></span></div></div></div>`;
@@ -674,7 +697,9 @@ if (fslist) {
                 }
             } else if (
                 id === localStorage.getItem("userid") &&
-                path[1] !== ".system"
+                path[1] !== ".system" &&
+                !(path[1] === "Shared" && path.length === 2) &&
+                !(path[1] === "Shared" && path[3] === ".system")
             ) {
                 if (
                     item.classList.contains("file") ||

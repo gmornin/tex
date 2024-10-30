@@ -106,7 +106,7 @@ async fn fs_task(
     let pathbuf = get_user_dir(account.id, Some(GMServices::Tex)).join(&preview_path);
 
     if matches!(path.as_str(), "Shared" | "Shared/") {
-        return dir(id, path, topbar, is_owner).await
+        return dir(id, path, topbar, is_owner).await;
     }
 
     if !fs::try_exists(&pathbuf).await? {
@@ -149,7 +149,14 @@ async fn dir(
     let path_display = yew::ServerRenderer::<components::Path>::with_props(|| path_props)
         .render()
         .await;
-    let upload = if path.starts_with(".system") || !is_owner {
+    let upload = if path.starts_with(".system")
+        || matches!(path.as_str(), "Shared" | "Shared/")
+        || matches!(
+            path.split('/').collect::<Vec<_>>().as_slice(),
+            ["Shared", _, ".system", ..]
+        )
+        || !is_owner
+    {
         r#"<img src="/static/icons/fileadd.svg" alt="" width="20px" height="20px" id="create" style="display: none;" /><img src="/static/icons/upload.svg" width="20px" height="20px" id="upload" style="display: none;" />"#
     } else {
         r#"<img src="/static/icons/fileadd.svg" width="20px" height="20px" id="create" /><img src="/static/icons/upload.svg" width="20px" height="20px" id="upload" />"#
