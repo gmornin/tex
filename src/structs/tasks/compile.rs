@@ -265,7 +265,7 @@ pub async fn texlive_latex2pdf(
             .arg("--noprofile")
             .arg("sh")
             .arg("-c")
-            .arg(&format!(
+            .arg(format!(
                 "cd {} && {} -interaction nonstopmode -halt-on-error -file-line-error {}",
                 shlex::try_quote(parent.as_ref()).unwrap(),
                 shlex::try_quote(bin).unwrap(),

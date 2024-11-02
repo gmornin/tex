@@ -98,10 +98,11 @@ pub async fn topbar_option_from_token(
                 }
             };
 
-            if !account
-                .services
-                .contains(&goodmorning_services::structs::GMServices::Tex)
-            {
+            if !account.services.contains(
+                &goodmorning_services::structs::GMServices::Tex
+                    .as_str()
+                    .to_string(),
+            ) {
                 return Ok(Ok(None));
             }
 

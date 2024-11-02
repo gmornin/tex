@@ -6,10 +6,7 @@ use goodmorning_services::bindings::{
     structs::ProfileDetail,
 };
 use goodmorning_services::{functions::*, structs::*, traits::CollectionItem};
-use mongodb::{
-    bson::{self, doc},
-    options::UpdateOptions,
-};
+use mongodb::bson::{self, doc};
 
 use crate::{structs::TexProfile, PROFILES};
 
@@ -57,11 +54,10 @@ async fn set_profile_task(post: Json<V1ProfileOnly>) -> Result<V1Response, Box<d
 
     let filter = doc! { "_id": account.id };
     let update = doc! { "$set": {"profile": bson::to_bson(&profile)?} };
-    let options = UpdateOptions::builder().upsert(false).build();
     if PROFILES
         .get()
         .unwrap()
-        .update_one(filter, update, options)
+        .update_one(filter, update)
         .await?
         .matched_count
         == 0

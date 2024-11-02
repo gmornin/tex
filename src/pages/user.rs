@@ -43,10 +43,11 @@ async fn profile_task(id: Path<i64>, req: HttpRequest) -> Result<HttpResponse, B
         }
     };
 
-    if !account
-        .services
-        .contains(&goodmorning_services::structs::GMServices::Tex)
-    {
+    if !account.services.contains(
+        &goodmorning_services::structs::GMServices::Tex
+            .as_str()
+            .to_string(),
+    ) {
         return Ok(NamedFile::open_async(NOT_FOUND.get().unwrap())
             .await?
             .into_response(&req));

@@ -58,7 +58,10 @@ pub async fn home(req: HttpRequest) -> HttpResponse {
         }
     };
 
-    if !account.services.contains(&GMServices::Tex) {
+    if !account
+        .services
+        .contains(&GMServices::Tex.as_str().to_string())
+    {
         return match NamedFile::open_async(FINISH_SETUP.get().unwrap()).await {
             Ok(file) => file.into_response(&req),
             Err(e) => internalserver_error(e.into()),

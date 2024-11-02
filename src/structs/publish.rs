@@ -1,7 +1,6 @@
 use futures_util::StreamExt;
 use goodmorning_services::bindings::services::v1::*;
-use mongodb::bson::doc;
-use mongodb::options::FindOptions;
+use mongodb::bson::{doc, Document};
 use serde::{Deserialize, Serialize};
 use std::error::Error;
 
@@ -67,13 +66,14 @@ impl TexPublish {
 
         page = page.saturating_sub(1);
 
-        let mut find_options = FindOptions::default();
-        find_options.skip = Some(page * page_size); // Skip the first 9 documents
-        find_options.limit = Some(page_size as i64 + 1); // Retrieve 11 documents (10th to 20th)
-        find_options.batch_size = Some(page_size as u32);
-        find_options.sort = Some(doc! {"_id": -1});
-
-        let mut cursor = collection.find(None, find_options).await.unwrap();
+        let mut cursor = collection
+            .find(Document::new())
+            .skip(page * page_size)
+            .limit(page_size as i64)
+            .batch_size(page_size as u32)
+            .sort(doc! {"_id": -1})
+            .await
+            .unwrap();
 
         let mut items = Vec::with_capacity(page_size as usize);
 
@@ -96,13 +96,14 @@ impl TexPublish {
 
         page = page.saturating_sub(1);
 
-        let mut find_options = FindOptions::default();
-        find_options.skip = Some(page * page_size); // Skip the first 9 documents
-        find_options.limit = Some(page_size as i64 + 1); // Retrieve 11 documents (10th to 20th)
-        find_options.batch_size = Some(page_size as u32);
-        find_options.sort = Some(doc! {"_id": -1});
-
-        let mut cursor = collection.find(None, find_options).await.unwrap();
+        let mut cursor = collection
+            .find(Document::new())
+            .skip(page * page_size)
+            .limit(page_size as i64)
+            .batch_size(page_size as u32)
+            .sort(doc! {"_id": -1})
+            .await
+            .unwrap();
 
         let mut items = Vec::with_capacity(page_size as usize);
 
@@ -121,7 +122,7 @@ impl TexPublish {
 
     pub async fn total(userid: i64) -> Result<u64, Box<dyn Error>> {
         Ok(get_tex_userpublishes(userid)
-            .estimated_document_count(None)
+            .estimated_document_count()
             .await?)
     }
 }

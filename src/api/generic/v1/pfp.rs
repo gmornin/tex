@@ -53,7 +53,10 @@ async fn pfp_name_task(
         None => return Err(V1Error::NoSuchUser.into()),
     };
 
-    if !account.services.contains(&GMServices::Tex) {
+    if !account
+        .services
+        .contains(&GMServices::Tex.as_str().to_string())
+    {
         return Ok(from_res::<V1Response>(Err(V1Error::NotCreated.into())));
     }
 

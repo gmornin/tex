@@ -41,7 +41,7 @@ async fn create_task(
     let path = get_usersys_dir(account.id, Some(GMServices::Tex));
     fs::create_dir_all(&path).await?;
 
-    account.services.push(GMServices::Tex);
+    account.services.push(GMServices::Tex.as_str().to_string());
     account.save_replace(ACCOUNTS.get().unwrap()).await?;
 
     Ok(V1Response::ServiceCreated)

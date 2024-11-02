@@ -100,7 +100,7 @@ async fn edit_task(path: Path<String>, req: &HttpRequest) -> Result<HttpResponse
         &topbar,
         content,
         ext,
-        &preview_path.to_str().unwrap(),
+        preview_path.to_str().unwrap(),
         &nonce,
         &previews,
         &target_exts,

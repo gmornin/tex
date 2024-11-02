@@ -49,10 +49,11 @@ async fn publish_single_task(
         }
     };
 
-    if !account
-        .services
-        .contains(&goodmorning_services::structs::GMServices::Tex)
-    {
+    if !account.services.contains(
+        &goodmorning_services::structs::GMServices::Tex
+            .as_str()
+            .to_string(),
+    ) {
         return Ok(NamedFile::open_async(NOT_FOUND.get().unwrap())
             .await?
             .into_response(&req));

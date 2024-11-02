@@ -51,16 +51,17 @@ async fn publish_task(
         }
     };
 
-    if !account
-        .services
-        .contains(&goodmorning_services::structs::GMServices::Tex)
-    {
+    if !account.services.contains(
+        &goodmorning_services::structs::GMServices::Tex
+            .as_str()
+            .to_string(),
+    ) {
         return Ok(NamedFile::open_async(NOT_FOUND.get().unwrap())
             .await?
             .into_response(&req));
     }
 
-    let size = params.size.unwrap_or(10).min(50).max(1) as u64;
+    let size = params.size.unwrap_or(10).clamp(1, 50) as u64;
     let page = params.page.unwrap_or(1) as u64;
     let total = TexPublish::total(account.id).await?;
     let max_page = (total as f32 / size as f32).ceil() as u64;
