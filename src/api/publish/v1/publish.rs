@@ -53,7 +53,10 @@ async fn publish_task(post: Json<V1Publish>) -> Result<V1Response, Box<dyn Error
 
     let copy_to = get_usersys_dir(account.id, Some(GMServices::Tex))
         .join("publishes")
-        .join(format!("{}.{ext}", account.counters.tex_publishes));
+        .join(format!(
+            "{}.{ext}",
+            account.get_counter("tex_publishes".to_string())
+        ));
 
     let parent = copy_to.parent().unwrap();
     if !fs::try_exists(parent).await? {
@@ -64,7 +67,7 @@ async fn publish_task(post: Json<V1Publish>) -> Result<V1Response, Box<dyn Error
 
     let published = TexPublish::new(
         account.id,
-        &mut account.counters.tex_publishes,
+        &mut account.get_counter("tex_publishes".to_string()),
         post.title,
         post.desc,
         ext,
