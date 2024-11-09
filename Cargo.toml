@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 # goodmorning-services = { path = "../services", features = [ "tex" ] }
-goodmorning-services = { git = "https://github.com/gmornin/services", rev = "14f8954" , features = [ "tex" ] }
+goodmorning-services = { git = "https://github.com/gmornin/services", rev = "d75106b" , features = [ "tex" ] }
 actix-web = { version = "4.3", default-features = false }
 tokio = "1.26"
 serde = { version = "1.0", default-features = false }
