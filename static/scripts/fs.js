@@ -536,6 +536,7 @@ function copyOverwriteTask(body) {
                     .slice(1, -1)
                     .join("/")}`.replace(/\/+$/, "")
             ];
+            refresh();
         })
         .catch((error) => console.error(error));
 }
@@ -593,6 +594,7 @@ function copyTask() {
                     .slice(1, -1)
                     .join("/")}`.replace(/\/+$/, "")
             ];
+            refresh();
         })
         .catch((error) => console.error(error));
 }
