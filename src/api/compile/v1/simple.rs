@@ -60,7 +60,18 @@ async fn simple_task(
                 user_path,
                 restrict_path,
             }),
-            *MAX_CONCURRENT.get().unwrap(),
+            QUEUE_PRESETS
+                .get()
+                .unwrap()
+                .get(&account.limit)
+                .map(|c| c.max_concurrent)
+                .unwrap_or(*MAX_CONCURRENT.get().unwrap()),
+            QUEUE_PRESETS
+                .get()
+                .unwrap()
+                .get(&account.limit)
+                .map(|c| c.queue_limit)
+                .unwrap_or(*QUEUE_LIMIT.get().unwrap()),
             ApiVer::V1,
             *if matches!(post.from, FromFormat::Markdown) {
                 COMPILE_MARKDOWN_LIMIT.get().unwrap()

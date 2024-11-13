@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 # goodmorning-services = { path = "../services", features = [ "tex" ] }
-goodmorning-services = { git = "https://github.com/gmornin/services", rev = "1a8675f" , features = [ "tex" ] }
+goodmorning-services = { git = "https://github.com/gmornin/services", rev = "7aefd19" , features = [ "tex" ] }
 actix-web = { version = "4.3", default-features = false }
 tokio = "1.26"
 serde = { version = "1.0", default-features = false }
@@ -30,6 +30,10 @@ pulldown-cmark = { version = "0.12", features = ["html"], default-features = fal
 implicit-clone = "0.4"
 shlex = { version = "1.3", default-features = false }
 scraper = { version = "0.21", default-features = false }
+
+[features]
+default = []
+blue = []
 
 [profile.release]
 strip = true

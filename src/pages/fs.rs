@@ -19,7 +19,7 @@ use tokio::fs;
 use crate::{
     components::{self, html_friendly_mime, topbar_from_req, FsItem, FsItemProp, PathProp},
     functions::{from_res, gen_nonce, get_file},
-    intererr, CSP_BASE, IMG_NOT_FOUND, NOT_FOUND,
+    *,
 };
 
 #[get("/fs/{id}/{path:.*}")]
@@ -129,7 +129,6 @@ async fn dir(
     is_owner: bool,
 ) -> Result<HttpResponse, Box<dyn Error>> {
     let pathbuf = std::path::Path::new("tex").join(&path);
-    dbg!(&path);
     let items = dir_items(id, &pathbuf, is_owner, false).await?;
     let nonce = gen_nonce();
     let csp_header = format!("{} 'nonce-{nonce}'", CSP_BASE.get().unwrap());
@@ -369,6 +368,17 @@ async fn file(
             String::new()
         },
     );
+
+    #[cfg(feature = "blue")]
+    let path_blue = std::path::Path::new(&path);
+    #[cfg(feature = "blue")]
+    if is_owner && path_blue.extension() == Some(OsStr::new("mcworld")) {
+        footurls.push_str(&format!(
+            r#"<a class="linklike" href="{}/render?source=tex/{path}&target={}">BlueMap</a>"#,
+            GMBLUE.get().unwrap(),
+            path_blue.with_extension("").to_string_lossy()
+        ));
+    }
 
     if let Some(source) = source {
         println!("path buf: {pathbuf:?}");

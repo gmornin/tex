@@ -26,6 +26,9 @@ pub struct TexConfig {
     pub topbar_urls: Vec<UrlItem>,
     #[serde(default)]
     pub limits: TexLimits,
+    #[cfg(feature = "blue")]
+    #[serde(default = "gmblue_default")]
+    pub gmblue: String,
 }
 
 fn allow_create_default() -> bool {
@@ -70,6 +73,8 @@ impl Default for TexConfig {
             allow_create: allow_create_default(),
             topbar_urls: topbar_urls_default(),
             limits: Default::default(),
+            #[cfg(feature = "blue")]
+            gmblue: gmblue_default(),
         }
     }
 }
@@ -140,6 +145,11 @@ fn texdir_default() -> String {
 
 fn distdir_default() -> String {
     "/usr/local/texlive".to_string()
+}
+
+#[cfg(feature = "blue")]
+fn gmblue_default() -> String {
+    "https://gmblue.domain.com".to_string()
 }
 
 impl Default for TexLocations {

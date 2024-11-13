@@ -51,6 +51,9 @@ pub static TOPBAR_LOGGEDOUT: OnceLock<String> = OnceLock::new();
 
 pub static PROFILES: OnceLock<Collection<TexProfile>> = OnceLock::new();
 
+#[cfg(feature = "blue")]
+pub static GMBLUE: OnceLock<String> = OnceLock::new();
+
 pub async fn gmtvalinit() {
     CSP_BASE
         .set(format!(
@@ -92,6 +95,9 @@ pub async fn gmtvalinit() {
             tex_config.limits.compile_markdown_timeout,
         ))
         .unwrap();
+
+    #[cfg(feature = "blue")]
+    GMBLUE.set(tex_config.gmblue).unwrap();
 
     BEEN_LOGGEDOUT
         .set(STATIC_PATH.get().unwrap().join("htmls/been-loggedout.html"))
