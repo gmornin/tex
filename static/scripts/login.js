@@ -1,3 +1,5 @@
+let params = new URLSearchParams(window.location.search).toString();
+
 function update() {
   let errorDisplay = document.getElementById("error-display");
   errorDisplay.innerText = "";
@@ -74,7 +76,7 @@ function signup() {
     return;
   }
 
-  let url = "/api/accounts/v1/create";
+  let url = `/api/accounts/v1/create?${params}`;
   let data = {
     username,
     email,
@@ -147,7 +149,7 @@ function signin() {
   let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   let identifierType = emailRegex.test(identifier) ? "email" : "username";
 
-  let url = "/api/accounts/v1/login";
+  let url = `/api/accounts/v1/login?${params}`;
   let data = {
     identifier,
     "identifier-type": identifierType,
