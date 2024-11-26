@@ -86,6 +86,8 @@ async fn fs_task(
         }
     };
 
+    let token = account.token.clone();
+
     let mut preview_path = PathBuf::from(&path);
 
     if let ["Shared", user, ..] = preview_path
@@ -118,7 +120,17 @@ async fn fs_task(
     if metadata.is_dir() {
         dir(id, path, topbar, is_owner).await
     } else {
-        file(account, id, pathbuf, path, topbar, is_owner, metadata.len()).await
+        file(
+            account,
+            token,
+            id,
+            pathbuf,
+            path,
+            topbar,
+            is_owner,
+            metadata.len(),
+        )
+        .await
     }
 }
 
@@ -268,6 +280,7 @@ async fn dir(
 
 async fn file(
     account: Account,
+    token: String,
     id: i64,
     pathbuf: PathBuf,
     path: String,
@@ -283,7 +296,7 @@ async fn file(
     }
 
     let url = if is_owner {
-        format!("/api/storage/v1/file/{}/tex/{}", account.token, path)
+        format!("/api/storage/v1/file/{}/tex/{}", token, path)
     } else {
         format!("/api/usercontent/v1/file/id/{}/tex/{}", account.id, path)
     };
